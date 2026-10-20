@@ -63,11 +63,27 @@ export interface TelemetryItem {
   maxTapLevel: number;
   lastTapLevel: number;
   lastSeenAt: string;
+  englishGloss?: string | null;
+  urduExplanation?: string | null;
+  spokenSynonyms?: string[];
+  arabicRoot?: string | null;
+  cousins?: string[];
 }
 
 // -------------------------------------------------------------
 // Reader State Signals & Stores
 // -------------------------------------------------------------
+export const [toastMessage, setToastMessage] = createSignal<string | null>(null);
+let toastTimer: any = null;
+
+export function showToast(message: string, duration = 3000) {
+  if (toastTimer) clearTimeout(toastTimer);
+  setToastMessage(message);
+  toastTimer = setTimeout(() => {
+    setToastMessage(null);
+    toastTimer = null;
+  }, duration);
+}
 export const [stories, setStories] = createSignal<Story[]>([]);
 export const [activeStory, setActiveStory] = createSignal<Story | null>(null);
 export const [paragraphs, setParagraphs] = createSignal<Paragraph[]>([]);
@@ -203,9 +219,13 @@ export async function playTTS(text: string): Promise<void> {
         const urduVoice = voices.find((v) => v.lang.startsWith('ur'));
         if (urduVoice) {
           utterance.voice = urduVoice;
+        } else {
+          showToast(`صوتی تلفظ: ${data.text}`);
         }
 
         window.speechSynthesis.speak(utterance);
+      } else {
+        showToast(`صوتی تلفظ: ${data.text}`);
       }
     }
   } catch (err) {

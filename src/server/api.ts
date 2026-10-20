@@ -158,7 +158,7 @@ api.post('/telemetry', async (c) => {
 });
 
 // -------------------------------------------------------------
-// 4. GET /api/telemetry - Get user vocabulary telemetry items
+// 4. GET /api/telemetry - Get user vocabulary telemetry items with joined analyses
 // -------------------------------------------------------------
 api.get('/telemetry', async (c) => {
   try {
@@ -168,7 +168,25 @@ api.get('/telemetry', async (c) => {
       .orderBy(desc(schema.userTelemetry.lastSeenAt))
       .all();
 
-    return c.json({ success: true, data: items });
+    // Enrich with analysis data
+    const enriched = items.map((item) => {
+      const analysis = db
+        .select()
+        .from(schema.tokenAnalyses)
+        .where(eq(schema.tokenAnalyses.vocalizedForm, item.vocalizedSurface))
+        .get();
+
+      return {
+        ...item,
+        englishGloss: analysis?.englishContextualGloss || null,
+        urduExplanation: analysis?.urduSimpleExplanation || null,
+        spokenSynonyms: analysis?.spokenUrduSynonymsJson || [],
+        arabicRoot: analysis?.arabicRoot || null,
+        cousins: analysis?.familiarCousinsJson || [],
+      };
+    });
+
+    return c.json({ success: true, data: enriched });
   } catch (error: any) {
     return c.json({ success: false, error: error.message }, 500);
   }
@@ -332,6 +350,29 @@ api.post('/stories/ingest', async (c) => {
             compoundGroupId: tok.compoundGroupId || null,
           })
           .run();
+
+        // If it's a word token, insert a rich token analysis
+        if (tok.isWord) {
+          const graphemes = UrduLanguagePack.decomposeWordToGraphemes(tok.surface);
+          
+          db.insert(schema.tokenAnalyses)
+            .values({
+              id: `ana_${tokenId}`,
+              tokenId,
+              vocalizedForm: tok.surface,
+              phoneticBreakdownJson: [{ letters: tok.surface }],
+              graphemesJson: graphemes,
+              spokenUrduSynonymsJson: [tok.normalized],
+              urduSimpleExplanation: `${tok.surface} کا وضاحتی مفہوم`,
+              izafatBreakdownUrdu: tok.izafatGroupId ? 'ترکیبِ اضافت کا جزو' : null,
+              tokenTier: 'common_vocab',
+              arabicRoot: null,
+              familiarCousinsJson: null,
+              englishContextualGloss: tok.normalized,
+              literaryNuanceNote: 'Ingested literary vocabulary item.',
+            })
+            .run();
+        }
       }
     }
 

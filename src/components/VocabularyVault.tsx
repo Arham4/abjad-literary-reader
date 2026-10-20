@@ -160,18 +160,32 @@ export default function VocabularyVault() {
                 return (
                   <div class="p-3.5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 flex items-center justify-between gap-3 hover:border-amber-500/30 transition-colors">
                     {/* Word display & audio */}
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-start gap-3 flex-1 min-w-0">
                       <button
                         type="button"
                         title="تلفظ سنیں"
-                        class="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 transition-colors cursor-pointer"
+                        class="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 transition-colors cursor-pointer shrink-0 mt-1"
                         onClick={() => playTTS(item.vocalizedSurface)}
                       >
                         <Volume2 size={16} />
                       </button>
-                      <div dir="rtl" class="text-right">
+                      <div dir="rtl" class="text-right flex-1 min-w-0">
                         <div class="font-nastaliq text-2xl leading-none">{item.vocalizedSurface}</div>
-                        <div class="text-[10px] text-neutral-400 mt-1 font-mono">{item.normalizedSurface}</div>
+                        <Show when={item.englishGloss}>
+                          <div class="text-xs font-sans text-indigo-700 dark:text-indigo-300 mt-1 font-medium truncate text-left" dir="ltr">
+                            {item.englishGloss}
+                          </div>
+                        </Show>
+                        <Show when={item.urduExplanation}>
+                          <div class="text-[11px] font-nastaliq text-neutral-600 dark:text-neutral-400 mt-0.5 truncate">
+                            {item.urduExplanation}
+                          </div>
+                        </Show>
+                        <Show when={item.arabicRoot}>
+                          <div class="text-[10px] text-blue-600 dark:text-blue-400 mt-0.5">
+                            مادہ: {item.arabicRoot}
+                          </div>
+                        </Show>
                       </div>
                     </div>
 

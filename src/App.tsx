@@ -15,6 +15,7 @@ import {
   closeVault,
   isVaultOpen,
   scriptTradition,
+  toastMessage,
 } from './store/readerStore';
 
 export default function App() {
@@ -111,6 +112,14 @@ export default function App() {
           <ReaderSurface />
         </Show>
       </main>
+
+      {/* Non-blocking Phonetic Toast Notification */}
+      <Show when={toastMessage()}>
+        <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-neutral-900/95 text-white border border-white/20 shadow-xl backdrop-blur-md text-xs sm:text-sm font-medium flex items-center gap-2 pointer-events-none transition-all duration-200">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+          <span>{toastMessage()}</span>
+        </div>
+      </Show>
 
       {/* Floating 3-Tap Popover / Mobile Bottom Sheet */}
       <TokenLensPopover />
