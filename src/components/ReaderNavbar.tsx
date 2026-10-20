@@ -1,4 +1,4 @@
-import { For, Show } from 'solid-js';
+import { createSignal, For, Show } from 'solid-js';
 import {
   stories,
   activeStory,
@@ -13,35 +13,41 @@ import {
   setShowIzafatHighlights,
   openVault,
   vaultItems,
-  ScriptTradition,
 } from '../store/readerStore';
-import { BookMarked, Sun, Moon, Coffee, Type, Sliders, Sparkles } from 'lucide-solid';
+import { BookMarked, Sun, Moon, Coffee, SlidersHorizontal, Check } from 'lucide-solid';
 
 export default function ReaderNavbar() {
+  const [showMobileSettings, setShowMobileSettings] = createSignal(false);
+
+  // Cycle themes: paper -> sepia -> midnight -> paper
+  const cycleTheme = () => {
+    const current = theme();
+    if (current === 'paper') setTheme('sepia');
+    else if (current === 'sepia') setTheme('midnight');
+    else setTheme('paper');
+  };
+
   return (
     <header class="sticky top-0 z-30 backdrop-blur-md border-b transition-colors duration-200 shadow-xs">
-      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        {/* Brand & Story Selector */}
-        <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2">
-            <span class="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center text-white font-bold text-sm tracking-wider shadow-xs">
-              ابجد
-            </span>
-            <span class="hidden sm:inline font-bold text-base tracking-tight">Abjad Reader</span>
+      <div class="max-w-6xl mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between gap-2">
+        {/* Left: Brand Logo & Story Select */}
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-600 flex items-center justify-center text-white font-bold text-xs sm:text-sm tracking-wider shadow-xs shrink-0 font-nastaliq">
+            ابجد
           </div>
 
-          {/* Story Selector Dropdown */}
-          <div class="relative">
+          {/* Story Selector with Responsive Truncation */}
+          <div class="relative min-w-0">
             <select
               aria-label="Select Story"
-              class="text-xs sm:text-sm font-medium py-1.5 px-3 pr-8 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+              class="text-xs sm:text-sm font-medium py-1 sm:py-1.5 pl-2 pr-6 sm:pr-8 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer max-w-[145px] xs:max-w-[190px] sm:max-w-none truncate"
               value={activeStory()?.slug || ''}
               onChange={(e) => selectStory(e.currentTarget.value)}
             >
               <For each={stories()}>
                 {(s) => (
                   <option value={s.slug}>
-                    {s.titleEnglish} ({s.titleUrdu}) • Lvl {s.level}
+                    {s.titleEnglish} ({s.titleUrdu})
                   </option>
                 )}
               </For>
@@ -49,13 +55,13 @@ export default function ReaderNavbar() {
           </div>
         </div>
 
-        {/* Controls: Script, Font Size, Theme & Vault */}
-        <div class="flex items-center gap-2 sm:gap-3">
-          {/* Script Tradition Switcher */}
-          <div class="hidden sm:flex items-center p-0.5 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-xs">
+        {/* Right: Controls */}
+        <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Desktop-only Script Tradition Switcher */}
+          <div class="hidden md:flex items-center p-0.5 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-xs">
             <button
               type="button"
-              class={`px-2.5 py-1 rounded-md font-nastaliq transition-all cursor-pointer ${
+              class={`px-2 py-1 rounded-md font-nastaliq transition-all cursor-pointer ${
                 scriptTradition() === 'nastaliq'
                   ? 'bg-amber-600 text-white shadow-xs'
                   : 'text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white'
@@ -67,7 +73,7 @@ export default function ReaderNavbar() {
             </button>
             <button
               type="button"
-              class={`px-2.5 py-1 rounded-md font-naskh transition-all cursor-pointer ${
+              class={`px-2 py-1 rounded-md font-naskh transition-all cursor-pointer ${
                 scriptTradition() === 'naskh'
                   ? 'bg-amber-600 text-white shadow-xs'
                   : 'text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white'
@@ -80,42 +86,28 @@ export default function ReaderNavbar() {
           </div>
 
           {/* Font Size Adjuster */}
-          <div class="flex items-center gap-1 border border-black/10 dark:border-white/10 rounded-lg p-0.5 bg-black/5 dark:bg-white/5">
+          <div class="flex items-center border border-black/10 dark:border-white/10 rounded-lg p-0.5 bg-black/5 dark:bg-white/5 text-xs">
             <button
               type="button"
               title="Decrease Font Size"
-              class="w-6 h-6 flex items-center justify-center text-xs font-bold hover:bg-black/10 dark:hover:bg-white/10 rounded cursor-pointer"
-              onClick={() => setFontSizePx(Math.max(20, fontSizePx() - 2))}
+              class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center font-bold hover:bg-black/10 dark:hover:bg-white/10 rounded cursor-pointer"
+              onClick={() => setFontSizePx(Math.max(18, fontSizePx() - 2))}
             >
               -
             </button>
-            <span class="text-xs px-1 font-mono">{fontSizePx()}px</span>
+            <span class="px-1 font-mono text-[11px] sm:text-xs min-w-[28px] text-center">{fontSizePx()}</span>
             <button
               type="button"
               title="Increase Font Size"
-              class="w-6 h-6 flex items-center justify-center text-xs font-bold hover:bg-black/10 dark:hover:bg-white/10 rounded cursor-pointer"
+              class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center font-bold hover:bg-black/10 dark:hover:bg-white/10 rounded cursor-pointer"
               onClick={() => setFontSizePx(Math.min(44, fontSizePx() + 2))}
             >
               +
             </button>
           </div>
 
-          {/* Izafat Underline Toggle */}
-          <button
-            type="button"
-            title="ترکیبِ اضافت نمایاں کریں (Toggle Izafat highlights)"
-            class={`hidden md:flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
-              showIzafatHighlights()
-                ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300'
-                : 'border-transparent text-neutral-500 hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-            onClick={() => setShowIzafatHighlights(!showIzafatHighlights())}
-          >
-            <span>ِ اضافت</span>
-          </button>
-
-          {/* Theme Switcher */}
-          <div class="flex items-center border border-black/10 dark:border-white/10 rounded-lg p-0.5 bg-black/5 dark:bg-white/5">
+          {/* Desktop Theme Switcher (3 buttons) */}
+          <div class="hidden sm:flex items-center border border-black/10 dark:border-white/10 rounded-lg p-0.5 bg-black/5 dark:bg-white/5">
             <button
               type="button"
               title="Paper Theme"
@@ -124,7 +116,7 @@ export default function ReaderNavbar() {
               }`}
               onClick={() => setTheme('paper')}
             >
-              <Sun size={15} />
+              <Sun size={14} />
             </button>
             <button
               type="button"
@@ -134,7 +126,7 @@ export default function ReaderNavbar() {
               }`}
               onClick={() => setTheme('sepia')}
             >
-              <Coffee size={15} />
+              <Coffee size={14} />
             </button>
             <button
               type="button"
@@ -144,25 +136,101 @@ export default function ReaderNavbar() {
               }`}
               onClick={() => setTheme('midnight')}
             >
-              <Moon size={15} />
+              <Moon size={14} />
             </button>
           </div>
 
-          {/* Vocabulary Vault Drawer Button */}
+          {/* Mobile Theme Switcher (single tap cycling button) */}
+          <button
+            type="button"
+            title={`Theme: ${theme()} (Tap to change)`}
+            class="sm:hidden p-1.5 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-amber-600 dark:text-amber-400"
+            onClick={cycleTheme}
+          >
+            <Show when={theme() === 'paper'}>
+              <Sun size={15} />
+            </Show>
+            <Show when={theme() === 'sepia'}>
+              <Coffee size={15} />
+            </Show>
+            <Show when={theme() === 'midnight'}>
+              <Moon size={15} />
+            </Show>
+          </button>
+
+          {/* Mobile Settings Toggle (Script, Izafat) */}
+          <button
+            type="button"
+            title="Reading Settings"
+            class={`md:hidden p-1.5 rounded-lg border transition-colors ${
+              showMobileSettings()
+                ? 'bg-amber-600 text-white border-amber-600'
+                : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-neutral-600 dark:text-neutral-400'
+            }`}
+            onClick={() => setShowMobileSettings(!showMobileSettings())}
+          >
+            <SlidersHorizontal size={15} />
+          </button>
+
+          {/* Vocabulary Vault Button */}
           <button
             type="button"
             title="ذخیرہ الفاظ (Vocabulary Vault)"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-medium transition-colors shadow-xs cursor-pointer"
+            class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-medium transition-colors shadow-xs cursor-pointer"
             onClick={openVault}
           >
-            <BookMarked size={16} />
-            <span class="hidden sm:inline">لغت و الفاظ</span>
+            <BookMarked size={14} class="shrink-0" />
+            <span class="hidden sm:inline">لغت</span>
             <span class="px-1.5 py-0.2 rounded-full bg-black/20 text-[10px] font-mono">
               {vaultItems().length}
             </span>
           </button>
         </div>
       </div>
+
+      {/* Mobile Secondary Settings Drawer / Bar */}
+      <Show when={showMobileSettings()}>
+        <div class="md:hidden px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 flex items-center justify-between text-xs animate-fadeIn">
+          {/* Script Tradition Toggle */}
+          <div class="flex items-center gap-1.5">
+            <span class="text-neutral-500 font-sans text-[11px]">رسم الخط:</span>
+            <div class="flex items-center p-0.5 rounded-md border border-black/10 dark:border-white/10 bg-white/40 dark:bg-black/40">
+              <button
+                type="button"
+                class={`px-2 py-0.5 rounded font-nastaliq ${
+                  scriptTradition() === 'nastaliq' ? 'bg-amber-600 text-white' : 'text-neutral-600 dark:text-neutral-400'
+                }`}
+                onClick={() => setScriptTradition('nastaliq')}
+              >
+                نستعلیق
+              </button>
+              <button
+                type="button"
+                class={`px-2 py-0.5 rounded font-naskh ${
+                  scriptTradition() === 'naskh' ? 'bg-amber-600 text-white' : 'text-neutral-600 dark:text-neutral-400'
+                }`}
+                onClick={() => setScriptTradition('naskh')}
+              >
+                نسخ
+              </button>
+            </div>
+          </div>
+
+          {/* Izafat Underline Toggle */}
+          <button
+            type="button"
+            class={`flex items-center gap-1 px-2 py-1 rounded-md border text-[11px] ${
+              showIzafatHighlights()
+                ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300'
+                : 'border-black/10 dark:border-white/10 text-neutral-500'
+            }`}
+            onClick={() => setShowIzafatHighlights(!showIzafatHighlights())}
+          >
+            <Check size={12} class={showIzafatHighlights() ? 'opacity-100' : 'opacity-0'} />
+            <span>ترکیبِ اضافت (ِ)</span>
+          </button>
+        </div>
+      </Show>
     </header>
   );
 }

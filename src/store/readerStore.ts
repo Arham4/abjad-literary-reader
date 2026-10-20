@@ -93,7 +93,9 @@ export const [isLoading, setIsLoading] = createSignal<boolean>(false);
 
 // Typography & Appearance
 export const [scriptTradition, setScriptTradition] = createSignal<ScriptTradition>('nastaliq');
-export const [fontSizePx, setFontSizePx] = createSignal<number>(28);
+export const [fontSizePx, setFontSizePx] = createSignal<number>(
+  typeof window !== 'undefined' && window.innerWidth < 640 ? 23 : 28
+);
 export const [theme, setTheme] = createSignal<'paper' | 'sepia' | 'midnight'>('paper');
 export const [showIzafatHighlights, setShowIzafatHighlights] = createSignal<boolean>(true);
 

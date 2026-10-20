@@ -57,6 +57,10 @@ export default function VocabularyVault() {
             ? 'bg-[#FAF4E8] border-l border-[#E2D6C0] text-[#29221E]'
             : 'bg-[#FFFCF7] border-l border-[#E8DFC9] text-[#1C1917]'
         }`}
+        style={{
+          'padding-top': 'env(safe-area-inset-top)',
+          'padding-bottom': 'max(1rem, env(safe-area-inset-bottom))',
+        }}
       >
         {/* Header */}
         <div class="p-5 border-b border-black/10 dark:border-white/10 flex items-center justify-between">

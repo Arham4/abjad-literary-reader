@@ -4,7 +4,6 @@ import {
   currentSentenceIndex,
   isPlaying,
   playSentence,
-  stopAudio,
   toggleAudio,
   theme,
 } from '../store/readerStore';
@@ -46,31 +45,32 @@ export default function AudioBar() {
           ? 'bg-[#F2E9D8]/95 border-[#E2D6C0] text-[#29221E]'
           : 'bg-[#FAF6EE]/95 border-[#E8DFC9] text-[#1C1917]'
       }`}
+      style={{ 'padding-bottom': 'max(0.4rem, env(safe-area-inset-bottom))' }}
     >
-      <div class="max-w-4xl mx-auto px-4 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="max-w-4xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
         {/* Active Sentence Text or Status */}
-        <div class="flex items-center gap-2 w-full sm:w-auto overflow-hidden">
-          <div class="p-1.5 rounded-md bg-amber-500/10 text-amber-600 shrink-0">
-            <Volume2 size={16} />
+        <div class="flex items-center gap-2 min-w-0 flex-1">
+          <div class="p-1 sm:p-1.5 rounded-md bg-amber-500/10 text-amber-600 shrink-0">
+            <Volume2 size={15} />
           </div>
-          <div class="text-xs truncate text-right w-full sm:w-auto" dir="rtl">
+          <div class="text-xs truncate text-right min-w-0 flex-1" dir="rtl">
             <Show
               when={currentSentence()}
               fallback={
-                <span class="text-neutral-400 font-sans">
-                  کسی جملے کا صوتی مطالعہ شروع کرنے کے لیے بٹن دبائیں۔ (Play narration)
+                <span class="text-neutral-400 font-sans text-[11px] sm:text-xs">
+                  صوتی مطالعہ (Play narration)
                 </span>
               }
             >
-              <span class="font-nastaliq text-sm leading-relaxed text-amber-800 dark:text-amber-300">
+              <span class="font-nastaliq text-xs sm:text-sm leading-relaxed text-amber-800 dark:text-amber-300">
                 {currentSentence()!.text}
               </span>
             </Show>
           </div>
         </div>
 
-        {/* Audio Controls */}
-        <div class="flex items-center gap-2 shrink-0">
+        {/* Audio Controls (compact row on all viewports) */}
+        <div class="flex items-center gap-1 sm:gap-2 shrink-0">
           <button
             type="button"
             title="Previous Sentence"
@@ -78,19 +78,19 @@ export default function AudioBar() {
             disabled={currentSentenceIndex() === null || currentSentenceIndex() === 0}
             onClick={handlePrev}
           >
-            <SkipBack size={16} />
+            <SkipBack size={14} />
           </button>
 
           <button
             type="button"
             title={isPlaying() ? 'Pause' : 'Play Narration'}
-            class="px-3.5 py-1.5 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
+            class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs flex items-center gap-1 transition-colors shadow-xs cursor-pointer active:scale-95"
             onClick={toggleAudio}
           >
-            <Show when={isPlaying()} fallback={<Play size={14} />}>
-              <Pause size={14} />
+            <Show when={isPlaying()} fallback={<Play size={13} />}>
+              <Pause size={13} />
             </Show>
-            <span>{isPlaying() ? 'وقفہ' : 'صوتی قرأت'}</span>
+            <span>{isPlaying() ? 'وقفہ' : 'قرأت'}</span>
           </button>
 
           <button
@@ -103,12 +103,12 @@ export default function AudioBar() {
             }
             onClick={handleNext}
           >
-            <SkipForward size={16} />
+            <SkipForward size={14} />
           </button>
 
           <Show when={currentSentenceIndex() !== null}>
-            <span class="text-[11px] font-mono opacity-60 ml-2">
-              {currentSentenceIndex()! + 1} / {totalSentences()}
+            <span class="text-[10px] sm:text-[11px] font-mono opacity-60 ml-1">
+              {currentSentenceIndex()! + 1}/{totalSentences()}
             </span>
           </Show>
         </div>

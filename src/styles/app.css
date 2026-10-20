@@ -63,6 +63,13 @@ body.theme-midnight {
   user-select: text;
 }
 
+@media (max-width: 640px) {
+  .abjad-reader-surface {
+    line-height: 2.35;
+    word-spacing: 0.08em;
+  }
+}
+
 .abjad-reader-surface.font-nastaliq {
   font-family: "Mehr Nastaliq Web", "Noto Nastaliq Urdu", Gulzar, serif;
 }
@@ -80,6 +87,14 @@ body.theme-midnight {
   padding: 1.5rem 2rem;
   border-radius: 12px;
   transition: background-color 150ms ease;
+}
+
+@media (max-width: 640px) {
+  .abjad-paragraph-block {
+    padding: 0.875rem 0.625rem;
+    margin-bottom: 1.25rem;
+    border-radius: 8px;
+  }
 }
 
 /* Word tokens: strict containment so interaction never triggers HarfBuzz re-shaping */
