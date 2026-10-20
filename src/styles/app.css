@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+/* 2. Optional Local Mehr Nastaliq Web font with size-adjust */
+@font-face {
+  font-family: 'Mehr Nastaliq Web';
+  src: local('Mehr Nastaliq Web'), local('MehrNastaliqWeb');
+  font-display: block;
+  size-adjust: 130%;
+}
+
+/* 3. Anti-Halation Paper Themes */
+:root {
+  --color-bg-paper: #FAF6EE;
+  --color-ink-paper: #1C1917;
+  --color-muted-paper: #78716C;
+  --color-accent-paper: #D97706;
+
+  --color-bg-sepia: #F2E9D8;
+  --color-ink-sepia: #29221E;
+  --color-muted-sepia: #6B5E53;
+  --color-accent-sepia: #B45309;
+
+  --color-bg-midnight: #121316;
+  --color-ink-midnight: #E7E2D8;
+  --color-muted-midnight: #9CA3AF;
+  --color-accent-midnight: #F59E0B;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* Theme classes applied to #root or body */
+body.theme-paper {
+  background-color: var(--color-bg-paper);
+  color: var(--color-ink-paper);
+}
+
+body.theme-sepia {
+  background-color: var(--color-bg-sepia);
+  color: var(--color-ink-sepia);
+}
+
+body.theme-midnight {
+  background-color: var(--color-bg-midnight);
+  color: var(--color-ink-midnight);
+}
+
+/* 4. Rekhta-Grade Nastaliq Engine & HarfBuzz Runtime Isolation */
+.abjad-reader-surface {
+  direction: rtl;
+  unicode-bidi: isolate;
+  contain: layout style;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ccmp" 1, "curs" 1, "mark" 1, "mkmk" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  line-height: 2.6;
+  word-spacing: 0.14em;
+  user-select: text;
+}
+
+.abjad-reader-surface.font-nastaliq {
+  font-family: "Mehr Nastaliq Web", "Noto Nastaliq Urdu", Gulzar, serif;
+}
+
+.abjad-reader-surface.font-naskh {
+  font-family: "Amiri", "Noto Sans Arabic", serif;
+  line-height: 2.2;
+}
+
+.abjad-paragraph-block {
+  contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px; /* Skips off-screen HarfBuzz shaping */
+  margin-bottom: 2rem;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  transition: background-color 150ms ease;
+}
+
+/* Word tokens: strict containment so interaction never triggers HarfBuzz re-shaping */
+.abjad-word-token {
+  display: inline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding-inline: 0.08em;
+  margin-inline: -0.08em;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  /* NEVER change padding, margin, border-width, or font-weight on hover/active */
+  transition: background-color 75ms linear;
+}
+
+.abjad-word-token:hover {
+  background-color: rgba(217, 119, 6, 0.12);
+}
+
+.abjad-word-token[data-active="true"] {
+  background-color: rgba(217, 119, 6, 0.25) !important;
+  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.4);
+}
+
+/* Expand tap area to 44px touch target on mobile without altering Nastaliq layout */
+@media (pointer: coarse) {
+  .abjad-word-token {
+    position: relative;
+  }
+  .abjad-word-token::before {
+    content: '';
+    position: absolute;
+    inset: -6px -4px;
+    z-index: 1;
+  }
+}
+
+/* Persian Izafat construction dashed underline */
+.izafat-group {
+  display: inline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  border-bottom: 1px dashed rgba(217, 119, 6, 0.5);
+  /* NEVER set white-space: nowrap so multi-word Izafat chains wrap cleanly on mobile */
+}
+
+/* Active sentence audio highlight */
+.sentence-highlight-active {
+  background-color: rgba(217, 119, 6, 0.07);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(217, 119, 6, 0.2);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(120, 113, 108, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 113, 108, 0.5);
+}

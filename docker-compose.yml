@@ -1,0 +1,13 @@
+services:
+  abjad-reader:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: abjad-literary-reader
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+    volumes:
+      - ./public/audio/cache:/app/public/audio/cache
+    restart: unless-stopped

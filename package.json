@@ -22,6 +22,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@hono/vite-dev-server": "^0.26.1",
     "@tailwindcss/vite": "^4.0.9",
     "@types/bun": "^1.2.4",
     "drizzle-kit": "^0.30.4",
