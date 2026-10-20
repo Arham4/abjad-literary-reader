@@ -1,0 +1,300 @@
+import { AbjadLanguagePack, GraphemeUnit, TokenSpan, ScriptTradition } from '../types';
+
+// The 15 Urdu base consonants that pair with Doachashmee Heh (\u06BE)
+const ASPIRATED_BASE_LETTERS = new Set([
+  'ب', 'پ', 'ت', 'ٹ', 'ج', 'چ', 'د', 'ڈ', 'ر', 'ڑ', 'ل', 'م', 'ن', 'ک', 'گ'
+]);
+
+const DOACHASHMEE_HEH = '\u06BE'; // ھ
+
+// Letter names mapping for Urdu graphemes
+const URDU_LETTER_NAMES: Record<string, string> = {
+  'آ': 'الف مد آ',
+  'ا': 'الف',
+  'ب': 'بے',
+  'بھ': 'بھے',
+  'پ': 'پے',
+  'پھ': 'پھے',
+  'ت': 'تے',
+  'تھ': 'تھے',
+  'ٹ': 'ٹے',
+  'ٹھ': 'ٹھے',
+  'ث': 'ثے',
+  'ج': 'جیم',
+  'جھ': 'جھے',
+  'چ': 'چے',
+  'چھ': 'چھے',
+  'ح': 'بڑی حے',
+  'خ': 'خے',
+  'د': 'دال',
+  'دھ': 'دھے',
+  'ڈ': 'ڈال',
+  'ڈھ': 'ڈھے',
+  'ذ': 'ذال',
+  'ر': 'رے',
+  'رھ': 'رھے',
+  'ڑ': 'ڑے',
+  'ڑھ': 'ڑھے',
+  'ز': 'زے',
+  'ژ': 'ژے',
+  'س': 'سین',
+  'ش': 'شین',
+  'ص': 'صاد',
+  'ض': 'ضاد',
+  'ط': 'طوئے',
+  'ظ': 'ظوئے',
+  'ع': 'عین',
+  'غ': 'غین',
+  'ف': 'فے',
+  'ق': 'قاف',
+  'ک': 'کاف',
+  'کھ': 'کھے',
+  'گ': 'گاف',
+  'گھ': 'گھے',
+  'ل': 'لام',
+  'لھ': 'لھے',
+  'م': 'میم',
+  'مھ': 'مھے',
+  'ن': 'نون',
+  'نھ': 'نھے',
+  'ں': 'نون غنہ',
+  'و': 'واؤ',
+  'ہ': 'چھوٹی گول ہ',
+  'ۂ': 'ہائے مع ہمزہ',
+  'ھ': 'دو چشمی ہے',
+  'ء': 'ہمزہ',
+  'ی': 'چھوٹی یے',
+  'ئ': 'ہمزہ برائے یے',
+  'ے': 'بڑی یے',
+  'ۓ': 'بڑی یے مع ہمزہ',
+};
+
+// Safe harakat regex: strips short vowels, tanween, sukun, and shadda
+// Explicitly NEVER strips \u0653 (Madda) or \u0654 (Hamza Above)
+export const SAFE_HARAKAT_REGEX = /[\u064B-\u0652\u0656-\u0658\u0670]/g;
+
+// Eastern Arabic to Urdu Extended Arabic-Indic digits
+const DIGIT_MAP: Record<string, string> = {
+  '\u0660': '\u06F0', // ٠ -> ۰
+  '\u0661': '\u06F1', // ١ -> ۱
+  '\u0662': '\u06F2', // ٢ -> ۲
+  '\u0663': '\u06F3', // ٣ -> ۳
+  '\u0664': '\u06F4', // ٤ -> ۴
+  '\u0665': '\u06F5', // ٥ -> ۵
+  '\u0666': '\u06F6', // ٦ -> ۶
+  '\u0667': '\u06F7', // ٧ -> ۷
+  '\u0668': '\u06F8', // ٨ -> ۸
+  '\u0669': '\u06F9', // ٩ -> ۹
+};
+
+export const UrduLanguagePack: AbjadLanguagePack = {
+  code: 'ur',
+  name: 'Urdu',
+  nativeName: 'اردو',
+  defaultScriptTradition: 'nastaliq' as ScriptTradition,
+  fontStack: {
+    nastaliq: ['"Mehr Nastaliq Web"', '"Noto Nastaliq Urdu"', 'Gulzar', 'system-ui', 'sans-serif'],
+    naskh: ['"Amiri"', '"Noto Sans Arabic"', 'system-ui', 'sans-serif'],
+  },
+  typographyDefaults: {
+    baseFontSizePx: 28,
+    lineHeightMultiplier: 2.6,
+    wordSpacingEm: 0.14,
+  },
+
+  normalizeUnicode(text: string): string {
+    if (!text) return '';
+
+    // Step 1: NFC Normalization
+    let normalized = text.normalize('NFC');
+
+    // Step 2: Map Arabic variants to Urdu equivalents
+    // Arabic Kaf \u0643 -> Urdu Keheh \u06A9
+    normalized = normalized.replace(/\u0643/g, '\u06A9');
+
+    // Arabic Yeh \u064A and Alef Maksura \u0649 -> Urdu Farsi Yeh \u06CC
+    normalized = normalized.replace(/[\u064A\u0649]/g, '\u06CC');
+
+    // Arabic Heh \u0647 and Ae \u06D5 -> Urdu Heh Goal \u06C1
+    normalized = normalized.replace(/[\u0647\u06D5]/g, '\u06C1');
+
+    // Arabic Heh with Yeh Above \u06C0 -> Urdu Heh Goal with Hamza Above \u06C2
+    normalized = normalized.replace(/\u06C0/g, '\u06C2');
+
+    // Eastern Arabic digits \u0660-\u0669 -> Extended Arabic-Indic Urdu digits \u06F0-\u06F9
+    normalized = normalized.replace(/[\u0660-\u0669]/g, (ch) => DIGIT_MAP[ch] || ch);
+
+    // Note: \u06D2 (Bari Yeh ے), \u06C1 (Heh Goal ہ), \u06C2 (Izafat Heh ۂ),
+    // \u06D3 (Bari Yeh with Hamza ۓ), and \u200C (ZWNJ) are strictly preserved.
+
+    return normalized;
+  },
+
+  stripHarakatPreserveOrthography(text: string): string {
+    if (!text) return '';
+    // Strip ONLY short vowels, tanween, sukun, and shadda
+    // Preserves \u0653 (Combining Madda) and \u0654 (Combining Hamza)
+    return text.replace(SAFE_HARAKAT_REGEX, '');
+  },
+
+  decomposeWordToGraphemes(word: string): GraphemeUnit[] {
+    if (!word) return [];
+
+    // Step 1: Normalize and strip harakat (including Shadda \u0651)
+    const normalized = this.normalizeUnicode(word);
+    const bare = this.stripHarakatPreserveOrthography(normalized);
+
+    const graphemes: GraphemeUnit[] = [];
+    const chars = Array.from(bare);
+
+    for (let i = 0; i < chars.length; i++) {
+      const ch = chars[i];
+      const nextCh = chars[i + 1];
+
+      // Check for aspirated digraph (Urdu base consonant + Doachashmee Heh)
+      if (ASPIRATED_BASE_LETTERS.has(ch) && nextCh === DOACHASHMEE_HEH) {
+        const digraph = ch + nextCh;
+        graphemes.push({
+          raw: digraph,
+          name: URDU_LETTER_NAMES[digraph] || `${digraph} (مرکب آواز)`,
+          isAspiratedDigraph: true,
+        });
+        i++; // skip next character
+      } else {
+        graphemes.push({
+          raw: ch,
+          name: URDU_LETTER_NAMES[ch] || ch,
+          isAspiratedDigraph: false,
+        });
+      }
+    }
+
+    return graphemes;
+  },
+
+  tokenizeParagraph(text: string): TokenSpan[] {
+    if (!text) return [];
+
+    const normalizedText = this.normalizeUnicode(text);
+    const tokens: TokenSpan[] = [];
+
+    // Regex to capture words (including ZWNJ \u200C, trailing Zer \u0650, Madda, Hamza, etc.)
+    // versus whitespace and punctuation
+    const wordPattern = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF\u200C]+|[^\s\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF\u200C]+|\s+/gu;
+
+    const sentencePunctuation = new Set(['۔', '؟', '?', '!', '\n']);
+    let sentenceIndex = 0;
+    let tokenIndex = 0;
+
+    let match: RegExpExecArray | null;
+    const rawMatches: { text: string; isWord: boolean }[] = [];
+
+    while ((match = wordPattern.exec(normalizedText)) !== null) {
+      const str = match[0];
+      const isWord = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/u.test(str) && !/^[،۔؛:؟!«»"'\s\d]+$/u.test(str);
+      rawMatches.push({ text: str, isWord });
+    }
+
+    // Now convert into TokenSpan with Izafat group detection
+    let izafatCounter = 1;
+
+    for (let i = 0; i < rawMatches.length; i++) {
+      const item = rawMatches[i];
+
+      if (!item.isWord) {
+        tokens.push({
+          id: `t_${tokenIndex}`,
+          tokenIndex,
+          surface: item.text,
+          normalized: item.text,
+          isWord: false,
+          sentenceIndex,
+        });
+
+        // Check if punctuation ends a sentence
+        if (sentencePunctuation.has(item.text.trim()) || item.text.includes('\n')) {
+          sentenceIndex++;
+        }
+
+        tokenIndex++;
+        continue;
+      }
+
+      const surface = item.text;
+      const endsWithZer = surface.endsWith('\u0650'); // Zer-e-Izafat
+      const endsWithHehHamza = surface.endsWith('ۂ'); // e.g. خانۂ
+      const isHamzaIzafat = surface.endsWith('ئے') && surface.length > 2; // e.g. روئے
+
+      let normalized: string;
+      let izafatGroupId: string | undefined;
+
+      // Special rule: for tokens.normalizedForm, strip harakat EXCEPT trailing Zer (\u0650)
+      // when used as zer-e-izafat (e.g. شہرِ retains its trailing zer)
+      if (endsWithZer) {
+        const withoutTrailingZer = surface.slice(0, -1);
+        const strippedBase = this.stripHarakatPreserveOrthography(withoutTrailingZer);
+        normalized = strippedBase + '\u0650'; // retain trailing zer!
+      } else {
+        normalized = this.stripHarakatPreserveOrthography(surface);
+      }
+
+      // Check if this token forms an Izafat with the next word
+      const nextItemIndex = rawMatches.findIndex((m, idx) => idx > i && m.isWord);
+      const isIzafatHead = (endsWithZer || endsWithHehHamza || isHamzaIzafat) && nextItemIndex !== -1;
+
+      if (isIzafatHead) {
+        const groupId = `izafat_${izafatCounter++}`;
+        izafatGroupId = groupId;
+      }
+
+      tokens.push({
+        id: `t_${tokenIndex}`,
+        tokenIndex,
+        surface,
+        normalized,
+        isWord: true,
+        sentenceIndex,
+        izafatGroupId,
+      });
+
+      tokenIndex++;
+    }
+
+    // Pass 2: Propagate izafatGroupId to the following modifier word if previous had it
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i].izafatGroupId && tokens[i].isWord) {
+        const gid = tokens[i].izafatGroupId;
+        // Find next word token
+        for (let j = i + 1; j < tokens.length; j++) {
+          if (tokens[j].isWord) {
+            tokens[j].izafatGroupId = gid;
+            break;
+          }
+        }
+      }
+    }
+
+    return tokens;
+  },
+
+  supportedMorphology: ['izafat', 'triliteral_root', 'persian_compounding', 'spoken_bridge'],
+
+  buildLinguisticPrompt(paragraph: string, contextTitle?: string): string {
+    return `You are an expert Urdu lexicographer and literary linguist analyzing a paragraph from: "${contextTitle || 'Urdu Literature'}".
+Target Reader: Conversational Urdu speaker seeking scaffolded literary reading comprehension.
+Input Paragraph:
+"${paragraph}"
+
+Analyze each unique token and output a JSON object mapping tokens to:
+1. vocalizedForm (with full harakat/aeraab)
+2. phoneticBreakdownJson: Array of { letters: string, vowelNameUrdu?: string }
+3. spokenUrduSynonymsJson: Array of everyday conversational Urdu words
+4. urduSimpleExplanation: Explanation in simple, conversational Urdu
+5. izafatBreakdownUrdu: If izafat, explain head and modifier connection
+6. tokenTier: 'function_word' | 'common_vocab' | 'literary_vocab'
+7. arabicRoot: Triliteral root if Arabic-origin (e.g., 'ش-ہ-ر')
+8. familiarCousinsJson: 2-4 everyday Urdu cousin words sharing the root
+9. englishContextualGloss: Concise English meaning in context
+10. literaryNuanceNote: Stylistic, emotional, or cultural nuance note`;
+  },
+};

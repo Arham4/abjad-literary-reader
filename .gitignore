@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# output
+dist/
+out/
+.cache/
+
+# database & caches
+dev.db*
+*.sqlite*
+*.sqlite-wal
+*.sqlite-shm
+
+# audio cache
+public/audio/cache/*
+!public/audio/cache/.gitkeep
+
+# environment & logs
+.env
+.env.local
+*.log
