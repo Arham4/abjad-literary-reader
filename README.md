@@ -19,9 +19,13 @@ An ultra-low-latency literary reading application for Perso-Arabic Abjad languag
 
 ### 1. Build and Run Container
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
-Access the application at: **http://localhost:4000**
+- **Desktop Local Access**: [http://localhost:4000](http://localhost:4000)
+- **Mobile Access (Same Wi-Fi)**: [http://192.168.1.161:4000](http://192.168.1.161:4000) or [http://192.168.1.163:4000](http://192.168.1.163:4000)
+- **Mobile Access (Cellular / Outside via UPnP)**: [http://98.116.68.62:4000](http://98.116.68.62:4000)
+
+*(To renew the UPnP external port mapping at any time without touching other scripts: `C:\tools\upnpc.exe -e "Abjad Reader" -a 192.168.1.161 4000 4000 TCP 86400`)*
 
 ### 2. Run Tests in Docker
 ```bash
