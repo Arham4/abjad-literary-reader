@@ -1,0 +1,75 @@
+import { Database } from 'bun:sqlite';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import * as schema from './schema';
+
+const sqlite = new Database('dev.db', { create: true });
+sqlite.exec('PRAGMA journal_mode = WAL;');
+sqlite.exec('PRAGMA synchronous = NORMAL;');
+sqlite.exec('PRAGMA foreign_keys = ON;');
+
+// Create tables automatically if not already created
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS stories (
+    id TEXT PRIMARY KEY,
+    slug TEXT NOT NULL UNIQUE,
+    author_urdu TEXT NOT NULL,
+    author_english TEXT NOT NULL,
+    title_urdu TEXT NOT NULL,
+    title_english TEXT NOT NULL,
+    level INTEGER NOT NULL,
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS paragraphs (
+    id TEXT PRIMARY KEY,
+    story_id TEXT NOT NULL REFERENCES stories(id) ON DELETE CASCADE,
+    paragraph_index INTEGER NOT NULL,
+    raw_text TEXT NOT NULL,
+    audio_url TEXT,
+    sentences_json TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_paragraphs_story ON paragraphs(story_id, paragraph_index);
+
+  CREATE TABLE IF NOT EXISTS tokens (
+    id TEXT PRIMARY KEY,
+    paragraph_id TEXT NOT NULL REFERENCES paragraphs(id) ON DELETE CASCADE,
+    token_index INTEGER NOT NULL,
+    surface_form TEXT NOT NULL,
+    normalized_form TEXT NOT NULL,
+    is_word INTEGER NOT NULL,
+    sentence_index INTEGER NOT NULL,
+    izafat_group_id TEXT,
+    compound_group_id TEXT
+  );
+  CREATE INDEX IF NOT EXISTS idx_tokens_paragraph ON tokens(paragraph_id, token_index);
+
+  CREATE TABLE IF NOT EXISTS token_analyses (
+    id TEXT PRIMARY KEY,
+    token_id TEXT NOT NULL UNIQUE REFERENCES tokens(id) ON DELETE CASCADE,
+    vocalized_form TEXT NOT NULL,
+    phonetic_breakdown_json TEXT NOT NULL,
+    graphemes_json TEXT NOT NULL,
+    spoken_urdu_synonyms_json TEXT NOT NULL,
+    urdu_simple_explanation TEXT NOT NULL,
+    izafat_breakdown_urdu TEXT,
+    token_tier TEXT NOT NULL,
+    arabic_root TEXT,
+    familiar_cousins_json TEXT,
+    english_contextual_gloss TEXT NOT NULL,
+    literary_nuance_note TEXT
+  );
+
+  CREATE TABLE IF NOT EXISTS user_telemetry (
+    id TEXT PRIMARY KEY,
+    normalized_surface TEXT NOT NULL,
+    vocalized_surface TEXT NOT NULL,
+    lookup_count INTEGER NOT NULL DEFAULT 1,
+    max_tap_level INTEGER NOT NULL DEFAULT 1,
+    last_tap_level INTEGER NOT NULL DEFAULT 1,
+    last_seen_at INTEGER NOT NULL
+  );
+  CREATE UNIQUE INDEX IF NOT EXISTS idx_telemetry_lexeme ON user_telemetry(normalized_surface, vocalized_surface);
+`);
+
+export const db = drizzle(sqlite, { schema });
+export { sqlite };
