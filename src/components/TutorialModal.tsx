@@ -208,83 +208,202 @@ export default function TutorialModal() {
                   <h3 class="text-xl sm:text-2xl font-bold font-serif tracking-tight">
                     The 3-Tap Clue Rule
                   </h3>
-                  <p class="text-sm font-medium opacity-80">
-                    Why we don't immediately give away the English translation:
+                  <p class="text-sm font-medium opacity-75">
+                    We never spoil the English translation immediately. Each tap reveals one clue:
                   </p>
                 </div>
 
                 <div class="space-y-3">
                   {/* Clue 1 Card */}
                   <div
-                    class={`p-4 rounded-2xl border space-y-2 shadow-xs ${
+                    class={`p-4 sm:p-5 rounded-2xl border space-y-2.5 transition-all shadow-xs ${
                       theme() === 'sepia'
                         ? 'bg-[#F2EAE0] border-[#D8CCBA]'
                         : theme() === 'midnight'
                         ? 'bg-[#202229] border-neutral-700'
-                        : 'bg-white border-[#E0D7C8]'
+                        : 'bg-white border-[#E2D9CC]'
                     }`}
                   >
-                    <div class="flex items-center gap-2.5">
-                      <span
-                        class={`px-2.5 py-1 rounded-full text-xs font-serif font-bold text-white shrink-0 ${
-                          theme() === 'sepia' ? 'bg-[#3A2D23]' : 'bg-neutral-900 dark:bg-white dark:text-neutral-900'
-                        }`}
-                      >
-                        Tap 1
-                      </span>
-                      <span class="font-bold text-sm sm:text-base">
-                        Sound It Out (Zero Spoilers)
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2.5">
+                        <span
+                          class={`px-2.5 py-1 rounded-full text-xs font-serif font-bold tracking-wide shrink-0 ${
+                            theme() === 'sepia'
+                              ? 'bg-[#3A2D23] text-[#FAF6EC]'
+                              : theme() === 'midnight'
+                              ? 'bg-neutral-100 text-neutral-900'
+                              : 'bg-neutral-900 text-white'
+                          }`}
+                        >
+                          Tap 1
+                        </span>
+                        <span class="font-bold text-sm sm:text-base font-serif">
+                          Sound It Out (Zero Spoilers)
+                        </span>
+                      </div>
+                      <span class="text-[11px] font-sans font-bold opacity-50 uppercase tracking-wider hidden sm:inline">
+                        Optical Decoding
                       </span>
                     </div>
-                    <p class="text-xs sm:text-sm leading-relaxed opacity-85">
-                      Hear the isolated word spoken aloud, see full vowel marks (<em>Pesh ُ, Zer ِ, Zabar َ</em>), and see each letter separated into clean phonics blocks so your eyes break the cursive connection.
+
+                    <p class="text-xs sm:text-sm leading-relaxed text-neutral-800 dark:text-neutral-200">
+                      Hear the isolated word spoken aloud, see full vowel markings (<em>Pesh ُ, Zer ِ, Zabar َ</em>), and see each cursive letter separated into individual alphabet blocks so your eyes break the cursive connection.
                     </p>
+
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                      <span
+                        class={`px-2.5 py-0.5 rounded-md border text-[11px] font-medium font-sans ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#3A2D23]'
+                            : theme() === 'midnight'
+                            ? 'bg-neutral-800 border-neutral-700 text-neutral-300'
+                            : 'bg-neutral-50 border-neutral-200 text-neutral-700'
+                        }`}
+                      >
+                        🔊 Native Audio
+                      </span>
+                      <span
+                        class={`px-2.5 py-0.5 rounded-md border text-[11px] font-medium font-sans ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#3A2D23]'
+                            : theme() === 'midnight'
+                            ? 'bg-neutral-800 border-neutral-700 text-neutral-300'
+                            : 'bg-neutral-50 border-neutral-200 text-neutral-700'
+                        }`}
+                      >
+                        َ ِ ُ Vowel Marks
+                      </span>
+                      <span
+                        class={`px-2.5 py-0.5 rounded-md border text-[11px] font-medium font-sans ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#3A2D23]'
+                            : theme() === 'midnight'
+                            ? 'bg-neutral-800 border-neutral-700 text-neutral-300'
+                            : 'bg-neutral-50 border-neutral-200 text-neutral-700'
+                        }`}
+                      >
+                        Isolated Alphabet Blocks
+                      </span>
+                    </div>
                   </div>
 
                   {/* Clue 2 Card */}
                   <div
-                    class={`p-4 rounded-2xl border space-y-2 shadow-xs ${
+                    class={`p-4 sm:p-5 rounded-2xl border space-y-2.5 transition-all shadow-xs ${
                       theme() === 'sepia'
-                        ? 'bg-[#EBF3EC] border-[#A2CCA6]'
+                        ? 'bg-[#F2EAE0] border-[#D8CCBA]'
                         : theme() === 'midnight'
-                        ? 'bg-emerald-950/40 border-emerald-800'
-                        : 'bg-emerald-50 border-emerald-200'
+                        ? 'bg-[#202229] border-neutral-700'
+                        : 'bg-white border-[#E2D9CC]'
                     }`}
                   >
-                    <div class="flex items-center gap-2.5">
-                      <span class="px-2.5 py-1 rounded-full text-xs font-serif font-bold bg-[#1E4D2B] text-white shrink-0">
-                        Tap 2
-                      </span>
-                      <span class="font-bold text-sm sm:text-base text-[#194324] dark:text-emerald-200">
-                        The Spoken Bridge (Rozmarra)
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2.5">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-serif font-bold tracking-wide shrink-0 bg-[#1E4D2B] text-white">
+                          Tap 2
+                        </span>
+                        <span class="font-bold text-sm sm:text-base font-serif">
+                          The Spoken Bridge (Rozmarra)
+                        </span>
+                      </div>
+                      <span class="text-[11px] font-sans font-bold opacity-50 uppercase tracking-wider hidden sm:inline">
+                        Household Urdu
                       </span>
                     </div>
-                    <p class="text-xs sm:text-sm leading-relaxed text-[#194324] dark:text-emerald-100 opacity-90">
-                      Still stuck? Tap again to see the simple, everyday spoken word you say at home and related root-family words you already know from everyday conversation.
+
+                    <p class="text-xs sm:text-sm leading-relaxed text-neutral-800 dark:text-neutral-200">
+                      Still stuck? Tap again to see the simple, everyday spoken equivalent you already say at home (<em>Rozmarra</em>), a plain conversational Urdu explanation, and related root-family words.
                     </p>
+
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                      <span
+                        class={`px-2.5 py-0.5 rounded-md border text-[11px] font-medium font-sans ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#1E4D2B]'
+                            : theme() === 'midnight'
+                            ? 'bg-neutral-800 border-neutral-700 text-emerald-300'
+                            : 'bg-neutral-50 border-neutral-200 text-emerald-800'
+                        }`}
+                      >
+                        Home Spoken Equivalent
+                      </span>
+                      <span
+                        class={`px-2.5 py-0.5 rounded-md border text-[11px] font-medium font-sans ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#1E4D2B]'
+                            : theme() === 'midnight'
+                            ? 'bg-neutral-800 border-neutral-700 text-emerald-300'
+                            : 'bg-neutral-50 border-neutral-200 text-emerald-800'
+                        }`}
+                      >
+                        Simple Urdu Explanation
+                      </span>
+                      <span
+                        class={`px-2.5 py-0.5 rounded-md border text-[11px] font-medium font-sans ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#1E4D2B]'
+                            : theme() === 'midnight'
+                            ? 'bg-neutral-800 border-neutral-700 text-emerald-300'
+                            : 'bg-neutral-50 border-neutral-200 text-emerald-800'
+                        }`}
+                      >
+                        Word Root Cousins
+                      </span>
+                    </div>
                   </div>
 
                   {/* Clue 3 Card */}
                   <div
-                    class={`p-4 rounded-2xl border space-y-2 shadow-xs ${
+                    class={`p-4 sm:p-5 rounded-2xl border space-y-2.5 transition-all shadow-xs ${
                       theme() === 'sepia'
-                        ? 'bg-[#EEF1F6] border-[#B9C6DA]'
+                        ? 'bg-[#F2EAE0] border-[#D8CCBA]'
                         : theme() === 'midnight'
-                        ? 'bg-indigo-950/40 border-indigo-800'
-                        : 'bg-indigo-50 border-indigo-200'
+                        ? 'bg-[#202229] border-neutral-700'
+                        : 'bg-white border-[#E2D9CC]'
                     }`}
                   >
-                    <div class="flex items-center gap-2.5">
-                      <span class="px-2.5 py-1 rounded-full text-xs font-serif font-bold bg-[#2B3A67] text-white shrink-0">
-                        Tap 3
-                      </span>
-                      <span class="font-bold text-sm sm:text-base text-[#1E2E4A] dark:text-indigo-200">
-                        English Meaning & Literary Nuance
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2.5">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-serif font-bold tracking-wide shrink-0 bg-[#2B3A67] text-white">
+                          Tap 3
+                        </span>
+                        <span class="font-bold text-sm sm:text-base font-serif">
+                          English Meaning & Literary Nuance
+                        </span>
+                      </div>
+                      <span class="text-[11px] font-sans font-bold opacity-50 uppercase tracking-wider hidden sm:inline">
+                        Full Definition
                       </span>
                     </div>
-                    <p class="text-xs sm:text-sm leading-relaxed text-[#1E2E4A] dark:text-indigo-100 opacity-90">
-                      If the spoken clues weren't enough, the third tap reveals the full literary English definition and historical nuance notes from classical Urdu literature.
+
+                    <p class="text-xs sm:text-sm leading-relaxed text-neutral-800 dark:text-neutral-200">
+                      If the spoken clues weren't enough, the third tap reveals the complete contextual English translation, historical background, and cultural nuance notes from Urdu literature.
                     </p>
+
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                      <span
+                        class={`px-2.5 py-0.5 rounded-md border text-[11px] font-medium font-sans ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#2B3A67]'
+                            : theme() === 'midnight'
+                            ? 'bg-neutral-800 border-neutral-700 text-indigo-300'
+                            : 'bg-neutral-50 border-neutral-200 text-indigo-800'
+                        }`}
+                      >
+                        English Contextual Meaning
+                      </span>
+                      <span
+                        class={`px-2.5 py-0.5 rounded-md border text-[11px] font-medium font-sans ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#2B3A67]'
+                            : theme() === 'midnight'
+                            ? 'bg-neutral-800 border-neutral-700 text-indigo-300'
+                            : 'bg-neutral-50 border-neutral-200 text-indigo-800'
+                        }`}
+                      >
+                        Literary & Cultural Notes
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
