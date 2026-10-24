@@ -404,9 +404,22 @@ export interface AudioPlaybackHandle {
 }
 
 let currentAudioElement: HTMLAudioElement | null = null;
+let activePlaybackSessionId = 0;
+let activeAbortController: AbortController | null = null;
 
 // Stop low-level active audio playback stream without resetting narration play intent
 export function stopActiveAudioStream() {
+  // Invalidate any in-flight promises, fetches, and callbacks
+  activePlaybackSessionId++;
+
+  // Abort any in-flight fetch request
+  if (activeAbortController) {
+    try {
+      activeAbortController.abort();
+    } catch (_) {}
+    activeAbortController = null;
+  }
+
   if (simulatedAudioTimer) {
     clearTimeout(simulatedAudioTimer);
     simulatedAudioTimer = null;
@@ -414,7 +427,9 @@ export function stopActiveAudioStream() {
   if (currentAudioElement) {
     currentAudioElement.onended = null;
     currentAudioElement.onerror = null;
+    currentAudioElement.onpause = null;
     currentAudioElement.pause();
+    currentAudioElement.src = '';
     currentAudioElement = null;
   }
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -445,14 +460,24 @@ export async function playSelectedText(customText?: string): Promise<AudioPlayba
   // Pause continuous sentence narration first
   pauseAudio();
   setIsSelectionPlaying(true);
+  const selectionSessionId = activePlaybackSessionId;
 
   const handle = await playTTS(text);
+  if (selectionSessionId !== activePlaybackSessionId || !isSelectionPlaying()) {
+    if (handle) handle.pause();
+    return null;
+  }
+
   if (handle) {
     handle.onEnded(() => {
-      setIsSelectionPlaying(false);
+      if (selectionSessionId === activePlaybackSessionId) {
+        setIsSelectionPlaying(false);
+      }
     });
     handle.onError(() => {
-      setIsSelectionPlaying(false);
+      if (selectionSessionId === activePlaybackSessionId) {
+        setIsSelectionPlaying(false);
+      }
     });
   } else {
     setIsSelectionPlaying(false);
@@ -472,11 +497,33 @@ export async function playWordAudio(text: string): Promise<AudioPlaybackHandle |
   return playTTS(text);
 }
 
+// Background prefetch for next sentence so 'Next' button & auto-advance have zero lag
+export function prefetchSentenceAudio(globalIndex: number) {
+  const sentenceList = allStorySentences();
+  if (globalIndex >= 0 && globalIndex < sentenceList.length) {
+    const text = sentenceList[globalIndex].text;
+    if (!text) return;
+    const voice = ttsVoice();
+    const rate = ttsRate();
+    const pitch = ttsPitch();
+    fetch(
+      `/api/tts?text=${encodeURIComponent(text)}&lang=ur-PK&voice=${encodeURIComponent(
+        voice
+      )}&speed=${rate}&pitch=${pitch}`
+    ).catch(() => {});
+  }
+}
+
 export async function playTTS(text: string): Promise<AudioPlaybackHandle | null> {
   if (!text) return null;
 
   // Stop currently playing low-level audio stream without toggling isPlaying signal
   stopActiveAudioStream();
+
+  // Monotonic session token for this playback request
+  const sessionId = activePlaybackSessionId;
+  const abortController = new AbortController();
+  activeAbortController = abortController;
 
   const voice = ttsVoice();
   const engine = ttsEngine();
@@ -488,6 +535,8 @@ export async function playTTS(text: string): Promise<AudioPlaybackHandle | null>
   const useBrowser = (engine === 'browser' || engine === 'auto') && browserVoice !== null;
 
   if (useBrowser && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    if (sessionId !== activePlaybackSessionId) return null;
+
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = browserVoice ? browserVoice.lang : 'ur-PK';
@@ -504,18 +553,22 @@ export async function playTTS(text: string): Promise<AudioPlaybackHandle | null>
     let errorCallback: (() => void) | null = null;
 
     utterance.onend = () => {
-      if (endedCallback) endedCallback();
+      if (sessionId === activePlaybackSessionId && endedCallback) endedCallback();
     };
     utterance.onerror = (e) => {
       if (e.error !== 'interrupted' && e.error !== 'canceled') {
-        if (errorCallback) errorCallback();
+        if (sessionId === activePlaybackSessionId && errorCallback) errorCallback();
       }
     };
 
     window.speechSynthesis.speak(utterance);
 
     return {
-      pause: () => window.speechSynthesis.cancel(),
+      pause: () => {
+        if (sessionId === activePlaybackSessionId) {
+          window.speechSynthesis.cancel();
+        }
+      },
       onEnded: (cb) => {
         endedCallback = cb;
       },
@@ -530,38 +583,74 @@ export async function playTTS(text: string): Promise<AudioPlaybackHandle | null>
     const res = await fetch(
       `/api/tts?text=${encodeURIComponent(text)}&lang=ur-PK&voice=${encodeURIComponent(
         voice
-      )}&speed=${rate}&pitch=${pitch}`
+      )}&speed=${rate}&pitch=${pitch}`,
+      { signal: abortController.signal }
     );
+
+    // If session was superseded or cancelled while fetch was in flight, abort immediately
+    if (sessionId !== activePlaybackSessionId) {
+      return null;
+    }
+
     const data = await res.json();
 
+    // Check again after JSON parsing
+    if (sessionId !== activePlaybackSessionId) {
+      return null;
+    }
+
     if (data.audioUrl) {
-      const audio = new Audio(data.audioUrl);
+      const audio = new Audio();
+      audio.src = data.audioUrl;
       audio.playbackRate = rate;
+
+      if (sessionId !== activePlaybackSessionId) {
+        audio.src = '';
+        return null;
+      }
+
       currentAudioElement = audio;
 
       let endedCallback: (() => void) | null = null;
       let errorCallback: (() => void) | null = null;
 
       audio.onended = () => {
-        currentAudioElement = null;
-        if (endedCallback) endedCallback();
+        if (sessionId === activePlaybackSessionId) {
+          currentAudioElement = null;
+          if (endedCallback) endedCallback();
+        }
       };
       audio.onerror = () => {
-        currentAudioElement = null;
-        if (errorCallback) errorCallback();
+        if (sessionId === activePlaybackSessionId) {
+          currentAudioElement = null;
+          if (errorCallback) errorCallback();
+        }
       };
 
       try {
         await audio.play();
-      } catch (playErr) {
-        console.warn('Audio play error:', playErr);
-        if (errorCallback) errorCallback();
+        // If pause was clicked right during play() resolution:
+        if (sessionId !== activePlaybackSessionId) {
+          audio.pause();
+          audio.src = '';
+          currentAudioElement = null;
+          return null;
+        }
+      } catch (playErr: any) {
+        if (playErr?.name !== 'AbortError') {
+          console.warn('Audio play error:', playErr);
+          if (sessionId === activePlaybackSessionId && errorCallback) errorCallback();
+        }
+        return null;
       }
 
       return {
         pause: () => {
-          audio.pause();
-          currentAudioElement = null;
+          if (sessionId === activePlaybackSessionId) {
+            audio.pause();
+            audio.src = '';
+            currentAudioElement = null;
+          }
         },
         onEnded: (cb) => {
           endedCallback = cb;
@@ -571,6 +660,8 @@ export async function playTTS(text: string): Promise<AudioPlaybackHandle | null>
         },
       };
     } else if (data.fallback === 'web-speech') {
+      if (sessionId !== activePlaybackSessionId) return null;
+
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(data.text);
@@ -583,18 +674,22 @@ export async function playTTS(text: string): Promise<AudioPlaybackHandle | null>
         let errorCallback: (() => void) | null = null;
 
         utterance.onend = () => {
-          if (endedCallback) endedCallback();
+          if (sessionId === activePlaybackSessionId && endedCallback) endedCallback();
         };
         utterance.onerror = (e) => {
           if (e.error !== 'interrupted' && e.error !== 'canceled') {
-            if (errorCallback) errorCallback();
+            if (sessionId === activePlaybackSessionId && errorCallback) errorCallback();
           }
         };
 
         window.speechSynthesis.speak(utterance);
 
         return {
-          pause: () => window.speechSynthesis.cancel(),
+          pause: () => {
+            if (sessionId === activePlaybackSessionId) {
+              window.speechSynthesis.cancel();
+            }
+          },
           onEnded: (cb) => {
             endedCallback = cb;
           },
@@ -604,9 +699,12 @@ export async function playTTS(text: string): Promise<AudioPlaybackHandle | null>
         };
       }
     }
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.name === 'AbortError') {
+      return null;
+    }
     console.warn('TTS playback error, falling back to speech synthesis:', err);
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    if (sessionId === activePlaybackSessionId && typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'ur-PK';
@@ -623,11 +721,20 @@ export async function testVoicePreview() {
     return;
   }
   setIsPreviewPlaying(true);
+  const previewSessionId = activePlaybackSessionId;
   const sampleText = 'کھول دو اور سنہری دھوپ کا انتظار کرو۔';
   const handle = await playTTS(sampleText);
+  if (previewSessionId !== activePlaybackSessionId || !isPreviewPlaying()) {
+    if (handle) handle.pause();
+    return;
+  }
   if (handle) {
-    handle.onEnded(() => setIsPreviewPlaying(false));
-    handle.onError(() => setIsPreviewPlaying(false));
+    handle.onEnded(() => {
+      if (previewSessionId === activePlaybackSessionId) setIsPreviewPlaying(false);
+    });
+    handle.onError(() => {
+      if (previewSessionId === activePlaybackSessionId) setIsPreviewPlaying(false);
+    });
   } else {
     setIsPreviewPlaying(false);
   }
@@ -646,6 +753,10 @@ export async function playSentence(globalIndex: number) {
     return;
   }
 
+  // Pre-emptively stop active playback stream and capture unique session
+  stopActiveAudioStream();
+  const sentenceSessionId = activePlaybackSessionId;
+
   const s = sentenceList[globalIndex];
   setCurrentSentence(s);
   setIsPlaying(true);
@@ -661,13 +772,22 @@ export async function playSentence(globalIndex: number) {
     }, 60);
   }
 
+  // Pre-cache next sentence in the background for zero-lag transition
+  prefetchSentenceAudio(globalIndex + 1);
+
   // Play audio through unified handle
   const handle = await playTTS(s.text);
+
+  // If user paused or clicked next/prev while fetch was in flight, abort!
+  if (sentenceSessionId !== activePlaybackSessionId || !isPlaying()) {
+    if (handle) handle.pause();
+    return;
+  }
 
   if (handle) {
     handle.onEnded(() => {
       // Auto-advance continuous narration to the next sentence
-      if (isPlaying()) {
+      if (sentenceSessionId === activePlaybackSessionId && isPlaying()) {
         if (globalIndex + 1 < sentenceList.length) {
           playSentence(globalIndex + 1);
         } else {
@@ -676,9 +796,10 @@ export async function playSentence(globalIndex: number) {
       }
     });
     handle.onError(() => {
+      if (sentenceSessionId !== activePlaybackSessionId || !isPlaying()) return;
       const fallbackDuration = Math.max(3500, s.text.length * 85);
       simulatedAudioTimer = setTimeout(() => {
-        if (isPlaying()) {
+        if (sentenceSessionId === activePlaybackSessionId && isPlaying()) {
           if (globalIndex + 1 < sentenceList.length) {
             playSentence(globalIndex + 1);
           } else {
@@ -689,9 +810,10 @@ export async function playSentence(globalIndex: number) {
     });
   } else {
     // If Web Speech or silent fallback, timer progresses sentences automatically
+    if (sentenceSessionId !== activePlaybackSessionId || !isPlaying()) return;
     const fallbackDuration = Math.max(3500, s.text.length * 85);
     simulatedAudioTimer = setTimeout(() => {
-      if (isPlaying()) {
+      if (sentenceSessionId === activePlaybackSessionId && isPlaying()) {
         if (globalIndex + 1 < sentenceList.length) {
           playSentence(globalIndex + 1);
         } else {
