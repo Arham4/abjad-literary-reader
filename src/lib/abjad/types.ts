@@ -33,6 +33,7 @@ export interface AbjadLanguagePack {
   stripHarakatPreserveOrthography(text: string): string;
   decomposeWordToGraphemes(word: string): GraphemeUnit[];
   tokenizeParagraph(text: string): TokenSpan[];
+  splitSentences(text: string): string[];
   supportedMorphology: Array<'izafat' | 'triliteral_root' | 'persian_compounding' | 'spoken_bridge'>;
   buildLinguisticPrompt(paragraph: string, contextTitle?: string): string;
 }

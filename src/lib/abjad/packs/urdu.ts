@@ -280,7 +280,49 @@ export const UrduLanguagePack: AbjadLanguagePack = {
       }
     }
 
+    // Pass 3: Align tokens with robust sentence boundaries so token.sentenceIndex is 100% synchronized!
+    const sentencesList = this.splitSentences(normalizedText);
+    let currentSIdx = 0;
+    let accumulatedText = '';
+
+    for (const token of tokens) {
+      token.sentenceIndex = currentSIdx;
+      accumulatedText += token.surface;
+
+      const targetSentence = sentencesList[currentSIdx] || '';
+      if (
+        currentSIdx + 1 < sentencesList.length &&
+        accumulatedText.replace(/\s+/g, '').endsWith(targetSentence.replace(/\s+/g, ''))
+      ) {
+        currentSIdx++;
+        accumulatedText = '';
+      }
+    }
+
     return tokens;
+  },
+
+  splitSentences(text: string): string[] {
+    if (!text) return [];
+    const normalized = this.normalizeUnicode(text);
+    // A sentence ends with [۔؟!؟!\n] followed by optional closing quotation marks and brackets
+    const regex = /[^۔؟!؟!\n]+[۔؟!؟!\n]+["”'’»“”‘)…—–]*/gu;
+    const matches: string[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(normalized)) !== null) {
+      const s = match[0].trim();
+      if (s) {
+        matches.push(s);
+      }
+      lastIndex = regex.lastIndex;
+    }
+    const remaining = normalized.slice(lastIndex).trim();
+    if (remaining) {
+      matches.push(remaining);
+    }
+    return matches.length > 0 ? matches : [normalized.trim()];
   },
 
   supportedMorphology: ['izafat', 'triliteral_root', 'persian_compounding', 'spoken_bridge'],

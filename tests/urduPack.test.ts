@@ -89,6 +89,24 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     expect(nonWords).toContain('۔');
   });
 
+  test('splitSentences and tokenizeParagraph synchronize sentenceIndex with 100% precision', () => {
+    const text = 'امرتسر سے اسپیشل ٹرین دوپہر دو بجے کو چلی اور آٹھ گھنٹوں کے بعد مغل پورہ پہنچی۔ راستے میں کئی آدمی مارے گئے۔ متعدد زخمی ہوئے اور کچھ ادھر ادھر بھٹک گئے۔';
+    const sentences = UrduLanguagePack.splitSentences(text);
+    expect(sentences.length).toBe(3);
+    expect(sentences[0]).toBe('امرتسر سے اسپیشل ٹرین دوپہر دو بجے کو چلی اور آٹھ گھنٹوں کے بعد مغل پورہ پہنچی۔');
+    expect(sentences[1]).toBe('راستے میں کئی آدمی مارے گئے۔');
+    expect(sentences[2]).toBe('متعدد زخمی ہوئے اور کچھ ادھر ادھر بھٹک گئے۔');
+
+    const tokens = UrduLanguagePack.tokenizeParagraph(text);
+    const s0Tokens = tokens.filter((t) => t.sentenceIndex === 0).map((t) => t.surface).join('').trim();
+    const s1Tokens = tokens.filter((t) => t.sentenceIndex === 1).map((t) => t.surface).join('').trim();
+    const s2Tokens = tokens.filter((t) => t.sentenceIndex === 2).map((t) => t.surface).join('').trim();
+
+    expect(s0Tokens).toBe(sentences[0]);
+    expect(s1Tokens).toBe(sentences[1]);
+    expect(s2Tokens).toBe(sentences[2]);
+  });
+
   test('cleanUrduForTTS strips distracting jazm and diacritics for neural speech models', () => {
     // Amritsar with jazm and diacritics
     expect(cleanUrduForTTS('امْرِتْسَر')).toBe('امرتسر');

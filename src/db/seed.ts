@@ -4438,6 +4438,16 @@ async function seed() {
     let pIdx = 0;
     for (const pItem of pList) {
       const paragraphId = `p_${storyId}_${pIdx}`;
+
+      // Generate authentic, robust sentence list directly from paragraph text
+      const sentencesList = UrduLanguagePack.splitSentences(pItem.paragraphText);
+      const sentencesJson = sentencesList.map((sText, idx) => ({
+        index: idx,
+        text: sText,
+        startTimeMs: 0,
+        endTimeMs: Math.max(3500, sText.length * 85),
+      }));
+
       db.insert(schema.paragraphs)
         .values({
           id: paragraphId,
@@ -4445,7 +4455,7 @@ async function seed() {
           paragraphIndex: pIdx,
           rawText: pItem.paragraphText,
           audioUrl: null, // triggers synthesized simulation timer fallback
-          sentencesJson: pItem.sentences,
+          sentencesJson: sentencesJson,
         })
         .run();
 
