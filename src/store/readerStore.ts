@@ -722,7 +722,7 @@ export async function testVoicePreview() {
   }
   setIsPreviewPlaying(true);
   const previewSessionId = activePlaybackSessionId;
-  const sampleText = 'کھول دو اور سنہری دھوپ کا انتظار کرو۔';
+  const sampleText = 'ٹھنڈ میں، ایک قحط زدہ گاؤں سے گزرتے وقت ایک فارغ، بااثر اور چڑچڑے شخص کو بعض جل پری نما اژدہے نظر آئے۔';
   const handle = await playTTS(sampleText);
   if (previewSessionId !== activePlaybackSessionId || !isPreviewPlaying()) {
     if (handle) handle.pause();

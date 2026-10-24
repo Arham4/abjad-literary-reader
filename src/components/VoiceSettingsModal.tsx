@@ -345,10 +345,10 @@ export default function VoiceSettingsModal() {
             >
               <div class="space-y-1 text-center sm:text-left min-w-0">
                 <span class="text-[11px] font-bold uppercase tracking-wider opacity-70">
-                  Sample Literary Preview · نمونۂ کلام
+                  Sample Literary Preview (Pangram) · نمونۂ کلام
                 </span>
-                <p class="font-nastaliq text-base sm:text-lg font-bold leading-relaxed" dir="rtl">
-                  کھول دو اور سنہری دھوپ کا انتظار کرو۔
+                <p class="font-nastaliq text-base sm:text-lg font-bold leading-relaxed py-1" dir="rtl">
+                  ٹھنڈ میں، ایک قحط زدہ گاؤں سے گزرتے وقت ایک فارغ، بااثر اور چڑچڑے شخص کو بعض جل پری نما اژدہے نظر آئے۔
                 </p>
               </div>
 
