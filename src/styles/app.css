@@ -10,19 +10,25 @@
 
 /* 3. Anti-Halation Paper Themes */
 :root {
-  --color-bg-paper: #FAF6EE;
-  --color-ink-paper: #1C1917;
-  --color-muted-paper: #78716C;
-  --color-accent-paper: #D97706;
+  --color-bg-paper: #FAF8F5;
+  --color-card-paper: #FFFFFF;
+  --color-border-paper: rgba(215, 203, 186, 0.55);
+  --color-ink-paper: #1F1B17;
+  --color-muted-paper: #786F66;
+  --color-accent-paper: #B45309;
 
-  --color-bg-sepia: #F2E9D8;
-  --color-ink-sepia: #29221E;
-  --color-muted-sepia: #6B5E53;
-  --color-accent-sepia: #B45309;
+  --color-bg-sepia: #F3EBDD;
+  --color-card-sepia: #FBF6EC;
+  --color-border-sepia: rgba(196, 178, 153, 0.65);
+  --color-ink-sepia: #2B231D;
+  --color-muted-sepia: #7C6C5E;
+  --color-accent-sepia: #9A4C07;
 
-  --color-bg-midnight: #121316;
-  --color-ink-midnight: #E7E2D8;
-  --color-muted-midnight: #9CA3AF;
+  --color-bg-midnight: #101114;
+  --color-card-midnight: #181A1F;
+  --color-border-midnight: rgba(255, 255, 255, 0.08);
+  --color-ink-midnight: #ECE7DE;
+  --color-muted-midnight: #9EA3AD;
   --color-accent-midnight: #F59E0B;
 }
 
@@ -30,8 +36,10 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   transition: background-color 200ms ease, color 200ms ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Theme classes applied to #root or body */
@@ -50,6 +58,29 @@ body.theme-midnight {
   color: var(--color-ink-midnight);
 }
 
+/* Luxury Book Page Presentation Container */
+.abjad-book-page {
+  transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+body.theme-paper .abjad-book-page {
+  background-color: var(--color-card-paper);
+  border: 1px solid var(--color-border-paper);
+  box-shadow: 0 4px 20px -2px rgba(60, 45, 25, 0.05), 0 1px 3px rgba(60, 45, 25, 0.03);
+}
+
+body.theme-sepia .abjad-book-page {
+  background-color: var(--color-card-sepia);
+  border: 1px solid var(--color-border-sepia);
+  box-shadow: 0 4px 20px -2px rgba(45, 30, 15, 0.07), 0 1px 3px rgba(45, 30, 15, 0.04);
+}
+
+body.theme-midnight .abjad-book-page {
+  background-color: var(--color-card-midnight);
+  border: 1px solid var(--color-border-midnight);
+  box-shadow: 0 4px 25px -2px rgba(0, 0, 0, 0.5);
+}
+
 /* 4. Rekhta-Grade Nastaliq Engine & HarfBuzz Runtime Isolation */
 .abjad-reader-surface {
   direction: rtl;
@@ -58,15 +89,13 @@ body.theme-midnight {
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ccmp" 1, "curs" 1, "mark" 1, "mkmk" 1;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  line-height: 2.6;
-  word-spacing: 0.14em;
+  line-height: 2.25;
   user-select: text;
 }
 
 @media (max-width: 640px) {
   .abjad-reader-surface {
-    line-height: 2.35;
-    word-spacing: 0.08em;
+    line-height: 2.1;
   }
 }
 
@@ -76,24 +105,22 @@ body.theme-midnight {
 
 .abjad-reader-surface.font-naskh {
   font-family: "Amiri", "Noto Sans Arabic", serif;
-  line-height: 2.2;
+  line-height: 2.0;
 }
 
 .abjad-paragraph-block {
   contain: layout style;
   content-visibility: auto;
-  contain-intrinsic-size: auto 320px; /* Skips off-screen HarfBuzz shaping */
-  margin-bottom: 2rem;
-  padding: 1.5rem 2rem;
-  border-radius: 12px;
+  contain-intrinsic-size: auto 300px; /* Skips off-screen HarfBuzz shaping */
+  margin-bottom: 1.75rem;
+  padding: 0.5rem 0.25rem;
   transition: background-color 150ms ease;
 }
 
 @media (max-width: 640px) {
   .abjad-paragraph-block {
-    padding: 0.875rem 0.625rem;
     margin-bottom: 1.25rem;
-    border-radius: 8px;
+    padding: 0.25rem 0;
   }
 }
 
@@ -102,22 +129,22 @@ body.theme-midnight {
   display: inline;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  padding-inline: 0.08em;
-  margin-inline: -0.08em;
-  border-radius: 4px;
+  padding-inline: 0.1em;
+  margin-inline: -0.1em;
+  border-radius: 6px;
   cursor: pointer;
   outline: none;
   /* NEVER change padding, margin, border-width, or font-weight on hover/active */
-  transition: background-color 75ms linear;
+  transition: background-color 80ms ease, box-shadow 80ms ease;
 }
 
 .abjad-word-token:hover {
-  background-color: rgba(217, 119, 6, 0.12);
+  background-color: rgba(217, 119, 6, 0.1);
 }
 
 .abjad-word-token[data-active="true"] {
-  background-color: rgba(217, 119, 6, 0.25) !important;
-  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.4);
+  background-color: rgba(217, 119, 6, 0.22) !important;
+  box-shadow: inset 0 -2px 0 0 rgba(217, 119, 6, 0.6);
 }
 
 /* Expand tap area to 44px touch target on mobile without altering Nastaliq layout */

@@ -45,7 +45,7 @@ export default function ReaderSurface() {
 
   return (
     <div
-      class={`abjad-reader-surface max-w-4xl mx-auto px-4 py-8 ${
+      class={`abjad-reader-surface w-full ${
         scriptTradition() === 'naskh' ? 'font-naskh' : 'font-nastaliq'
       }`}
       style={{
