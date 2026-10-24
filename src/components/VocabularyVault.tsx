@@ -177,7 +177,7 @@ export default function VocabularyVault() {
                         <Volume2 size={16} />
                       </button>
                       <div dir="rtl" class="text-right flex-1 min-w-0">
-                        <div class="font-nastaliq text-2xl leading-none">{item.vocalizedSurface}</div>
+                        <div class="font-nastaliq text-2xl leading-relaxed py-1">{item.vocalizedSurface}</div>
                         <Show when={item.englishGloss}>
                           <div class="text-xs font-sans text-indigo-700 dark:text-indigo-300 mt-1 font-medium truncate text-left" dir="ltr">
                             {item.englishGloss}

@@ -220,21 +220,24 @@ export default function TokenLensPopover() {
         {/* TAP 1: The Optical & Phonetic Unblocker */}
         <div class="space-y-4">
           {/* Large Vocalized Calligraphic Display */}
-          <div class="text-center py-2 space-y-2">
+          <div class="text-center pt-3 pb-2 sm:pt-4 sm:pb-3">
             <div
               dir="rtl"
-              class={`text-4xl sm:text-6xl tracking-wide select-text font-bold leading-relaxed text-inherit ${
+              class={`text-4xl sm:text-6xl tracking-wide select-text font-bold text-inherit pt-2 pb-5 sm:pb-7 mb-2 sm:mb-3 ${
                 scriptTradition() === 'naskh' ? 'font-naskh' : 'font-nastaliq'
               }`}
+              style={{
+                'line-height': scriptTradition() === 'naskh' ? '1.9' : '2.3',
+              }}
             >
               {analysis()!.vocalizedForm}
             </div>
 
-            <div>
+            <div class="pt-1">
               <button
                 type="button"
                 title="Listen to word pronunciation"
-                class={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold shadow-xs transition-all cursor-pointer ${
+                class={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold shadow-xs transition-all cursor-pointer ${
                   theme() === 'sepia'
                     ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
                     : theme() === 'midnight'
@@ -268,7 +271,7 @@ export default function TokenLensPopover() {
                           : 'bg-neutral-100 border-neutral-200'
                       }`}
                     >
-                      <span class="font-nastaliq text-lg font-bold leading-none">
+                      <span class="font-nastaliq text-lg font-bold leading-normal py-0.5">
                         {pill.letters}
                       </span>
                       <Show when={pill.vowelNameUrdu}>
@@ -316,7 +319,7 @@ export default function TokenLensPopover() {
                           : 'bg-neutral-100 border-neutral-200'
                       }`}
                     >
-                      <span class="text-xl font-bold font-nastaliq leading-tight">
+                      <span class="text-xl font-bold font-nastaliq leading-normal py-0.5">
                         {g.raw}
                       </span>
                       <div class="w-full h-px bg-black/10 dark:bg-white/10 my-1" />
@@ -358,7 +361,7 @@ export default function TokenLensPopover() {
                           playTTS(syn);
                         }}
                       >
-                        <span class="font-nastaliq text-base">{syn}</span>
+                        <span class="font-nastaliq text-base leading-normal py-0.5">{syn}</span>
                         <Volume2 size={13} class="opacity-80" />
                       </button>
                     )}

@@ -172,25 +172,29 @@ export default function App() {
           <article class="abjad-book-page rounded-2xl sm:rounded-3xl p-5 sm:p-10 md:p-14">
             {/* Story Title & Author Banner */}
             <Show when={activeStory()}>
-              <header class="text-center mb-6 sm:mb-10 space-y-2 sm:space-y-3">
-                <div
-                  class={`inline-block px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-serif tracking-widest uppercase font-bold border shadow-xs ${
-                    theme() === 'sepia'
-                      ? 'bg-[#3A2D23] text-[#FAF6EC] border-[#554233]'
-                      : theme() === 'midnight'
-                      ? 'bg-neutral-100 text-neutral-900 border-neutral-300'
-                      : 'bg-neutral-900 text-white border-neutral-800'
-                  }`}
-                >
-                  {getLevelLabel(activeStory()!.level)}
+              <header class="text-center mb-8 sm:mb-12">
+                <div class="mb-3 sm:mb-5">
+                  <div
+                    class={`inline-block px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-serif tracking-widest uppercase font-bold border shadow-xs ${
+                      theme() === 'sepia'
+                        ? 'bg-[#3A2D23] text-[#FAF6EC] border-[#554233]'
+                        : theme() === 'midnight'
+                        ? 'bg-neutral-100 text-neutral-900 border-neutral-300'
+                        : 'bg-neutral-900 text-white border-neutral-800'
+                    }`}
+                  >
+                    {getLevelLabel(activeStory()!.level)}
+                  </div>
                 </div>
 
                 <h1
                   dir="rtl"
-                  class={`text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight py-2 select-text ${
+                  class={`text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight pt-3 sm:pt-6 pb-6 sm:pb-10 mb-4 sm:mb-6 select-text relative z-10 ${
                     scriptTradition() === 'naskh' ? 'font-naskh' : 'font-nastaliq'
                   }`}
-                  style={{ 'line-height': 1.6 }}
+                  style={{
+                    'line-height': scriptTradition() === 'naskh' ? '1.9' : '2.3',
+                  }}
                 >
                   <Show
                     when={titleTokens().length > 0}
@@ -217,14 +221,14 @@ export default function App() {
                   </Show>
                 </h1>
 
-                <div class="text-xs sm:text-sm opacity-70 font-serif">
+                <div class="text-xs sm:text-sm opacity-75 font-serif mt-2 mb-4">
                   <span class="font-bold">{activeStory()!.titleEnglish}</span>
                   <span class="mx-2 opacity-40">·</span>
                   <span class="italic">by {activeStory()!.authorEnglish}</span>
                 </div>
 
                 {/* Classic Calligraphic / Ornamental Divider */}
-                <div class="flex items-center justify-center gap-3 pt-2 opacity-35">
+                <div class="flex items-center justify-center gap-3 pt-3 pb-1 opacity-35">
                   <div class="h-px w-10 sm:w-16 bg-current" />
                   <span class="text-xs font-serif">❦</span>
                   <div class="h-px w-10 sm:w-16 bg-current" />

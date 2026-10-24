@@ -454,14 +454,18 @@ export default function TutorialModal() {
                   </div>
 
                   {/* Vocalized Display & Audio */}
-                  <div class="text-center py-2 space-y-2">
-                    <div class="font-nastaliq text-5xl sm:text-6xl font-bold leading-tight" dir="rtl">
+                  <div class="text-center pt-3 pb-2 sm:pt-4 sm:pb-3">
+                    <div
+                      class="font-nastaliq text-5xl sm:text-6xl font-bold pt-2 pb-5 sm:pb-7 mb-2 sm:mb-3"
+                      style={{ 'line-height': '2.3' }}
+                      dir="rtl"
+                    >
                       کھِڑْکی
                     </div>
-                    <div>
+                    <div class="pt-1">
                       <button
                         type="button"
-                        class={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold shadow-xs transition-all cursor-pointer ${
+                        class={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold shadow-xs transition-all cursor-pointer ${
                           theme() === 'sepia'
                             ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
                             : theme() === 'midnight'
