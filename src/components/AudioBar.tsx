@@ -50,19 +50,19 @@ export default function AudioBar() {
       <div class="max-w-4xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
         {/* Active Sentence Text or Status */}
         <div class="flex items-center gap-2 min-w-0 flex-1">
-          <div class="p-1 sm:p-1.5 rounded-md bg-amber-500/10 text-amber-600 shrink-0">
+          <div class="p-1 sm:p-1.5 rounded-md bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shrink-0 shadow-xs">
             <Volume2 size={15} />
           </div>
           <div class="text-xs truncate text-right min-w-0 flex-1" dir="rtl">
             <Show
               when={currentSentence()}
               fallback={
-                <span class="text-neutral-400 font-sans text-[11px] sm:text-xs">
+                <span class="text-neutral-500 font-sans text-[11px] sm:text-xs">
                   Tap Play to listen to sentence narration (صوتی قرأت)
                 </span>
               }
             >
-              <span class="font-nastaliq text-xs sm:text-sm leading-relaxed text-amber-800 dark:text-amber-300">
+              <span class="font-nastaliq text-xs sm:text-sm font-bold leading-relaxed text-neutral-950 dark:text-white">
                 {currentSentence()!.text}
               </span>
             </Show>
@@ -84,7 +84,7 @@ export default function AudioBar() {
           <button
             type="button"
             title={isPlaying() ? 'Pause Narration' : 'Play Sentence Narration'}
-            class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs flex items-center gap-1 transition-colors shadow-xs cursor-pointer active:scale-95"
+            class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 font-bold text-xs flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer active:scale-95"
             onClick={toggleAudio}
           >
             <Show when={isPlaying()} fallback={<Play size={13} />}>

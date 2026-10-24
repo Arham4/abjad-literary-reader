@@ -12,7 +12,7 @@ import {
   scriptTradition,
   theme,
 } from '../store/readerStore';
-import { Volume2, X, ChevronLeft, Sparkles, BookOpen } from 'lucide-solid';
+import { Volume2, X } from 'lucide-solid';
 
 export default function TokenLensPopover() {
   let popoverRef: HTMLDivElement | undefined;
@@ -76,7 +76,6 @@ export default function TokenLensPopover() {
   });
 
   // On desktop, clicking the card body advances the hint.
-  // On mobile, tapping or scrolling the card body must NEVER accidentally advance!
   const handleDesktopBodyClick = (e: MouseEvent) => {
     if (!isMobile()) {
       advanceTapLevel();
@@ -88,7 +87,7 @@ export default function TokenLensPopover() {
       {/* Mobile backdrop */}
       <Show when={isMobile()}>
         <div
-          class="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs transition-opacity duration-200"
+          class="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs transition-opacity duration-200"
           onClick={(e) => {
             e.stopPropagation();
             closeTokenLens();
@@ -102,110 +101,107 @@ export default function TokenLensPopover() {
         onClick={handleDesktopBodyClick}
         class={`z-50 transition-all duration-200 ${
           isMobile()
-            ? 'fixed bottom-0 inset-x-0 rounded-t-2xl max-h-[85vh] overflow-y-auto shadow-2xl p-4 sm:p-5 border-t animate-slideUp'
-            : 'w-[420px] rounded-xl shadow-2xl p-5 border cursor-pointer'
+            ? 'fixed bottom-0 inset-x-0 rounded-t-3xl max-h-[85vh] overflow-y-auto shadow-2xl p-5 border-t-2 animate-slideUp'
+            : 'w-[440px] rounded-2xl shadow-2xl p-6 border-2 cursor-pointer'
         } ${
           theme() === 'midnight'
-            ? 'bg-[#1a1b1f] border-neutral-800 text-[#E7E2D8]'
-            : theme() === 'sepia'
-            ? 'bg-[#F9F4EB] border-[#E2D6C0] text-[#29221E]'
-            : 'bg-[#FFFCF7] border-[#E8DFC9] text-[#1C1917]'
+            ? 'bg-[#18191d] border-neutral-700 text-white'
+            : 'bg-white border-neutral-300 text-neutral-900'
         }`}
         style={
           isMobile()
-            ? { 'padding-bottom': 'max(1.5rem, env(safe-area-inset-bottom))' }
-            : { 'min-width': '340px' }
+            ? { 'padding-bottom': 'max(1.75rem, env(safe-area-inset-bottom))' }
+            : { 'min-width': '360px' }
         }
       >
         {/* Mobile drag handle */}
         <Show when={isMobile()}>
-          <div class="w-12 h-1 bg-neutral-400/40 rounded-full mx-auto mb-3" />
+          <div class="w-12 h-1.5 bg-neutral-400/50 rounded-full mx-auto mb-3.5" />
         </Show>
 
         {/* Header: Tap Progress & Controls */}
-        <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-black/10 dark:border-white/10 select-none">
-          <div class="flex items-center gap-1.5 min-w-0">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-neutral-200 dark:border-neutral-800 select-none">
+          <div class="flex items-center gap-2 min-w-0">
             <span
-              class={`px-2 py-0.5 rounded-full text-[11px] font-bold shrink-0 ${
+              class={`px-2.5 py-1 rounded-md text-xs font-bold text-white shrink-0 ${
                 tapLevel() === 1
-                  ? 'bg-amber-600 text-white'
+                  ? 'bg-neutral-900 dark:bg-white dark:text-neutral-900'
                   : tapLevel() === 2
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-indigo-600 text-white'
+                  ? 'bg-emerald-700'
+                  : 'bg-indigo-700'
               }`}
             >
               Clue {tapLevel()} of 3
             </span>
-            <span class="text-[11px] text-neutral-500 font-medium truncate">
-              {tapLevel() === 1 && 'Sound It Out (Zero Spoilers)'}
-              {tapLevel() === 2 && 'Spoken Urdu Bridge (Rozmarra)'}
-              {tapLevel() === 3 && 'English Meaning & Literary Nuance'}
+            <span class="text-xs font-bold text-neutral-800 dark:text-neutral-200 truncate">
+              {tapLevel() === 1 && '1: Sound It Out (Zero Spoilers)'}
+              {tapLevel() === 2 && '2: Everyday Spoken Urdu Bridge'}
+              {tapLevel() === 3 && '3: English Meaning & Nuance'}
             </span>
           </div>
 
-          <div class="flex items-center gap-1.5 shrink-0">
-            {/* Audio button */}
-            <button
-              type="button"
-              title="Listen to word pronunciation"
-              class="p-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 transition-colors cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                playTTS(analysis()!.vocalizedForm);
-              }}
-            >
-              <Volume2 size={16} />
-            </button>
-
-            {/* Close button */}
-            <button
-              type="button"
-              title="Close (Esc)"
-              class="p-1.5 rounded-lg hover:bg-neutral-500/15 text-neutral-500 transition-colors cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                closeTokenLens();
-              }}
-            >
-              <X size={16} />
-            </button>
-          </div>
+          <button
+            type="button"
+            title="Close (Esc)"
+            class="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors cursor-pointer shrink-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              closeTokenLens();
+            }}
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* TAP 1: The Optical & Phonetic Unblocker */}
-        <div class="space-y-3.5">
+        <div class="space-y-4">
           {/* Large Vocalized Calligraphic Display */}
-          <div class="text-center py-1 sm:py-2">
+          <div class="text-center py-2 space-y-2">
             <div
               dir="rtl"
-              class={`text-3xl sm:text-5xl tracking-wide select-text font-normal leading-relaxed ${
+              class={`text-4xl sm:text-6xl tracking-wide select-text font-bold leading-relaxed text-neutral-950 dark:text-white ${
                 scriptTradition() === 'naskh' ? 'font-naskh' : 'font-nastaliq'
               }`}
             >
               {analysis()!.vocalizedForm}
             </div>
-            <div class="text-[11px] text-neutral-400 mt-1 flex items-center justify-center gap-1 font-sans">
-              <span>Full Aeraab (تلفظ مع حرکات)</span>
-              <span>• Tap speaker to hear sound</span>
+
+            <div>
+              <button
+                type="button"
+                title="Listen to word pronunciation"
+                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-bold shadow-sm transition-all cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playTTS(analysis()!.vocalizedForm);
+                }}
+              >
+                <Volume2 size={15} class="text-white dark:text-neutral-900" />
+                <span>Listen to pronunciation (صوتی تلفظ)</span>
+              </button>
             </div>
           </div>
 
           {/* Structured Vowel Pills (RTL flex row) */}
           <Show when={analysis()!.phoneticBreakdownJson.length > 0}>
-            <div>
-              <div class="text-[11px] font-semibold text-neutral-400 mb-1.5 flex items-center justify-between font-sans">
+            <div class="space-y-1.5">
+              <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
                 <span>Vowel Marks (اعراب):</span>
-                <span class="text-[10px] opacity-75 font-mono">Pesh, Zer, Zabar</span>
+                <span class="text-[11px] font-normal text-neutral-500">Pesh (ُ), Zer (ِ), Zabar (َ)</span>
               </div>
-              <div dir="rtl" class="flex flex-wrap gap-1 sm:gap-1.5 justify-start">
+              <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
                 <For each={analysis()!.phoneticBreakdownJson}>
                   {(pill) => (
-                    <span class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-300 text-xs sm:text-sm font-medium">
-                      <span class="font-nastaliq text-sm sm:text-base leading-none">{pill.letters}</span>
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-300 dark:border-neutral-600 shadow-xs">
+                      <span class="font-nastaliq text-lg font-bold text-neutral-950 dark:text-white leading-none">
+                        {pill.letters}
+                      </span>
                       <Show when={pill.vowelNameUrdu}>
-                        <span class="text-[9px] sm:text-[10px] opacity-75 font-sans">[{pill.vowelNameUrdu}]</span>
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 font-sans">
+                          {pill.vowelNameUrdu}
+                        </span>
                       </Show>
-                    </span>
+                    </div>
                   )}
                 </For>
               </div>
@@ -214,23 +210,28 @@ export default function TokenLensPopover() {
 
           {/* Grapheme Decomposer Bar */}
           <Show when={analysis()!.graphemesJson.length > 0}>
-            <div>
-              <div class="text-[11px] font-semibold text-neutral-400 mb-1.5 flex items-center justify-between font-sans">
+            <div class="space-y-1.5">
+              <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
                 <span>Letter-by-Letter Breakdown (حروف):</span>
-                <span class="text-[10px] opacity-75">Connects letters to sounds</span>
+                <span class="text-[11px] font-normal text-neutral-500">Isolated alphabet blocks</span>
               </div>
-              <div dir="rtl" class="flex flex-wrap gap-1 sm:gap-1.5 justify-start">
+              <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
                 <For each={analysis()!.graphemesJson}>
                   {(g) => (
                     <div
-                      class={`flex flex-col items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md border text-center ${
+                      class={`flex flex-col items-center justify-center min-w-[52px] px-2.5 py-2 rounded-xl border-2 shadow-xs ${
                         g.isAspiratedDigraph
-                          ? 'bg-amber-600/15 border-amber-600/30 text-amber-800 dark:text-amber-200'
-                          : 'bg-neutral-500/10 border-neutral-500/20 text-neutral-800 dark:text-neutral-200'
+                          ? 'bg-neutral-200 dark:bg-neutral-700 border-neutral-400 dark:border-neutral-500'
+                          : 'bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600'
                       }`}
                     >
-                      <span class="text-sm sm:text-base font-nastaliq leading-none">{g.raw}</span>
-                      <span class="text-[8px] sm:text-[9px] text-neutral-500 mt-0.5 truncate max-w-[55px] font-nastaliq">{g.name}</span>
+                      <span class="text-xl font-bold font-nastaliq text-neutral-950 dark:text-white leading-tight">
+                        {g.raw}
+                      </span>
+                      <div class="w-full h-px bg-neutral-300 dark:bg-neutral-700 my-1" />
+                      <span class="text-xs font-bold text-neutral-700 dark:text-neutral-300 font-nastaliq">
+                        {g.name}
+                      </span>
                     </div>
                   )}
                 </For>
@@ -241,27 +242,27 @@ export default function TokenLensPopover() {
 
         {/* TAP 2: Conversational Urdu Bridge & Morphology */}
         <Show when={tapLevel() >= 2}>
-          <div class="mt-3.5 pt-3.5 border-t border-black/10 dark:border-white/10 space-y-3">
+          <div class="mt-4 pt-4 border-t-2 border-neutral-200 dark:border-neutral-800 space-y-3">
             {/* Rozmarra Everyday Urdu Synonyms */}
             <Show when={analysis()!.spokenUrduSynonymsJson.length > 0}>
-              <div>
-                <div class="text-[11px] font-semibold text-neutral-400 mb-1 flex items-center justify-between font-sans">
+              <div class="space-y-1.5">
+                <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
                   <span>Everyday Spoken Equivalent (Rozmarra):</span>
-                  <span class="text-[10px] opacity-75">Words you say at home</span>
+                  <span class="text-[11px] font-normal text-neutral-500">Words you say at home</span>
                 </div>
-                <div dir="rtl" class="flex flex-wrap gap-1.5 justify-start">
+                <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
                   <For each={analysis()!.spokenUrduSynonymsJson}>
                     {(syn) => (
                       <button
                         type="button"
-                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/25 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm hover:bg-emerald-500/20 cursor-pointer"
+                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-400 dark:border-emerald-600 text-emerald-950 dark:text-emerald-100 font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900 cursor-pointer shadow-xs transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
                           playTTS(syn);
                         }}
                       >
-                        <span class="font-nastaliq text-sm sm:text-base">{syn}</span>
-                        <Volume2 size={12} class="opacity-75" />
+                        <span class="font-nastaliq text-base">{syn}</span>
+                        <Volume2 size={13} class="opacity-80" />
                       </button>
                     )}
                   </For>
@@ -270,27 +271,27 @@ export default function TokenLensPopover() {
             </Show>
 
             {/* Simple Conversational Urdu Explanation */}
-            <div class="bg-black/5 dark:bg-white/5 p-2.5 rounded-lg">
-              <div class="text-[11px] font-semibold text-neutral-400 mb-0.5 font-sans">
+            <div class="bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-200 dark:border-neutral-700 p-3 rounded-xl space-y-1">
+              <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 font-sans">
                 Simple Explanation in Conversational Urdu:
               </div>
-              <p dir="rtl" class="text-xs sm:text-sm font-nastaliq leading-relaxed text-neutral-800 dark:text-neutral-200 text-right">
+              <p dir="rtl" class="text-sm font-nastaliq font-bold leading-relaxed text-neutral-950 dark:text-neutral-50 text-right">
                 {analysis()!.urduSimpleExplanation}
               </p>
             </div>
 
             {/* Morphological Root Bridge & Cousins */}
             <Show when={analysis()!.arabicRoot || (analysis()!.familiarCousinsJson && analysis()!.familiarCousinsJson!.length > 0)}>
-              <div>
-                <div class="text-[11px] font-semibold text-neutral-400 mb-1 flex items-center justify-between font-sans">
+              <div class="space-y-1.5">
+                <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
                   <span>Word Root Family (مادہ): {analysis()!.arabicRoot ? `[${analysis()!.arabicRoot}]` : ''}</span>
-                  <span class="text-[10px] opacity-75">Familiar cousins</span>
+                  <span class="text-[11px] font-normal text-neutral-500">Related cousin words</span>
                 </div>
-                <div dir="rtl" class="flex flex-wrap gap-1.5 justify-start">
+                <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
                   <Show when={analysis()!.familiarCousinsJson && analysis()!.familiarCousinsJson!.length > 0}>
                     <For each={analysis()!.familiarCousinsJson}>
                       {(cousin) => (
-                        <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-nastaliq">
+                        <span class="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border-2 border-blue-300 dark:border-blue-700 text-blue-950 dark:text-blue-100 text-xs font-bold font-nastaliq shadow-xs">
                           {cousin}
                         </span>
                       )}
@@ -302,11 +303,11 @@ export default function TokenLensPopover() {
 
             {/* Persian Izafat Construction Breakdown */}
             <Show when={analysis()!.izafatBreakdownUrdu}>
-              <div class="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-lg">
-                <div class="text-[11px] font-semibold text-amber-700 dark:text-amber-400 mb-0.5 font-sans">
+              <div class="bg-purple-50 dark:bg-purple-950/40 border-2 border-purple-300 dark:border-purple-700 p-3 rounded-xl space-y-1">
+                <div class="text-xs font-bold text-purple-950 dark:text-purple-200 font-sans">
                   Persian Izafat Relationship (ترکیبِ اضافت):
                 </div>
-                <p dir="rtl" class="text-xs font-nastaliq leading-relaxed text-amber-900 dark:text-amber-200 text-right">
+                <p dir="rtl" class="text-xs font-nastaliq font-bold leading-relaxed text-purple-950 dark:text-purple-100 text-right">
                   {analysis()!.izafatBreakdownUrdu}
                 </p>
               </div>
@@ -316,44 +317,41 @@ export default function TokenLensPopover() {
 
         {/* TAP 3: Full Literary & Philosophical Gloss */}
         <Show when={tapLevel() >= 3}>
-          <div class="mt-3.5 pt-3.5 border-t border-black/10 dark:border-white/10 space-y-3">
+          <div class="mt-4 pt-4 border-t-2 border-neutral-200 dark:border-neutral-800 space-y-3">
             {/* English Contextual Gloss */}
-            <div class="text-left">
-              <div class="text-[11px] font-semibold text-neutral-400 mb-1 uppercase tracking-wider font-sans">
+            <div class="text-left bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-300 dark:border-indigo-700 p-3.5 rounded-xl space-y-1">
+              <div class="text-xs font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider font-sans">
                 English Contextual Meaning:
               </div>
-              <p class="text-xs sm:text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+              <p class="text-base font-bold text-neutral-950 dark:text-white font-sans">
                 {analysis()!.englishContextualGloss}
               </p>
-            </div>
-
-            {/* Literary Nuance Note */}
-            <Show when={analysis()!.literaryNuanceNote}>
-              <div class="text-left bg-indigo-500/10 border border-indigo-500/20 p-2.5 rounded-lg">
-                <div class="text-[11px] font-semibold text-indigo-700 dark:text-indigo-400 mb-0.5 uppercase tracking-wider font-sans">
+              <Show when={analysis()!.literaryNuanceNote}>
+                <div class="w-full h-px bg-indigo-200 dark:bg-indigo-800 my-2" />
+                <div class="text-xs font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider font-sans">
                   Literary & Cultural Context:
                 </div>
-                <p class="text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed font-sans">
+                <p class="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed font-sans mt-0.5">
                   {analysis()!.literaryNuanceNote}
                 </p>
-              </div>
-            </Show>
+              </Show>
+            </div>
           </div>
         </Show>
 
         {/* Footer Hint Button */}
-        <div class="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between">
+        <div class="mt-4 pt-3.5 border-t border-neutral-200 dark:border-neutral-800">
           <Show
             when={tapLevel() < 3}
             fallback={
-              <div class="w-full text-center text-xs text-neutral-400 py-1 font-sans">
+              <div class="w-full text-center text-xs font-bold text-neutral-500 py-1 font-sans">
                 ✓ All 3 clues revealed • Tap another word or press Space to continue
               </div>
             }
           >
             <button
               type="button"
-              class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs sm:text-sm transition-colors cursor-pointer shadow-xs active:scale-[0.99]"
+              class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 font-bold text-xs sm:text-sm transition-all cursor-pointer shadow-md active:scale-[0.99]"
               onClick={(e) => {
                 e.stopPropagation();
                 advanceTapLevel();

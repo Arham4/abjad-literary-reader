@@ -36,7 +36,7 @@ export default function ReaderNavbar() {
         {/* Left: Brand & Story Title */}
         <div class="flex items-center gap-3 min-w-0">
           <div class="flex items-center gap-2 shrink-0">
-            <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-600 flex items-center justify-center text-white font-bold text-xs sm:text-sm font-nastaliq shadow-xs">
+            <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-neutral-900 dark:bg-white flex items-center justify-center text-white dark:text-neutral-900 font-bold text-xs sm:text-sm font-nastaliq shadow-xs">
               ابجد
             </span>
             <span class="font-serif font-bold text-sm tracking-wide hidden sm:inline">
@@ -50,7 +50,7 @@ export default function ReaderNavbar() {
           <div class="relative min-w-0">
             <select
               aria-label="Select Story"
-              class="appearance-none text-xs sm:text-sm font-medium py-1.5 pl-2.5 pr-7 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer max-w-[155px] xs:max-w-[210px] sm:max-w-xs truncate transition-colors"
+              class="appearance-none text-xs sm:text-sm font-medium py-1.5 pl-2.5 pr-7 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-neutral-800 dark:focus:ring-white cursor-pointer max-w-[155px] xs:max-w-[210px] sm:max-w-xs truncate transition-colors"
               value={activeStory()?.slug || ''}
               onChange={(e) => selectStory(e.currentTarget.value)}
             >
@@ -72,10 +72,10 @@ export default function ReaderNavbar() {
           <button
             type="button"
             title="How to Use / Guided Tour"
-            class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 text-neutral-600 dark:text-neutral-300 text-xs font-medium transition-colors cursor-pointer"
+            class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 text-xs font-bold transition-colors cursor-pointer shadow-xs"
             onClick={openTutorial}
           >
-            <HelpCircle size={14} class="shrink-0 text-amber-600" />
+            <HelpCircle size={14} class="shrink-0 text-neutral-900 dark:text-white" />
             <span class="hidden md:inline">Guide</span>
           </button>
 
@@ -86,7 +86,7 @@ export default function ReaderNavbar() {
               title="Reading Appearance (Font, Theme, Script)"
               class={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-serif font-bold transition-all cursor-pointer ${
                 showAppearanceMenu()
-                  ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                  ? 'bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-neutral-900 dark:border-white shadow-xs'
                   : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-200'
               }`}
               onClick={() => setShowAppearanceMenu(!showAppearanceMenu())}
@@ -148,7 +148,7 @@ export default function ReaderNavbar() {
                       type="button"
                       class={`p-2 rounded-xl border text-center transition-all cursor-pointer ${
                         scriptTradition() === 'nastaliq'
-                          ? 'border-amber-600 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-bold'
+                          ? 'border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-neutral-900 font-bold shadow-xs'
                           : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 text-neutral-600 dark:text-neutral-400'
                       }`}
                       onClick={() => setScriptTradition('nastaliq')}
@@ -161,7 +161,7 @@ export default function ReaderNavbar() {
                       type="button"
                       class={`p-2 rounded-xl border text-center transition-all cursor-pointer ${
                         scriptTradition() === 'naskh'
-                          ? 'border-amber-600 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-bold'
+                          ? 'border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-neutral-900 font-bold shadow-xs'
                           : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 text-neutral-600 dark:text-neutral-400'
                       }`}
                       onClick={() => setScriptTradition('naskh')}
@@ -180,7 +180,7 @@ export default function ReaderNavbar() {
                       type="button"
                       class={`p-2 rounded-xl border text-center flex flex-col items-center gap-1 transition-all cursor-pointer ${
                         theme() === 'paper'
-                          ? 'border-amber-600 ring-2 ring-amber-500/30 font-bold'
+                          ? 'border-neutral-900 ring-2 ring-neutral-900/30 font-bold'
                           : 'border-black/10 hover:border-black/20'
                       }`}
                       style={{ 'background-color': '#FAF8F5', color: '#1F1B17' }}
@@ -188,7 +188,7 @@ export default function ReaderNavbar() {
                     >
                       <div class="w-4 h-4 rounded-full border border-black/15 bg-[#FAF8F5] flex items-center justify-center">
                         <Show when={theme() === 'paper'}>
-                          <Check size={10} class="text-amber-600" />
+                          <Check size={10} class="text-neutral-900" />
                         </Show>
                       </div>
                       <span class="text-[11px]">Paper</span>
@@ -198,7 +198,7 @@ export default function ReaderNavbar() {
                       type="button"
                       class={`p-2 rounded-xl border text-center flex flex-col items-center gap-1 transition-all cursor-pointer ${
                         theme() === 'sepia'
-                          ? 'border-amber-700 ring-2 ring-amber-600/30 font-bold'
+                          ? 'border-neutral-900 ring-2 ring-neutral-900/30 font-bold'
                           : 'border-black/10 hover:border-black/20'
                       }`}
                       style={{ 'background-color': '#F3EBDD', color: '#2B231D' }}
@@ -206,7 +206,7 @@ export default function ReaderNavbar() {
                     >
                       <div class="w-4 h-4 rounded-full border border-black/15 bg-[#F3EBDD] flex items-center justify-center">
                         <Show when={theme() === 'sepia'}>
-                          <Check size={10} class="text-amber-700" />
+                          <Check size={10} class="text-neutral-900" />
                         </Show>
                       </div>
                       <span class="text-[11px]">Sepia</span>
@@ -216,7 +216,7 @@ export default function ReaderNavbar() {
                       type="button"
                       class={`p-2 rounded-xl border text-center flex flex-col items-center gap-1 transition-all cursor-pointer ${
                         theme() === 'midnight'
-                          ? 'border-amber-500 ring-2 ring-amber-400/30 font-bold'
+                          ? 'border-white ring-2 ring-white/40 font-bold'
                           : 'border-white/10 hover:border-white/20'
                       }`}
                       style={{ 'background-color': '#101114', color: '#ECE7DE' }}
@@ -224,7 +224,7 @@ export default function ReaderNavbar() {
                     >
                       <div class="w-4 h-4 rounded-full border border-white/20 bg-[#101114] flex items-center justify-center">
                         <Show when={theme() === 'midnight'}>
-                          <Check size={10} class="text-amber-400" />
+                          <Check size={10} class="text-white" />
                         </Show>
                       </div>
                       <span class="text-[11px]">Midnight</span>
@@ -241,12 +241,12 @@ export default function ReaderNavbar() {
                   <button
                     type="button"
                     class={`w-10 h-6 rounded-full transition-colors relative cursor-pointer ${
-                      showIzafatHighlights() ? 'bg-amber-600' : 'bg-neutral-300 dark:bg-neutral-700'
+                      showIzafatHighlights() ? 'bg-neutral-900 dark:bg-white' : 'bg-neutral-300 dark:bg-neutral-700'
                     }`}
                     onClick={() => setShowIzafatHighlights(!showIzafatHighlights())}
                   >
                     <div
-                      class={`w-4 h-4 rounded-full bg-white transition-transform absolute top-1 ${
+                      class={`w-4 h-4 rounded-full bg-white dark:bg-neutral-900 transition-transform absolute top-1 ${
                         showIzafatHighlights() ? 'left-5' : 'left-1'
                       }`}
                     />
@@ -260,12 +260,12 @@ export default function ReaderNavbar() {
           <button
             type="button"
             title="Vocabulary Vault (ذخیرہ الفاظ)"
-            class="flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium transition-colors shadow-xs cursor-pointer"
+            class="flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-bold transition-colors shadow-xs cursor-pointer"
             onClick={openVault}
           >
             <BookMarked size={14} class="shrink-0" />
             <span class="hidden sm:inline">Vault</span>
-            <span class="px-1.5 py-0.2 rounded-full bg-black/20 text-[10px] font-mono">
+            <span class="px-1.5 py-0.2 rounded-full bg-neutral-700 dark:bg-neutral-200 text-white dark:text-neutral-900 text-[10px] font-mono font-bold">
               {vaultItems().length}
             </span>
           </button>

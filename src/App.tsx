@@ -78,7 +78,7 @@ export default function App() {
           fallback={
             <div class="flex items-center justify-center py-24 text-neutral-400">
               <div class="animate-pulse flex flex-col items-center gap-3">
-                <div class="w-8 h-8 rounded-full border-2 border-amber-600 border-t-transparent animate-spin" />
+                <div class="w-8 h-8 rounded-full border-2 border-neutral-900 dark:border-white border-t-transparent animate-spin" />
                 <span class="text-xs font-medium">تحریر لوڈ کی جا رہی ہے...</span>
               </div>
             </div>
@@ -89,7 +89,7 @@ export default function App() {
             {/* Story Title & Author Banner */}
             <Show when={activeStory()}>
               <header class="text-center mb-6 sm:mb-10 space-y-2 sm:space-y-3">
-                <div class="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-serif tracking-widest uppercase font-semibold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-600/15">
+                <div class="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-serif tracking-widest uppercase font-bold bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 border border-neutral-300 dark:border-neutral-700 shadow-xs">
                   {getLevelLabel(activeStory()!.level)}
                 </div>
 
@@ -103,19 +103,19 @@ export default function App() {
                   {activeStory()!.titleUrdu}
                 </h1>
 
-                <div class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 font-serif">
-                  <span>{activeStory()!.titleEnglish}</span>
+                <div class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 font-serif">
+                  <span class="font-bold">{activeStory()!.titleEnglish}</span>
                   <span class="mx-2 opacity-40">·</span>
                   <span class="italic">by {activeStory()!.authorEnglish}</span>
                   <span class="mx-1.5 opacity-40">(</span>
-                  <span dir="rtl" class="font-nastaliq text-sm sm:text-base text-neutral-700 dark:text-neutral-300">
+                  <span dir="rtl" class="font-nastaliq text-sm sm:text-base text-neutral-800 dark:text-neutral-200">
                     {activeStory()!.authorUrdu}
                   </span>
                   <span class="opacity-40">)</span>
                 </div>
 
                 {/* Classic Calligraphic / Ornamental Divider */}
-                <div class="flex items-center justify-center gap-3 pt-2 opacity-35 text-amber-700 dark:text-amber-300">
+                <div class="flex items-center justify-center gap-3 pt-2 opacity-35 text-neutral-500 dark:text-neutral-400">
                   <div class="h-px w-10 sm:w-16 bg-current" />
                   <span class="text-xs font-serif">❦</span>
                   <div class="h-px w-10 sm:w-16 bg-current" />
@@ -125,19 +125,19 @@ export default function App() {
 
             {/* Scene Vocabulary Preview (Pre-reading scaffolding) */}
             <Show when={activeStory()?.sceneVocabPreview && activeStory()!.sceneVocabPreview!.length > 0}>
-              <div class="mb-6 p-3 sm:p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-2">
+              <div class="mb-6 p-3 sm:p-4 rounded-xl bg-neutral-100/80 dark:bg-neutral-800/80 border-2 border-neutral-300 dark:border-neutral-700 space-y-2.5">
                 <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-serif font-bold uppercase tracking-wider text-neutral-500">
+                  <span class="text-[11px] font-sans font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-200">
                     Scene Vocabulary Preview (الفاظِ پیش نظر)
                   </span>
-                  <span class="text-[10px] text-amber-600 dark:text-amber-400 font-sans">
+                  <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-300 font-sans">
                     Key words in this story
                   </span>
                 </div>
                 <div class="flex flex-wrap gap-2" dir="rtl">
                   <For each={activeStory()!.sceneVocabPreview}>
                     {(word) => (
-                      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-200 text-sm font-nastaliq shadow-xs">
+                      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-900 border-2 border-neutral-300 dark:border-neutral-600 text-neutral-950 dark:text-white text-base font-nastaliq font-bold shadow-xs">
                         {word}
                       </span>
                     )}
@@ -148,20 +148,20 @@ export default function App() {
 
             {/* Reading Instructions / Pedagogical Note (Dismissible) */}
             <Show when={showTip()}>
-              <div class="mb-6 p-2.5 sm:p-3 rounded-xl bg-amber-500/5 border border-amber-500/15 text-[11px] sm:text-xs text-neutral-600 dark:text-neutral-400 flex items-center justify-between gap-2 transition-all">
+              <div class="mb-6 p-2.5 sm:p-3 rounded-xl bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-300 dark:border-neutral-700 text-xs text-neutral-800 dark:text-neutral-200 flex items-center justify-between gap-2 transition-all">
                 <div class="flex items-center gap-2 min-w-0">
-                  <span class="text-amber-600 font-bold shrink-0">💡 3 Gradual Clues:</span>
-                  <span class="truncate sm:whitespace-normal">
+                  <span class="text-neutral-950 dark:text-white font-extrabold shrink-0">💡 3 Gradual Clues:</span>
+                  <span class="truncate sm:whitespace-normal font-medium">
                     Tap any word to sound it out (<strong>1: Diacritics</strong> → <strong>2: Spoken Bridge</strong> → <strong>3: English Gloss</strong>)
                   </span>
                 </div>
                 <button
                   type="button"
                   title="Dismiss tip"
-                  class="p-1 hover:bg-neutral-500/10 rounded text-neutral-400 cursor-pointer shrink-0"
+                  class="p-1 hover:bg-neutral-300 dark:hover:bg-neutral-700 rounded text-neutral-600 dark:text-neutral-300 cursor-pointer shrink-0"
                   onClick={() => setShowTip(false)}
                 >
-                  <X size={13} />
+                  <X size={14} />
                 </button>
               </div>
             </Show>
@@ -175,7 +175,7 @@ export default function App() {
       {/* Non-blocking Phonetic Toast Notification */}
       <Show when={toastMessage()}>
         <div class="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-3.5 py-1.5 rounded-full bg-neutral-900/95 text-white border border-white/20 shadow-xl backdrop-blur-md text-xs font-medium flex items-center gap-2 pointer-events-none transition-all duration-200">
-          <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping shrink-0" />
+          <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping shrink-0" />
           <span>{toastMessage()}</span>
         </div>
       </Show>

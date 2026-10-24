@@ -31,12 +31,12 @@ export default function VocabularyVault() {
   const getTierBadge = (level: number) => {
     switch (level) {
       case 1:
-        return { label: 'Tap 1: Sound Out', color: 'bg-amber-500/15 text-amber-700 dark:text-amber-300' };
+        return { label: 'Tap 1: Sound Out', color: 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white border border-neutral-300 dark:border-neutral-700 font-bold' };
       case 2:
-        return { label: 'Tap 2: Spoken Bridge', color: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' };
+        return { label: 'Tap 2: Spoken Bridge', color: 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 font-bold' };
       case 3:
       default:
-        return { label: 'Tap 3: Full Gloss', color: 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300' };
+        return { label: 'Tap 3: Full Gloss', color: 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-900 dark:text-indigo-200 border border-indigo-300 dark:border-indigo-700 font-bold' };
     }
   };
 
@@ -65,7 +65,7 @@ export default function VocabularyVault() {
         {/* Header */}
         <div class="p-5 border-b border-black/10 dark:border-white/10 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <div class="p-2 rounded-lg bg-amber-600 text-white shadow-xs">
+            <div class="p-2 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xs">
               <BookMarked size={18} />
             </div>
             <div>
@@ -91,7 +91,7 @@ export default function VocabularyVault() {
             <input
               type="text"
               placeholder="Search words (تلاش کریں)..."
-              class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 focus:outline-none focus:ring-2 focus:ring-neutral-800 dark:focus:ring-white"
               value={searchQuery()}
               onInput={(e) => setSearchQuery(e.currentTarget.value)}
             />
@@ -101,9 +101,9 @@ export default function VocabularyVault() {
           <div class="flex items-center gap-1 overflow-x-auto text-xs pb-1">
             <button
               type="button"
-              class={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+              class={`px-3 py-1.5 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                 selectedTier() === 'all'
-                  ? 'bg-amber-600 text-white shadow-xs'
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-xs'
                   : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
               }`}
               onClick={() => setSelectedTier('all')}
@@ -112,9 +112,9 @@ export default function VocabularyVault() {
             </button>
             <button
               type="button"
-              class={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+              class={`px-3 py-1.5 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                 selectedTier() === 1
-                  ? 'bg-amber-600 text-white shadow-xs'
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-xs'
                   : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
               }`}
               onClick={() => setSelectedTier(1)}
@@ -123,9 +123,9 @@ export default function VocabularyVault() {
             </button>
             <button
               type="button"
-              class={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+              class={`px-3 py-1.5 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                 selectedTier() === 2
-                  ? 'bg-emerald-600 text-white shadow-xs'
+                  ? 'bg-emerald-700 text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
               }`}
               onClick={() => setSelectedTier(2)}
@@ -134,9 +134,9 @@ export default function VocabularyVault() {
             </button>
             <button
               type="button"
-              class={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+              class={`px-3 py-1.5 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                 selectedTier() === 3
-                  ? 'bg-indigo-600 text-white shadow-xs'
+                  ? 'bg-indigo-700 text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
               }`}
               onClick={() => setSelectedTier(3)}
@@ -152,7 +152,7 @@ export default function VocabularyVault() {
             when={filteredItems().length > 0}
             fallback={
               <div class="text-center py-12 text-neutral-400 space-y-2">
-                <Sparkles size={28} class="mx-auto opacity-40 text-amber-500" />
+                <Sparkles size={28} class="mx-auto opacity-40 text-neutral-500" />
                 <p class="text-sm font-medium">No words saved yet</p>
                 <p class="text-xs opacity-75 max-w-xs mx-auto">
                   Tap any word in the text while reading to decode it and add it to your personal vault.
@@ -164,13 +164,13 @@ export default function VocabularyVault() {
               {(item) => {
                 const badge = getTierBadge(item.maxTapLevel);
                 return (
-                  <div class="p-3.5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 flex items-center justify-between gap-3 hover:border-amber-500/30 transition-colors">
+                  <div class="p-3.5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 flex items-center justify-between gap-3 hover:border-black/30 dark:hover:border-white/30 transition-colors">
                     {/* Word display & audio */}
                     <div class="flex items-start gap-3 flex-1 min-w-0">
                       <button
                         type="button"
                         title="Listen to pronunciation"
-                        class="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 transition-colors cursor-pointer shrink-0 mt-1"
+                        class="p-2 rounded-lg bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white transition-colors cursor-pointer shrink-0 mt-1"
                         onClick={() => playTTS(item.vocalizedSurface)}
                       >
                         <Volume2 size={16} />
