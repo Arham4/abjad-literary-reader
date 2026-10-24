@@ -37,7 +37,7 @@ export default function AudioBar() {
         theme() === 'midnight'
           ? 'bg-[#121316]/95 border-neutral-800 text-[#E7E2D8]'
           : theme() === 'sepia'
-          ? 'bg-[#F2E9D8]/95 border-[#E2D6C0] text-[#29221E]'
+          ? 'bg-[#F4EFE6]/95 border-[#D8CCBA] text-[#28201A]'
           : 'bg-[#FAF6EE]/95 border-[#E8DFC9] text-[#1C1917]'
       }`}
       style={{ 'padding-bottom': 'max(0.4rem, env(safe-area-inset-bottom))' }}
@@ -45,19 +45,27 @@ export default function AudioBar() {
       <div class="max-w-4xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
         {/* Active Sentence Text or Status */}
         <div class="flex items-center gap-2 min-w-0 flex-1">
-          <div class="p-1 sm:p-1.5 rounded-md bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shrink-0 shadow-xs">
+          <div
+            class={`p-1 sm:p-1.5 rounded-md shrink-0 shadow-xs ${
+              theme() === 'sepia'
+                ? 'bg-[#3A2D23] text-[#FAF6EC]'
+                : theme() === 'midnight'
+                ? 'bg-white text-neutral-900'
+                : 'bg-neutral-900 text-white'
+            }`}
+          >
             <Volume2 size={15} />
           </div>
           <div class="text-xs truncate text-right min-w-0 flex-1" dir="rtl">
             <Show
               when={activeS()}
               fallback={
-                <span class="text-neutral-500 font-sans text-[11px] sm:text-xs">
+                <span class="opacity-60 font-sans text-[11px] sm:text-xs">
                   Tap Play to listen to sentence narration
                 </span>
               }
             >
-              <span class="font-nastaliq text-xs sm:text-sm font-bold leading-relaxed text-neutral-950 dark:text-white">
+              <span class="font-nastaliq text-xs sm:text-sm font-bold leading-relaxed">
                 {activeS()!.text}
               </span>
             </Show>
@@ -69,7 +77,7 @@ export default function AudioBar() {
           <button
             type="button"
             title="Previous Sentence"
-            class="p-1.5 rounded-md hover:bg-black/10 dark:hover:bg-white/10 text-neutral-600 dark:text-neutral-400 disabled:opacity-30 cursor-pointer"
+            class="p-1.5 rounded-md hover:bg-black/10 dark:hover:bg-white/10 opacity-70 hover:opacity-100 disabled:opacity-20 cursor-pointer"
             disabled={!activeS() || activeS()!.globalIndex === 0}
             onClick={handlePrev}
           >
@@ -79,7 +87,13 @@ export default function AudioBar() {
           <button
             type="button"
             title={isPlaying() ? 'Pause Narration' : 'Play Sentence Narration'}
-            class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 font-bold text-xs flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer active:scale-95"
+            class={`px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 ${
+              theme() === 'sepia'
+                ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
+                : theme() === 'midnight'
+                ? 'bg-white hover:bg-neutral-200 text-neutral-900'
+                : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+            }`}
             onClick={toggleAudio}
           >
             <Show when={isPlaying()} fallback={<Play size={13} />}>
@@ -91,7 +105,7 @@ export default function AudioBar() {
           <button
             type="button"
             title="Next Sentence"
-            class="p-1.5 rounded-md hover:bg-black/10 dark:hover:bg-white/10 text-neutral-600 dark:text-neutral-400 disabled:opacity-30 cursor-pointer"
+            class="p-1.5 rounded-md hover:bg-black/10 dark:hover:bg-white/10 opacity-70 hover:opacity-100 disabled:opacity-20 cursor-pointer"
             disabled={!activeS() || activeS()!.globalIndex >= sentencesList().length - 1}
             onClick={handleNext}
           >

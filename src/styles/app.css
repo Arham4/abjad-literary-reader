@@ -17,11 +17,11 @@
   --color-muted-paper: #786F66;
   --color-accent-paper: #B45309;
 
-  --color-bg-sepia: #F3EBDD;
-  --color-card-sepia: #FBF6EC;
-  --color-border-sepia: rgba(196, 178, 153, 0.65);
-  --color-ink-sepia: #2B231D;
-  --color-muted-sepia: #7C6C5E;
+  --color-bg-sepia: #F4EFE6;
+  --color-card-sepia: #FDFBF7;
+  --color-border-sepia: rgba(196, 178, 153, 0.45);
+  --color-ink-sepia: #261F1A;
+  --color-muted-sepia: #75675A;
   --color-accent-sepia: #9A4C07;
 
   --color-bg-midnight: #101114;
@@ -72,13 +72,13 @@ body.theme-paper .abjad-book-page {
 body.theme-sepia .abjad-book-page {
   background-color: var(--color-card-sepia);
   border: 1px solid var(--color-border-sepia);
-  box-shadow: 0 4px 20px -2px rgba(45, 30, 15, 0.07), 0 1px 3px rgba(45, 30, 15, 0.04);
+  box-shadow: 0 10px 30px -4px rgba(45, 30, 15, 0.08), 0 2px 6px rgba(45, 30, 15, 0.04);
 }
 
 body.theme-midnight .abjad-book-page {
   background-color: var(--color-card-midnight);
   border: 1px solid var(--color-border-midnight);
-  box-shadow: 0 4px 25px -2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.6);
 }
 
 /* 4. Rekhta-Grade Nastaliq Engine & HarfBuzz Runtime Isolation */
@@ -131,17 +131,21 @@ body.theme-midnight .abjad-book-page {
   display: inline;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  padding-inline: 0.1em;
-  margin-inline: -0.1em;
+  padding-inline: 0.12em;
+  margin-inline: -0.12em;
   border-radius: 6px;
   cursor: pointer;
   outline: none;
   /* NEVER change padding, margin, border-width, or font-weight on hover/active */
-  transition: background-color 80ms ease, box-shadow 80ms ease;
+  transition: background-color 90ms ease, box-shadow 90ms ease;
 }
 
 .abjad-word-token:hover {
-  background-color: rgba(0, 0, 0, 0.07);
+  background-color: rgba(180, 83, 9, 0.08);
+}
+
+body.theme-sepia .abjad-word-token:hover {
+  background-color: rgba(160, 90, 20, 0.09);
 }
 
 body.theme-midnight .abjad-word-token:hover {
@@ -149,13 +153,18 @@ body.theme-midnight .abjad-word-token:hover {
 }
 
 .abjad-word-token[data-active="true"] {
-  background-color: rgba(0, 0, 0, 0.12) !important;
-  box-shadow: inset 0 -3px 0 0 #111827;
+  background-color: rgba(180, 83, 9, 0.14) !important;
+  box-shadow: inset 0 -2.5px 0 0 #B45309;
+}
+
+body.theme-sepia .abjad-word-token[data-active="true"] {
+  background-color: rgba(170, 85, 10, 0.16) !important;
+  box-shadow: inset 0 -2.5px 0 0 #9A4C07;
 }
 
 body.theme-midnight .abjad-word-token[data-active="true"] {
-  background-color: rgba(255, 255, 255, 0.2) !important;
-  box-shadow: inset 0 -3px 0 0 #FFFFFF;
+  background-color: rgba(245, 158, 11, 0.22) !important;
+  box-shadow: inset 0 -2.5px 0 0 #F59E0B;
 }
 
 /* Expand tap area to 44px touch target on mobile without altering Nastaliq layout */
@@ -176,8 +185,15 @@ body.theme-midnight .abjad-word-token[data-active="true"] {
   display: inline;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  border-bottom: 1px dashed rgba(217, 119, 6, 0.5);
-  /* NEVER set white-space: nowrap so multi-word Izafat chains wrap cleanly on mobile */
+  border-bottom: 1.5px dashed rgba(180, 83, 9, 0.55);
+}
+
+body.theme-sepia .izafat-group {
+  border-bottom: 1.5px dashed rgba(154, 76, 7, 0.6);
+}
+
+body.theme-midnight .izafat-group {
+  border-bottom: 1.5px dashed rgba(245, 158, 11, 0.55);
 }
 
 /* Active sentence audio karaoke highlight */
@@ -191,16 +207,16 @@ body.theme-midnight .abjad-word-token[data-active="true"] {
   transition: background-color 150ms ease, border-color 150ms ease;
 }
 
-body.theme-midnight .sentence-token-active,
-body.theme-midnight .sentence-highlight-active {
-  background-color: rgba(245, 158, 11, 0.3) !important;
-  border-bottom: 2px solid #FBBF24;
-}
-
 body.theme-sepia .sentence-token-active,
 body.theme-sepia .sentence-highlight-active {
-  background-color: rgba(217, 119, 6, 0.25) !important;
+  background-color: rgba(217, 119, 6, 0.22) !important;
   border-bottom: 2px solid #B45309;
+}
+
+body.theme-midnight .sentence-token-active,
+body.theme-midnight .sentence-highlight-active {
+  background-color: rgba(245, 158, 11, 0.26) !important;
+  border-bottom: 2px solid #FBBF24;
 }
 
 /* Custom scrollbars */

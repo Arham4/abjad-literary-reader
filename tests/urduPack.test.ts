@@ -64,6 +64,12 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     expect(wordTokens[1].surface).toBe('افسوس');
     expect(wordTokens[1].izafatGroupId).toBe(wordTokens[0].izafatGroupId);
 
+    // Subsequent words 'کی' and 'کہانی' must NOT have izafatGroupId
+    expect(wordTokens[2].surface).toBe('کی');
+    expect(wordTokens[2].izafatGroupId).toBeUndefined();
+    expect(wordTokens[3].surface).toContain('کہانی');
+    expect(wordTokens[3].izafatGroupId).toBeUndefined();
+
     // Sentence ending creates sentenceIndex increment
     expect(tokens[tokens.length - 1].sentenceIndex).toBeGreaterThanOrEqual(0);
   });

@@ -40,31 +40,49 @@ export default function TutorialModal() {
       >
         {/* Modal Window */}
         <div
-          class={`relative w-full max-w-xl rounded-2xl shadow-2xl border-2 flex flex-col max-h-[92vh] overflow-hidden ${
+          class={`relative w-full max-w-xl rounded-2xl shadow-2xl border flex flex-col max-h-[92vh] overflow-hidden ${
             theme() === 'midnight'
-              ? 'bg-[#18191d] border-neutral-700 text-white'
+              ? 'bg-[#18191D] border-neutral-700/80 text-[#ECE7DE]'
+              : theme() === 'sepia'
+              ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#28201A] shadow-[0_20px_50px_-10px_rgba(45,30,15,0.25)]'
               : 'bg-[#FCFBF8] border-neutral-300 text-neutral-900'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div class="px-5 py-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-white dark:bg-[#1f2026]">
+          <div
+            class={`px-5 py-4 border-b flex items-center justify-between ${
+              theme() === 'sepia'
+                ? 'bg-[#F4ECE1] border-[#D8CCBA]'
+                : theme() === 'midnight'
+                ? 'bg-[#1F2026] border-neutral-800'
+                : 'bg-white border-neutral-200'
+            }`}
+          >
             <div class="flex items-center gap-2.5">
-              <span class="p-1.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xs">
+              <span
+                class={`p-1.5 rounded-lg shadow-xs ${
+                  theme() === 'sepia'
+                    ? 'bg-[#3A2D23] text-[#FAF6EC]'
+                    : theme() === 'midnight'
+                    ? 'bg-white text-neutral-900'
+                    : 'bg-neutral-900 text-white'
+                }`}
+              >
                 <HelpCircle size={16} />
               </span>
-              <span class="font-bold text-sm tracking-tight text-neutral-900 dark:text-white">
+              <span class="font-bold text-sm tracking-tight">
                 How Abjad Reader Works
               </span>
             </div>
             <div class="flex items-center gap-3">
-              <span class="text-xs font-bold text-neutral-600 dark:text-neutral-400 font-mono">
+              <span class="text-xs font-bold opacity-60 font-mono">
                 {currentSlide()} / {totalSlides}
               </span>
               <button
                 type="button"
                 title="Close Tutorial"
-                class="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white transition-colors cursor-pointer"
+                class="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 opacity-70 hover:opacity-100 transition-colors cursor-pointer"
                 onClick={closeTutorial}
               >
                 <X size={18} />
@@ -359,10 +377,18 @@ export default function TutorialModal() {
           </div>
 
           {/* Footer Controls */}
-          <div class="px-5 py-3.5 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-white dark:bg-[#1f2026]">
+          <div
+            class={`px-5 py-3.5 border-t flex items-center justify-between ${
+              theme() === 'sepia'
+                ? 'bg-[#F4ECE1] border-[#D8CCBA]'
+                : theme() === 'midnight'
+                ? 'bg-[#1F2026] border-neutral-800'
+                : 'bg-white border-neutral-200'
+            }`}
+          >
             <button
               type="button"
-              class="px-3 py-1.5 rounded-lg text-xs font-bold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer flex items-center gap-1"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 disabled:opacity-20 cursor-pointer flex items-center gap-1 transition-opacity"
               disabled={currentSlide() === 1}
               onClick={prevSlide}
             >
@@ -378,8 +404,10 @@ export default function TutorialModal() {
                     type="button"
                     class={`h-2 rounded-full transition-all cursor-pointer ${
                       currentSlide() === num
-                        ? 'w-6 bg-neutral-900 dark:bg-white'
-                        : 'w-2 bg-neutral-300 dark:bg-neutral-700'
+                        ? theme() === 'sepia'
+                          ? 'w-6 bg-[#3A2D23]'
+                          : 'w-6 bg-neutral-900 dark:bg-white'
+                        : 'w-2 bg-black/20 dark:bg-white/20'
                     }`}
                     onClick={() => setCurrentSlide(num)}
                   />
@@ -389,7 +417,13 @@ export default function TutorialModal() {
 
             <button
               type="button"
-              class="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-bold shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
+              class={`px-4 py-2 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+                theme() === 'sepia'
+                  ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
+                  : theme() === 'midnight'
+                  ? 'bg-white hover:bg-neutral-200 text-neutral-900'
+                  : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+              }`}
               onClick={nextSlide}
             >
               <span>{currentSlide() === totalSlides ? 'Start Reading' : 'Next'}</span>

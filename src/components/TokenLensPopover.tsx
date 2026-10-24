@@ -48,18 +48,45 @@ export default function TokenLensPopover() {
     if (!target || !popoverRef || isMobile()) return;
 
     computePosition(target, popoverRef, {
+      strategy: 'fixed',
       placement: 'top',
-      middleware: [offset(10), flip(), shift({ padding: 12 })],
+      middleware: [
+        offset(12),
+        flip({
+          fallbackPlacements: ['bottom'],
+          padding: { top: 76, bottom: 70, left: 16, right: 16 },
+        }),
+        shift({
+          mainAxis: true,
+          crossAxis: true,
+          padding: { top: 76, bottom: 70, left: 16, right: 16 },
+        }),
+      ],
     }).then(({ x, y }) => {
       if (popoverRef) {
         Object.assign(popoverRef.style, {
-          left: `${x}px`,
-          top: `${y}px`,
-          position: 'absolute',
+          left: `${Math.round(x)}px`,
+          top: `${Math.round(y)}px`,
+          position: 'fixed',
         });
       }
     });
   };
+
+  // Auto-scroll and recompute position when tap level advances
+  createEffect(() => {
+    const level = tapLevel();
+    if (popoverRef && activeTokenId()) {
+      updatePosition();
+      if (level > 1) {
+        setTimeout(() => {
+          if (popoverRef) {
+            popoverRef.scrollTo({ top: popoverRef.scrollHeight, behavior: 'smooth' });
+          }
+        }, 60);
+      }
+    }
+  });
 
   // Re-anchor when activeTargetEl changes
   createEffect(() => {
@@ -99,41 +126,55 @@ export default function TokenLensPopover() {
       <div
         ref={popoverRef}
         onClick={handleDesktopBodyClick}
-        class={`z-50 transition-all duration-200 ${
+        class={`z-50 transition-all duration-200 overflow-y-auto ${
           isMobile()
-            ? 'fixed bottom-0 inset-x-0 rounded-t-3xl max-h-[85vh] overflow-y-auto shadow-2xl p-5 border-t-2 animate-slideUp'
-            : 'w-[440px] rounded-2xl shadow-2xl p-6 border-2 cursor-pointer'
+            ? 'fixed bottom-0 inset-x-0 rounded-t-3xl max-h-[85vh] shadow-2xl p-5 border-t-2 animate-slideUp'
+            : 'w-[440px] rounded-2xl shadow-2xl p-5 sm:p-6 border cursor-pointer'
         } ${
           theme() === 'midnight'
-            ? 'bg-[#18191d] border-neutral-700 text-white'
-            : 'bg-white border-neutral-300 text-neutral-900'
+            ? 'bg-[#18191E] border-neutral-700/80 text-[#ECE7DE]'
+            : theme() === 'sepia'
+            ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#28201A] shadow-[0_20px_45px_-10px_rgba(45,30,15,0.22)]'
+            : 'bg-white border-[#E2D8CC] text-[#1F1B17] shadow-[0_20px_45px_-10px_rgba(60,45,25,0.15)]'
         }`}
         style={
           isMobile()
             ? { 'padding-bottom': 'max(1.75rem, env(safe-area-inset-bottom))' }
-            : { 'min-width': '360px' }
+            : {
+                'min-width': '380px',
+                'max-width': '460px',
+                'max-height': 'calc(100vh - 150px)',
+              }
         }
       >
         {/* Mobile drag handle */}
         <Show when={isMobile()}>
-          <div class="w-12 h-1.5 bg-neutral-400/50 rounded-full mx-auto mb-3.5" />
+          <div class="w-12 h-1.5 bg-neutral-400/40 rounded-full mx-auto mb-3.5" />
         </Show>
 
         {/* Header: Tap Progress & Controls */}
-        <div class="flex items-center justify-between pb-3 mb-3 border-b border-neutral-200 dark:border-neutral-800 select-none">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-black/10 dark:border-white/10 select-none">
           <div class="flex items-center gap-2 min-w-0">
             <span
-              class={`px-2.5 py-1 rounded-md text-xs font-bold text-white shrink-0 ${
+              class={`px-2.5 py-1 rounded-full text-xs font-serif font-bold text-white shrink-0 tracking-wide ${
                 tapLevel() === 1
-                  ? 'bg-neutral-900 dark:bg-white dark:text-neutral-900'
+                  ? theme() === 'sepia'
+                    ? 'bg-[#3A2D23] text-[#FAF6EC]'
+                    : theme() === 'midnight'
+                    ? 'bg-neutral-100 text-neutral-900'
+                    : 'bg-neutral-900 text-white'
                   : tapLevel() === 2
-                  ? 'bg-emerald-700'
-                  : 'bg-indigo-700'
+                  ? theme() === 'sepia'
+                    ? 'bg-[#1E4D2B] text-white'
+                    : 'bg-emerald-700 text-white'
+                  : theme() === 'sepia'
+                  ? 'bg-[#2B3A67] text-white'
+                  : 'bg-indigo-700 text-white'
               }`}
             >
               Clue {tapLevel()} of 3
             </span>
-            <span class="text-xs font-bold text-neutral-800 dark:text-neutral-200 truncate">
+            <span class="text-xs font-bold opacity-90 truncate font-sans">
               {tapLevel() === 1 && '1: Sound It Out (Zero Spoilers)'}
               {tapLevel() === 2 && '2: Everyday Spoken Urdu Bridge'}
               {tapLevel() === 3 && '3: English Meaning & Nuance'}
@@ -143,7 +184,7 @@ export default function TokenLensPopover() {
           <button
             type="button"
             title="Close (Esc)"
-            class="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors cursor-pointer shrink-0"
+            class="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 opacity-70 hover:opacity-100 transition-colors cursor-pointer shrink-0"
             onClick={(e) => {
               e.stopPropagation();
               closeTokenLens();
@@ -159,7 +200,7 @@ export default function TokenLensPopover() {
           <div class="text-center py-2 space-y-2">
             <div
               dir="rtl"
-              class={`text-4xl sm:text-6xl tracking-wide select-text font-bold leading-relaxed text-neutral-950 dark:text-white ${
+              class={`text-4xl sm:text-6xl tracking-wide select-text font-bold leading-relaxed text-inherit ${
                 scriptTradition() === 'naskh' ? 'font-naskh' : 'font-nastaliq'
               }`}
             >
@@ -170,13 +211,19 @@ export default function TokenLensPopover() {
               <button
                 type="button"
                 title="Listen to word pronunciation"
-                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-bold shadow-sm transition-all cursor-pointer"
+                class={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold shadow-xs transition-all cursor-pointer ${
+                  theme() === 'sepia'
+                    ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
+                    : theme() === 'midnight'
+                    ? 'bg-white hover:bg-neutral-200 text-neutral-900'
+                    : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+                }`}
                 onClick={(e) => {
                   e.stopPropagation();
                   playTTS(analysis()!.vocalizedForm);
                 }}
               >
-                <Volume2 size={15} class="text-white dark:text-neutral-900" />
+                <Volume2 size={15} />
                 <span>Listen to pronunciation</span>
               </button>
             </div>
@@ -185,19 +232,35 @@ export default function TokenLensPopover() {
           {/* Structured Vowel Pills (RTL flex row) */}
           <Show when={analysis()!.phoneticBreakdownJson.length > 0}>
             <div class="space-y-1.5">
-              <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
+              <div class="text-xs font-bold opacity-85 flex items-center justify-between font-sans">
                 <span>Vowel Marks:</span>
-                <span class="text-[11px] font-normal text-neutral-500">Pesh (ُ), Zer (ِ), Zabar (َ)</span>
+                <span class="text-[11px] font-normal opacity-70">Pesh (ُ), Zer (ِ), Zabar (َ)</span>
               </div>
               <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
                 <For each={analysis()!.phoneticBreakdownJson}>
                   {(pill) => (
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-300 dark:border-neutral-600 shadow-xs">
-                      <span class="font-nastaliq text-lg font-bold text-neutral-950 dark:text-white leading-none">
+                    <div
+                      class={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border shadow-xs ${
+                        theme() === 'sepia'
+                          ? 'bg-[#F2EAE0] border-[#D9CEBA]'
+                          : theme() === 'midnight'
+                          ? 'bg-[#202229] border-neutral-700'
+                          : 'bg-neutral-100 border-neutral-200'
+                      }`}
+                    >
+                      <span class="font-nastaliq text-lg font-bold leading-none">
                         {pill.letters}
                       </span>
                       <Show when={pill.vowelNameUrdu}>
-                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 font-sans">
+                        <span
+                          class={`text-[11px] font-bold px-2 py-0.5 rounded-md font-sans ${
+                            theme() === 'sepia'
+                              ? 'bg-[#E5DAC6] text-[#2C221E]'
+                              : theme() === 'midnight'
+                              ? 'bg-neutral-700 text-neutral-100'
+                              : 'bg-neutral-200 text-neutral-800'
+                          }`}
+                        >
                           {pill.vowelNameUrdu}
                         </span>
                       </Show>
@@ -211,25 +274,33 @@ export default function TokenLensPopover() {
           {/* Grapheme Decomposer Bar */}
           <Show when={analysis()!.graphemesJson.length > 0}>
             <div class="space-y-1.5">
-              <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
+              <div class="text-xs font-bold opacity-85 flex items-center justify-between font-sans">
                 <span>Letter-by-Letter Breakdown:</span>
-                <span class="text-[11px] font-normal text-neutral-500">Isolated alphabet blocks</span>
+                <span class="text-[11px] font-normal opacity-70">Isolated alphabet blocks</span>
               </div>
               <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
                 <For each={analysis()!.graphemesJson}>
                   {(g) => (
                     <div
-                      class={`flex flex-col items-center justify-center min-w-[52px] px-2.5 py-2 rounded-xl border-2 shadow-xs ${
-                        g.isAspiratedDigraph
-                          ? 'bg-neutral-200 dark:bg-neutral-700 border-neutral-400 dark:border-neutral-500'
-                          : 'bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600'
+                      class={`flex flex-col items-center justify-center min-w-[52px] px-2.5 py-2 rounded-xl border shadow-xs ${
+                        theme() === 'sepia'
+                          ? g.isAspiratedDigraph
+                            ? 'bg-[#E9DFCE] border-[#C8BCA4]'
+                            : 'bg-[#F2EAE0] border-[#D9CEBA]'
+                          : theme() === 'midnight'
+                          ? g.isAspiratedDigraph
+                            ? 'bg-neutral-700 border-neutral-600'
+                            : 'bg-neutral-800 border-neutral-700'
+                          : g.isAspiratedDigraph
+                          ? 'bg-neutral-200 border-neutral-300'
+                          : 'bg-neutral-100 border-neutral-200'
                       }`}
                     >
-                      <span class="text-xl font-bold font-nastaliq text-neutral-950 dark:text-white leading-tight">
+                      <span class="text-xl font-bold font-nastaliq leading-tight">
                         {g.raw}
                       </span>
-                      <div class="w-full h-px bg-neutral-300 dark:bg-neutral-700 my-1" />
-                      <span class="text-xs font-bold text-neutral-700 dark:text-neutral-300 font-nastaliq">
+                      <div class="w-full h-px bg-black/10 dark:bg-white/10 my-1" />
+                      <span class="text-xs font-bold opacity-75 font-nastaliq">
                         {g.name}
                       </span>
                     </div>
@@ -242,20 +313,26 @@ export default function TokenLensPopover() {
 
         {/* TAP 2: Conversational Urdu Bridge & Morphology */}
         <Show when={tapLevel() >= 2}>
-          <div class="mt-4 pt-4 border-t-2 border-neutral-200 dark:border-neutral-800 space-y-3">
+          <div class="mt-4 pt-4 border-t border-black/10 dark:border-white/10 space-y-3">
             {/* Rozmarra Everyday Urdu Synonyms */}
             <Show when={analysis()!.spokenUrduSynonymsJson.length > 0}>
               <div class="space-y-1.5">
-                <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
+                <div class="text-xs font-bold opacity-85 flex items-center justify-between font-sans">
                   <span>Everyday Spoken Equivalent:</span>
-                  <span class="text-[11px] font-normal text-neutral-500">Words you say at home</span>
+                  <span class="text-[11px] font-normal opacity-70">Words you say at home</span>
                 </div>
                 <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
                   <For each={analysis()!.spokenUrduSynonymsJson}>
                     {(syn) => (
                       <button
                         type="button"
-                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-400 dark:border-emerald-600 text-emerald-950 dark:text-emerald-100 font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900 cursor-pointer shadow-xs transition-colors"
+                        class={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border font-bold cursor-pointer shadow-xs transition-colors ${
+                          theme() === 'sepia'
+                            ? 'bg-[#EBF3EC] border-[#A2CCA6] text-[#194324] hover:bg-[#DDEBDE]'
+                            : theme() === 'midnight'
+                            ? 'bg-emerald-950/50 border-emerald-700 text-emerald-200 hover:bg-emerald-900/60'
+                            : 'bg-emerald-50 border-emerald-300 text-emerald-900 hover:bg-emerald-100'
+                        }`}
                         onClick={(e) => {
                           e.stopPropagation();
                           playTTS(syn);
@@ -271,11 +348,19 @@ export default function TokenLensPopover() {
             </Show>
 
             {/* Simple Conversational Urdu Explanation */}
-            <div class="bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-200 dark:border-neutral-700 p-3 rounded-xl space-y-1">
-              <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 font-sans">
+            <div
+              class={`p-3 rounded-xl border space-y-1 ${
+                theme() === 'sepia'
+                  ? 'bg-[#F2EAE0] border-[#D9CEBA]'
+                  : theme() === 'midnight'
+                  ? 'bg-[#202229] border-neutral-700'
+                  : 'bg-neutral-50 border-neutral-200'
+              }`}
+            >
+              <div class="text-xs font-bold opacity-85 font-sans">
                 Simple Explanation in Conversational Urdu:
               </div>
-              <p dir="rtl" class="text-sm font-nastaliq font-bold leading-relaxed text-neutral-950 dark:text-neutral-50 text-right">
+              <p dir="rtl" class="text-sm font-nastaliq font-bold leading-relaxed text-right">
                 {analysis()!.urduSimpleExplanation}
               </p>
             </div>
@@ -283,15 +368,23 @@ export default function TokenLensPopover() {
             {/* Morphological Root Bridge & Cousins */}
             <Show when={analysis()!.arabicRoot || (analysis()!.familiarCousinsJson && analysis()!.familiarCousinsJson!.length > 0)}>
               <div class="space-y-1.5">
-                <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
+                <div class="text-xs font-bold opacity-85 flex items-center justify-between font-sans">
                   <span>Word Root Family: {analysis()!.arabicRoot ? `[${analysis()!.arabicRoot}]` : ''}</span>
-                  <span class="text-[11px] font-normal text-neutral-500">Related cousin words</span>
+                  <span class="text-[11px] font-normal opacity-70">Related cousin words</span>
                 </div>
                 <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
                   <Show when={analysis()!.familiarCousinsJson && analysis()!.familiarCousinsJson!.length > 0}>
                     <For each={analysis()!.familiarCousinsJson}>
                       {(cousin) => (
-                        <span class="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border-2 border-blue-300 dark:border-blue-700 text-blue-950 dark:text-blue-100 text-xs font-bold font-nastaliq shadow-xs">
+                        <span
+                          class={`px-2.5 py-1 rounded-lg border text-xs font-bold font-nastaliq shadow-xs ${
+                            theme() === 'sepia'
+                              ? 'bg-[#FDF3E7] border-[#E8C59A] text-[#8C4300]'
+                              : theme() === 'midnight'
+                              ? 'bg-blue-950/40 border-blue-800 text-blue-200'
+                              : 'bg-blue-50 border-blue-200 text-blue-900'
+                          }`}
+                        >
                           {cousin}
                         </span>
                       )}
@@ -303,11 +396,19 @@ export default function TokenLensPopover() {
 
             {/* Persian Izafat Construction Breakdown */}
             <Show when={analysis()!.izafatBreakdownUrdu}>
-              <div class="bg-purple-50 dark:bg-purple-950/40 border-2 border-purple-300 dark:border-purple-700 p-3 rounded-xl space-y-1">
-                <div class="text-xs font-bold text-purple-950 dark:text-purple-200 font-sans">
+              <div
+                class={`p-3 rounded-xl border space-y-1 ${
+                  theme() === 'sepia'
+                    ? 'bg-[#F6EFF8] border-[#D5BFE2] text-[#4A245C]'
+                    : theme() === 'midnight'
+                    ? 'bg-purple-950/40 border-purple-800 text-purple-200'
+                    : 'bg-purple-50 border-purple-200 text-purple-900'
+                }`}
+              >
+                <div class="text-xs font-bold font-sans">
                   Persian Izafat Relationship:
                 </div>
-                <p dir="rtl" class="text-xs font-nastaliq font-bold leading-relaxed text-purple-950 dark:text-purple-100 text-right">
+                <p dir="rtl" class="text-xs font-nastaliq font-bold leading-relaxed text-right">
                   {analysis()!.izafatBreakdownUrdu}
                 </p>
               </div>
@@ -317,21 +418,29 @@ export default function TokenLensPopover() {
 
         {/* TAP 3: Full Literary & Philosophical Gloss */}
         <Show when={tapLevel() >= 3}>
-          <div class="mt-4 pt-4 border-t-2 border-neutral-200 dark:border-neutral-800 space-y-3">
+          <div class="mt-4 pt-4 border-t border-black/10 dark:border-white/10 space-y-3">
             {/* English Contextual Gloss */}
-            <div class="text-left bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-300 dark:border-indigo-700 p-3.5 rounded-xl space-y-1">
-              <div class="text-xs font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider font-sans">
+            <div
+              class={`p-3.5 rounded-xl border space-y-1 text-left ${
+                theme() === 'sepia'
+                  ? 'bg-[#F1ECE3] border-[#CFC0AC]'
+                  : theme() === 'midnight'
+                  ? 'bg-[#1E222D] border-neutral-700'
+                  : 'bg-neutral-50 border-neutral-200'
+              }`}
+            >
+              <div class="text-xs font-bold uppercase tracking-wider font-sans opacity-70">
                 English Contextual Meaning:
               </div>
-              <p class="text-base font-bold text-neutral-950 dark:text-white font-sans">
+              <p class="text-base font-bold font-serif leading-snug">
                 {analysis()!.englishContextualGloss}
               </p>
               <Show when={analysis()!.literaryNuanceNote}>
-                <div class="w-full h-px bg-indigo-200 dark:bg-indigo-800 my-2" />
-                <div class="text-xs font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider font-sans">
+                <div class="w-full h-px bg-black/10 dark:bg-white/10 my-2" />
+                <div class="text-xs font-bold uppercase tracking-wider font-sans opacity-70">
                   Literary & Cultural Context:
                 </div>
-                <p class="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed font-sans mt-0.5">
+                <p class="text-xs leading-relaxed font-sans mt-0.5 opacity-90">
                   {analysis()!.literaryNuanceNote}
                 </p>
               </Show>
@@ -340,18 +449,24 @@ export default function TokenLensPopover() {
         </Show>
 
         {/* Footer Hint Button */}
-        <div class="mt-4 pt-3.5 border-t border-neutral-200 dark:border-neutral-800">
+        <div class="mt-4 pt-3.5 border-t border-black/10 dark:border-white/10">
           <Show
             when={tapLevel() < 3}
             fallback={
-              <div class="w-full text-center text-xs font-bold text-neutral-500 py-1 font-sans">
-                ✓ All 3 clues revealed • Tap another word or press Space to continue
+              <div class="w-full text-center text-xs font-bold opacity-60 py-1 font-sans">
+                ✓ All 3 clues revealed • Tap another word to decode
               </div>
             }
           >
             <button
               type="button"
-              class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 font-bold text-xs sm:text-sm transition-all cursor-pointer shadow-md active:scale-[0.99]"
+              class={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer shadow-md active:scale-[0.99] ${
+                theme() === 'sepia'
+                  ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
+                  : theme() === 'midnight'
+                  ? 'bg-white hover:bg-neutral-200 text-neutral-900'
+                  : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+              }`}
               onClick={(e) => {
                 e.stopPropagation();
                 advanceTapLevel();

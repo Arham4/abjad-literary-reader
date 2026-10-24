@@ -223,7 +223,10 @@ export const UrduLanguagePack: AbjadLanguagePack = {
       const surface = item.text;
       const endsWithZer = surface.endsWith('\u0650'); // Zer-e-Izafat
       const endsWithHehHamza = surface.endsWith('ۂ'); // e.g. خانۂ
-      const isHamzaIzafat = surface.endsWith('ئے') && surface.length > 2; // e.g. روئے
+      
+      // Verbal forms ending with 'ئے' must not be tagged as izafat
+      const nonIzafatVerbalForms = new Set(['ہوئے', 'گئے', 'آئے', 'لیئے', 'دیئے', 'چاہئے', 'ہوئی', 'ہوئے']);
+      const isHamzaIzafat = surface.endsWith('ئے') && surface.length > 2 && !nonIzafatVerbalForms.has(surface); // e.g. روئے زمین
 
       let normalized: string;
       let izafatGroupId: string | undefined;
@@ -260,14 +263,15 @@ export const UrduLanguagePack: AbjadLanguagePack = {
       tokenIndex++;
     }
 
-    // Pass 2: Propagate izafatGroupId to the following modifier word if previous had it
+    // Pass 2: Propagate izafatGroupId only from head to its immediate modifier word
     for (let i = 0; i < tokens.length; i++) {
       if (tokens[i].izafatGroupId && tokens[i].isWord) {
         const gid = tokens[i].izafatGroupId;
-        // Find next word token
+        // Find immediate next word token and attach to the pair
         for (let j = i + 1; j < tokens.length; j++) {
           if (tokens[j].isWord) {
             tokens[j].izafatGroupId = gid;
+            i = j; // Advance past the modifier so we don't cascade down the whole sentence
             break;
           }
         }

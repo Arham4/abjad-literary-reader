@@ -98,7 +98,31 @@ export const [scriptTradition, setScriptTradition] = createSignal<ScriptTraditio
 export const [fontSizePx, setFontSizePx] = createSignal<number>(
   typeof window !== 'undefined' && window.innerWidth < 640 ? 23 : 28
 );
-export const [theme, setTheme] = createSignal<'paper' | 'sepia' | 'midnight'>('paper');
+
+const initialTheme = (): 'paper' | 'sepia' | 'midnight' => {
+  if (typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    const qTheme = urlParams.get('theme');
+    if (qTheme === 'paper' || qTheme === 'sepia' || qTheme === 'midnight') {
+      return qTheme;
+    }
+    const saved = localStorage.getItem('abjad_theme');
+    if (saved === 'paper' || saved === 'sepia' || saved === 'midnight') {
+      return saved;
+    }
+  }
+  return 'sepia';
+};
+
+export const [theme, _setTheme] = createSignal<'paper' | 'sepia' | 'midnight'>(initialTheme());
+
+export function setTheme(t: 'paper' | 'sepia' | 'midnight') {
+  _setTheme(t);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('abjad_theme', t);
+  }
+}
+
 export const [showIzafatHighlights, setShowIzafatHighlights] = createSignal<boolean>(true);
 
 // 3-Tap Popover Interaction

@@ -36,7 +36,15 @@ export default function ReaderNavbar() {
         {/* Left: Brand & Story Title */}
         <div class="flex items-center gap-3 min-w-0">
           <div class="flex items-center gap-2 shrink-0">
-            <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-neutral-900 dark:bg-white flex items-center justify-center text-white dark:text-neutral-900 font-bold text-xs sm:text-sm font-nastaliq shadow-xs">
+            <span
+              class={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-bold text-xs sm:text-sm font-nastaliq shadow-xs ${
+                theme() === 'sepia'
+                  ? 'bg-[#3A2D23] text-[#FAF6EC]'
+                  : theme() === 'midnight'
+                  ? 'bg-white text-neutral-900'
+                  : 'bg-neutral-900 text-white'
+              }`}
+            >
               ابجد
             </span>
             <span class="font-serif font-bold text-sm tracking-wide hidden sm:inline">
@@ -50,7 +58,11 @@ export default function ReaderNavbar() {
           <div class="relative min-w-0">
             <select
               aria-label="Select Story"
-              class="appearance-none text-xs sm:text-sm font-medium py-1.5 pl-2.5 pr-7 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-neutral-800 dark:focus:ring-white cursor-pointer max-w-[155px] xs:max-w-[210px] sm:max-w-xs truncate transition-colors"
+              class={`appearance-none text-xs sm:text-sm font-medium py-1.5 pl-2.5 pr-7 rounded-lg border focus:outline-none cursor-pointer max-w-[155px] xs:max-w-[210px] sm:max-w-xs truncate transition-colors ${
+                theme() === 'sepia'
+                  ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border-[#D8CCBA] text-[#28201A]'
+                  : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
+              }`}
               value={activeStory()?.slug || ''}
               onChange={(e) => selectStory(e.currentTarget.value)}
             >
@@ -62,7 +74,7 @@ export default function ReaderNavbar() {
                 )}
               </For>
             </select>
-            <ChevronDown size={12} class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400" />
+            <ChevronDown size={12} class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />
           </div>
         </div>
 
@@ -72,10 +84,14 @@ export default function ReaderNavbar() {
           <button
             type="button"
             title="How to Use / Guided Tour"
-            class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 text-xs font-bold transition-colors cursor-pointer shadow-xs"
+            class={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer shadow-xs ${
+              theme() === 'sepia'
+                ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border-[#D8CCBA] text-[#28201A]'
+                : 'border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200'
+            }`}
             onClick={openTutorial}
           >
-            <HelpCircle size={14} class="shrink-0 text-neutral-900 dark:text-white" />
+            <HelpCircle size={14} class="shrink-0" />
             <span class="hidden md:inline">Guide</span>
           </button>
 
@@ -86,7 +102,11 @@ export default function ReaderNavbar() {
               title="Reading Appearance (Font, Theme, Script)"
               class={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-serif font-bold transition-all cursor-pointer ${
                 showAppearanceMenu()
-                  ? 'bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-neutral-900 dark:border-white shadow-xs'
+                  ? theme() === 'sepia'
+                    ? 'bg-[#3A2D23] text-[#FAF6EC] border-[#554233] shadow-xs'
+                    : 'bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-neutral-900 dark:border-white shadow-xs'
+                  : theme() === 'sepia'
+                  ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border-[#D8CCBA] text-[#28201A]'
                   : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-neutral-700 dark:text-neutral-200'
               }`}
               onClick={() => setShowAppearanceMenu(!showAppearanceMenu())}
@@ -104,12 +124,18 @@ export default function ReaderNavbar() {
               />
 
               <div
-                class="absolute right-0 top-full mt-2 z-50 w-72 sm:w-80 p-4 rounded-2xl shadow-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#1A1C20] text-neutral-800 dark:text-neutral-200 space-y-4 animate-fadeIn"
+                class={`absolute right-0 top-full mt-2 z-50 w-72 sm:w-80 p-4 rounded-2xl shadow-2xl border space-y-4 animate-fadeIn ${
+                  theme() === 'sepia'
+                    ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#28201A] shadow-[0_15px_35px_-5px_rgba(45,30,15,0.2)]'
+                    : theme() === 'midnight'
+                    ? 'bg-[#1A1C20] border-neutral-700 text-neutral-200'
+                    : 'bg-white border-black/10 text-neutral-800'
+                }`}
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Header */}
                 <div class="flex items-center justify-between pb-2 border-b border-black/10 dark:border-white/10">
-                  <span class="font-serif font-bold text-xs uppercase tracking-wider text-neutral-400">
+                  <span class="font-serif font-bold text-xs uppercase tracking-wider opacity-60">
                     Reading Appearance
                   </span>
                   <span class="text-[10px] text-amber-600 font-medium">Auto-saved</span>
@@ -260,12 +286,26 @@ export default function ReaderNavbar() {
           <button
             type="button"
             title="Vocabulary Vault"
-            class="flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-bold transition-colors shadow-xs cursor-pointer"
+            class={`flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 ${
+              theme() === 'sepia'
+                ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
+                : theme() === 'midnight'
+                ? 'bg-white hover:bg-neutral-200 text-neutral-900'
+                : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+            }`}
             onClick={openVault}
           >
             <BookMarked size={14} class="shrink-0" />
             <span class="hidden sm:inline">Vault</span>
-            <span class="px-1.5 py-0.2 rounded-full bg-neutral-700 dark:bg-neutral-200 text-white dark:text-neutral-900 text-[10px] font-mono font-bold">
+            <span
+              class={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
+                theme() === 'sepia'
+                  ? 'bg-[#524133] text-[#FAF6EC]'
+                  : theme() === 'midnight'
+                  ? 'bg-neutral-200 text-neutral-900'
+                  : 'bg-neutral-700 text-white'
+              }`}
+            >
               {vaultItems().length}
             </span>
           </button>
