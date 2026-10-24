@@ -13,8 +13,9 @@ import {
   setShowIzafatHighlights,
   openVault,
   vaultItems,
+  openTutorial,
 } from '../store/readerStore';
-import { BookMarked, Sun, Moon, Coffee, SlidersHorizontal, Check } from 'lucide-solid';
+import { BookMarked, Sun, Moon, Coffee, SlidersHorizontal, Check, HelpCircle } from 'lucide-solid';
 
 export default function ReaderNavbar() {
   const [showMobileSettings, setShowMobileSettings] = createSignal(false);
@@ -172,15 +173,26 @@ export default function ReaderNavbar() {
             <SlidersHorizontal size={15} />
           </button>
 
+          {/* How It Works / Tutorial Button */}
+          <button
+            type="button"
+            title="How to Use / Guided Tour"
+            class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg border border-amber-600/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 text-xs sm:text-sm font-medium transition-colors cursor-pointer"
+            onClick={openTutorial}
+          >
+            <HelpCircle size={14} class="shrink-0" />
+            <span class="hidden sm:inline">How to Use</span>
+          </button>
+
           {/* Vocabulary Vault Button */}
           <button
             type="button"
-            title="ذخیرہ الفاظ (Vocabulary Vault)"
+            title="Vocabulary Vault (ذخیرہ الفاظ)"
             class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-medium transition-colors shadow-xs cursor-pointer"
             onClick={openVault}
           >
             <BookMarked size={14} class="shrink-0" />
-            <span class="hidden sm:inline">لغت</span>
+            <span class="hidden sm:inline">Vault</span>
             <span class="px-1.5 py-0.2 rounded-full bg-black/20 text-[10px] font-mono">
               {vaultItems().length}
             </span>

@@ -126,7 +126,7 @@ export default function TokenLensPopover() {
         <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-black/10 dark:border-white/10 select-none">
           <div class="flex items-center gap-1.5 min-w-0">
             <span
-              class={`px-2 py-0.5 rounded-full text-[11px] font-semibold shrink-0 ${
+              class={`px-2 py-0.5 rounded-full text-[11px] font-bold shrink-0 ${
                 tapLevel() === 1
                   ? 'bg-amber-600 text-white'
                   : tapLevel() === 2
@@ -134,12 +134,12 @@ export default function TokenLensPopover() {
                   : 'bg-indigo-600 text-white'
               }`}
             >
-              اشارہ {tapLevel()} از ۳
+              Clue {tapLevel()} of 3
             </span>
             <span class="text-[11px] text-neutral-500 font-medium truncate">
-              {tapLevel() === 1 && 'صوتی و بصری اعراب'}
-              {tapLevel() === 2 && 'بول چال و مادہ'}
-              {tapLevel() === 3 && 'ادبی و تفصیلی مفہوم'}
+              {tapLevel() === 1 && 'Sound It Out (Zero Spoilers)'}
+              {tapLevel() === 2 && 'Spoken Urdu Bridge (Rozmarra)'}
+              {tapLevel() === 3 && 'English Meaning & Literary Nuance'}
             </span>
           </div>
 
@@ -147,7 +147,7 @@ export default function TokenLensPopover() {
             {/* Audio button */}
             <button
               type="button"
-              title="تلفظ سنیں (Listen)"
+              title="Listen to word pronunciation"
               class="p-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 transition-colors cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
@@ -160,7 +160,7 @@ export default function TokenLensPopover() {
             {/* Close button */}
             <button
               type="button"
-              title="بند کریں (Close)"
+              title="Close (Esc)"
               class="p-1.5 rounded-lg hover:bg-neutral-500/15 text-neutral-500 transition-colors cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
@@ -184,13 +184,19 @@ export default function TokenLensPopover() {
             >
               {analysis()!.vocalizedForm}
             </div>
-            <div class="text-[11px] text-neutral-400 mt-1">تلفظ مع حرکات و اعراب</div>
+            <div class="text-[11px] text-neutral-400 mt-1 flex items-center justify-center gap-1 font-sans">
+              <span>Full Aeraab (تلفظ مع حرکات)</span>
+              <span>• Tap speaker to hear sound</span>
+            </div>
           </div>
 
           {/* Structured Vowel Pills (RTL flex row) */}
           <Show when={analysis()!.phoneticBreakdownJson.length > 0}>
             <div>
-              <div class="text-[11px] font-semibold text-neutral-400 mb-1.5 text-right">اعراب و صوتی اجزاء</div>
+              <div class="text-[11px] font-semibold text-neutral-400 mb-1.5 flex items-center justify-between font-sans">
+                <span>Vowel Marks (اعراب):</span>
+                <span class="text-[10px] opacity-75 font-mono">Pesh, Zer, Zabar</span>
+              </div>
               <div dir="rtl" class="flex flex-wrap gap-1 sm:gap-1.5 justify-start">
                 <For each={analysis()!.phoneticBreakdownJson}>
                   {(pill) => (
@@ -209,7 +215,10 @@ export default function TokenLensPopover() {
           {/* Grapheme Decomposer Bar */}
           <Show when={analysis()!.graphemesJson.length > 0}>
             <div>
-              <div class="text-[11px] font-semibold text-neutral-400 mb-1.5 text-right">حروف و مرکب آوازیں</div>
+              <div class="text-[11px] font-semibold text-neutral-400 mb-1.5 flex items-center justify-between font-sans">
+                <span>Letter-by-Letter Breakdown (حروف):</span>
+                <span class="text-[10px] opacity-75">Connects letters to sounds</span>
+              </div>
               <div dir="rtl" class="flex flex-wrap gap-1 sm:gap-1.5 justify-start">
                 <For each={analysis()!.graphemesJson}>
                   {(g) => (
@@ -221,7 +230,7 @@ export default function TokenLensPopover() {
                       }`}
                     >
                       <span class="text-sm sm:text-base font-nastaliq leading-none">{g.raw}</span>
-                      <span class="text-[8px] sm:text-[9px] text-neutral-500 mt-0.5 truncate max-w-[55px]">{g.name}</span>
+                      <span class="text-[8px] sm:text-[9px] text-neutral-500 mt-0.5 truncate max-w-[55px] font-nastaliq">{g.name}</span>
                     </div>
                   )}
                 </For>
@@ -235,9 +244,12 @@ export default function TokenLensPopover() {
           <div class="mt-3.5 pt-3.5 border-t border-black/10 dark:border-white/10 space-y-3">
             {/* Rozmarra Everyday Urdu Synonyms */}
             <Show when={analysis()!.spokenUrduSynonymsJson.length > 0}>
-              <div dir="rtl" class="text-right">
-                <div class="text-[11px] font-semibold text-neutral-400 mb-1">روزمرہ بول چال کے مترادفات:</div>
-                <div class="flex flex-wrap gap-1.5 justify-start">
+              <div>
+                <div class="text-[11px] font-semibold text-neutral-400 mb-1 flex items-center justify-between font-sans">
+                  <span>Everyday Spoken Equivalent (Rozmarra):</span>
+                  <span class="text-[10px] opacity-75">Words you say at home</span>
+                </div>
+                <div dir="rtl" class="flex flex-wrap gap-1.5 justify-start">
                   <For each={analysis()!.spokenUrduSynonymsJson}>
                     {(syn) => (
                       <button
@@ -258,21 +270,24 @@ export default function TokenLensPopover() {
             </Show>
 
             {/* Simple Conversational Urdu Explanation */}
-            <div dir="rtl" class="text-right bg-black/5 dark:bg-white/5 p-2.5 rounded-lg">
-              <div class="text-[11px] font-semibold text-neutral-400 mb-0.5">آسان اردو وضاحت:</div>
-              <p class="text-xs sm:text-sm font-nastaliq leading-relaxed text-neutral-800 dark:text-neutral-200">
+            <div class="bg-black/5 dark:bg-white/5 p-2.5 rounded-lg">
+              <div class="text-[11px] font-semibold text-neutral-400 mb-0.5 font-sans">
+                Simple Explanation in Conversational Urdu:
+              </div>
+              <p dir="rtl" class="text-xs sm:text-sm font-nastaliq leading-relaxed text-neutral-800 dark:text-neutral-200 text-right">
                 {analysis()!.urduSimpleExplanation}
               </p>
             </div>
 
             {/* Morphological Root Bridge & Cousins */}
             <Show when={analysis()!.arabicRoot || (analysis()!.familiarCousinsJson && analysis()!.familiarCousinsJson!.length > 0)}>
-              <div dir="rtl" class="text-right">
-                <div class="text-[11px] font-semibold text-neutral-400 mb-1">
-                  اشتقاق و مادہ {analysis()!.arabicRoot ? `(مادہ: ${analysis()!.arabicRoot})` : ''}:
+              <div>
+                <div class="text-[11px] font-semibold text-neutral-400 mb-1 flex items-center justify-between font-sans">
+                  <span>Word Root Family (مادہ): {analysis()!.arabicRoot ? `[${analysis()!.arabicRoot}]` : ''}</span>
+                  <span class="text-[10px] opacity-75">Familiar cousins</span>
                 </div>
-                <Show when={analysis()!.familiarCousinsJson && analysis()!.familiarCousinsJson!.length > 0}>
-                  <div class="flex flex-wrap gap-1.5 justify-start">
+                <div dir="rtl" class="flex flex-wrap gap-1.5 justify-start">
+                  <Show when={analysis()!.familiarCousinsJson && analysis()!.familiarCousinsJson!.length > 0}>
                     <For each={analysis()!.familiarCousinsJson}>
                       {(cousin) => (
                         <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-nastaliq">
@@ -280,16 +295,18 @@ export default function TokenLensPopover() {
                         </span>
                       )}
                     </For>
-                  </div>
-                </Show>
+                  </Show>
+                </div>
               </div>
             </Show>
 
             {/* Persian Izafat Construction Breakdown */}
             <Show when={analysis()!.izafatBreakdownUrdu}>
-              <div dir="rtl" class="text-right bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-lg">
-                <div class="text-[11px] font-semibold text-amber-700 dark:text-amber-400 mb-0.5">ترکیبِ اضافت:</div>
-                <p class="text-xs font-nastaliq leading-relaxed text-amber-900 dark:text-amber-200">
+              <div class="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-lg">
+                <div class="text-[11px] font-semibold text-amber-700 dark:text-amber-400 mb-0.5 font-sans">
+                  Persian Izafat Relationship (ترکیبِ اضافت):
+                </div>
+                <p dir="rtl" class="text-xs font-nastaliq leading-relaxed text-amber-900 dark:text-amber-200 text-right">
                   {analysis()!.izafatBreakdownUrdu}
                 </p>
               </div>
@@ -302,7 +319,7 @@ export default function TokenLensPopover() {
           <div class="mt-3.5 pt-3.5 border-t border-black/10 dark:border-white/10 space-y-3">
             {/* English Contextual Gloss */}
             <div class="text-left">
-              <div class="text-[11px] font-semibold text-neutral-400 mb-1 uppercase tracking-wide">
+              <div class="text-[11px] font-semibold text-neutral-400 mb-1 uppercase tracking-wider font-sans">
                 English Contextual Meaning:
               </div>
               <p class="text-xs sm:text-sm font-semibold text-indigo-700 dark:text-indigo-300">
@@ -313,8 +330,8 @@ export default function TokenLensPopover() {
             {/* Literary Nuance Note */}
             <Show when={analysis()!.literaryNuanceNote}>
               <div class="text-left bg-indigo-500/10 border border-indigo-500/20 p-2.5 rounded-lg">
-                <div class="text-[11px] font-semibold text-indigo-700 dark:text-indigo-400 mb-0.5 uppercase tracking-wide">
-                  Literary Nuance & Context:
+                <div class="text-[11px] font-semibold text-indigo-700 dark:text-indigo-400 mb-0.5 uppercase tracking-wider font-sans">
+                  Literary & Cultural Context:
                 </div>
                 <p class="text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed font-sans">
                   {analysis()!.literaryNuanceNote}
@@ -329,21 +346,23 @@ export default function TokenLensPopover() {
           <Show
             when={tapLevel() < 3}
             fallback={
-              <div class="w-full text-center text-xs text-neutral-400 py-1">
-                مکمل تشریح کھل چکی ہے (Press Space or tap another word)
+              <div class="w-full text-center text-xs text-neutral-400 py-1 font-sans">
+                ✓ All 3 clues revealed • Tap another word or press Space to continue
               </div>
             }
           >
             <button
               type="button"
-              class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs sm:text-sm transition-colors cursor-pointer shadow-xs active:scale-[0.99]"
+              class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs sm:text-sm transition-colors cursor-pointer shadow-xs active:scale-[0.99]"
               onClick={(e) => {
                 e.stopPropagation();
                 advanceTapLevel();
               }}
             >
-              <span>اگلا اشارہ (Next Hint)</span>
-              <ChevronLeft size={16} />
+              <span>
+                {tapLevel() === 1 && 'Next Clue: Show Spoken Bridge (Tap 2) →'}
+                {tapLevel() === 2 && 'Next Clue: Show English Meaning (Tap 3) →'}
+              </span>
             </button>
           </Show>
         </div>

@@ -115,6 +115,20 @@ let simulatedAudioTimer: any = null;
 export const [isVaultOpen, setIsVaultOpen] = createSignal<boolean>(false);
 export const [vaultItems, setVaultItems] = createSignal<TelemetryItem[]>([]);
 
+// Tutorial / Walkthrough Modal
+export const [isTutorialOpen, setIsTutorialOpen] = createSignal<boolean>(false);
+
+export function openTutorial() {
+  setIsTutorialOpen(true);
+}
+
+export function closeTutorial() {
+  setIsTutorialOpen(false);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('abjad_tutorial_seen', 'true');
+  }
+}
+
 // -------------------------------------------------------------
 // Telemetry Flush
 // -------------------------------------------------------------

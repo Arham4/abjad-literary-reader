@@ -31,12 +31,12 @@ export default function VocabularyVault() {
   const getTierBadge = (level: number) => {
     switch (level) {
       case 1:
-        return { label: 'صرف ہجے و آواز', color: 'bg-amber-500/15 text-amber-700 dark:text-amber-300' };
+        return { label: 'Tap 1: Sound Out', color: 'bg-amber-500/15 text-amber-700 dark:text-amber-300' };
       case 2:
-        return { label: 'اردو پل و مادہ', color: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' };
+        return { label: 'Tap 2: Spoken Bridge', color: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' };
       case 3:
       default:
-        return { label: 'مکمل ادبی مفہوم', color: 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300' };
+        return { label: 'Tap 3: Full Gloss', color: 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300' };
     }
   };
 
@@ -69,13 +69,13 @@ export default function VocabularyVault() {
               <BookMarked size={18} />
             </div>
             <div>
-              <h2 class="text-base font-bold tracking-tight">ذخیرہ الفاظ (Vocabulary Vault)</h2>
-              <p class="text-xs text-neutral-500">آپ کے زیرِ مطالعہ آنے والے الفاظ کی تاریخی یادداشت</p>
+              <h2 class="text-base font-bold tracking-tight">Vocabulary Vault (ذخیرہ الفاظ)</h2>
+              <p class="text-xs text-neutral-500">Words you've looked up while reading</p>
             </div>
           </div>
           <button
             type="button"
-            title="بند کریں (Close)"
+            title="Close Vault (بند کریں)"
             class="p-2 rounded-lg hover:bg-neutral-500/10 text-neutral-500 transition-colors cursor-pointer"
             onClick={closeVault}
           >
@@ -90,7 +90,7 @@ export default function VocabularyVault() {
             <Search size={14} class="absolute left-3 top-3 text-neutral-400" />
             <input
               type="text"
-              placeholder="تلاش کریں (Search word)..."
+              placeholder="Search words (تلاش کریں)..."
               class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 focus:outline-none focus:ring-2 focus:ring-amber-500"
               value={searchQuery()}
               onInput={(e) => setSearchQuery(e.currentTarget.value)}
@@ -101,47 +101,47 @@ export default function VocabularyVault() {
           <div class="flex items-center gap-1 overflow-x-auto text-xs pb-1">
             <button
               type="button"
-              class={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              class={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
                 selectedTier() === 'all'
                   ? 'bg-amber-600 text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
               }`}
               onClick={() => setSelectedTier('all')}
             >
-              تمام ({vaultItems().length})
+              All ({vaultItems().length})
             </button>
             <button
               type="button"
-              class={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              class={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
                 selectedTier() === 1
                   ? 'bg-amber-600 text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
               }`}
               onClick={() => setSelectedTier(1)}
             >
-              ہجے (Lvl 1)
+              Tap 1: Sound Out
             </button>
             <button
               type="button"
-              class={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              class={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
                 selectedTier() === 2
                   ? 'bg-emerald-600 text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
               }`}
               onClick={() => setSelectedTier(2)}
             >
-              اردو پل (Lvl 2)
+              Tap 2: Spoken Bridge
             </button>
             <button
               type="button"
-              class={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              class={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
                 selectedTier() === 3
                   ? 'bg-indigo-600 text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
               }`}
               onClick={() => setSelectedTier(3)}
             >
-              مکمل معنی (Lvl 3)
+              Tap 3: Full Gloss
             </button>
           </div>
         </div>
@@ -153,8 +153,10 @@ export default function VocabularyVault() {
             fallback={
               <div class="text-center py-12 text-neutral-400 space-y-2">
                 <Sparkles size={28} class="mx-auto opacity-40 text-amber-500" />
-                <p class="text-sm">کوئی لفظ نہیں ملا۔</p>
-                <p class="text-xs opacity-75">متن میں کسی بھی لفظ پر کلک کریں تاکہ وہ یہاں محفوظ ہو جائے۔</p>
+                <p class="text-sm font-medium">No words saved yet</p>
+                <p class="text-xs opacity-75 max-w-xs mx-auto">
+                  Tap any word in the text while reading to decode it and add it to your personal vault.
+                </p>
               </div>
             }
           >
@@ -167,7 +169,7 @@ export default function VocabularyVault() {
                     <div class="flex items-start gap-3 flex-1 min-w-0">
                       <button
                         type="button"
-                        title="تلفظ سنیں"
+                        title="Listen to pronunciation"
                         class="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 transition-colors cursor-pointer shrink-0 mt-1"
                         onClick={() => playTTS(item.vocalizedSurface)}
                       >
@@ -187,7 +189,7 @@ export default function VocabularyVault() {
                         </Show>
                         <Show when={item.arabicRoot}>
                           <div class="text-[10px] text-blue-600 dark:text-blue-400 mt-0.5">
-                            مادہ: {item.arabicRoot}
+                            Root (مادہ): {item.arabicRoot}
                           </div>
                         </Show>
                       </div>
@@ -199,7 +201,7 @@ export default function VocabularyVault() {
                         {badge.label}
                       </span>
                       <span class="text-[10px] text-neutral-500 font-mono">
-                        {item.lookupCount} بار دیکھا گیا
+                        {item.lookupCount} {item.lookupCount === 1 ? 'lookup' : 'lookups'}
                       </span>
                     </div>
                   </div>

@@ -58,7 +58,7 @@ export default function AudioBar() {
               when={currentSentence()}
               fallback={
                 <span class="text-neutral-400 font-sans text-[11px] sm:text-xs">
-                  صوتی مطالعہ (Play narration)
+                  Tap Play to listen to sentence narration (صوتی قرأت)
                 </span>
               }
             >
@@ -83,14 +83,14 @@ export default function AudioBar() {
 
           <button
             type="button"
-            title={isPlaying() ? 'Pause' : 'Play Narration'}
+            title={isPlaying() ? 'Pause Narration' : 'Play Sentence Narration'}
             class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs flex items-center gap-1 transition-colors shadow-xs cursor-pointer active:scale-95"
             onClick={toggleAudio}
           >
             <Show when={isPlaying()} fallback={<Play size={13} />}>
               <Pause size={13} />
             </Show>
-            <span>{isPlaying() ? 'وقفہ' : 'قرأت'}</span>
+            <span>{isPlaying() ? 'Pause' : 'Play Narration'}</span>
           </button>
 
           <button

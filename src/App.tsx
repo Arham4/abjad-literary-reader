@@ -4,6 +4,7 @@ import ReaderSurface from './components/ReaderSurface';
 import TokenLensPopover from './components/TokenLensPopover';
 import AudioBar from './components/AudioBar';
 import VocabularyVault from './components/VocabularyVault';
+import TutorialModal from './components/TutorialModal';
 import {
   theme,
   activeStory,
@@ -16,6 +17,7 @@ import {
   isVaultOpen,
   scriptTradition,
   toastMessage,
+  openTutorial,
 } from './store/readerStore';
 import { X, Sparkles } from 'lucide-solid';
 
@@ -25,6 +27,11 @@ export default function App() {
   onMount(() => {
     loadStories();
     loadVault();
+
+    // First time visitor onboarding
+    if (!localStorage.getItem('abjad_tutorial_seen')) {
+      openTutorial();
+    }
 
     // Global keyboard listener for Escape
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
@@ -50,12 +57,12 @@ export default function App() {
   const getLevelLabel = (lvl: number) => {
     switch (lvl) {
       case 1:
-        return 'درجہ ۱ (ابتدائی)';
+        return 'Level 1: Novice (درجہ ۱)';
       case 2:
-        return 'درجہ ۲ (ادبی / Literary)';
+        return 'Level 2: Literary (درجہ ۲ - ادبی)';
       case 3:
       default:
-        return 'درجہ ۳ (اعلیٰ کلاسیکی)';
+        return 'Level 3: Classical Masterpiece (درجہ ۳ - کلاسیکی)';
     }
   };
 
@@ -105,10 +112,10 @@ export default function App() {
           {/* Reading Instructions / Pedagogical Note (Dismissible on Mobile) */}
           <Show when={showTip()}>
             <div class="mb-4 sm:mb-6 p-2.5 sm:p-3.5 rounded-xl border border-amber-500/25 bg-amber-500/5 text-[11px] sm:text-xs text-neutral-600 dark:text-neutral-400 flex items-center justify-between gap-2 transition-all">
-              <div class="flex items-center gap-1.5 min-w-0">
-                <span class="text-amber-600 font-bold shrink-0">💡 ۳ اشارات:</span>
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="text-amber-600 font-bold shrink-0">💡 3 Gradual Clues:</span>
                 <span class="truncate sm:whitespace-normal">
-                  کلک ۱: اعراب و ہجے • کلک ۲: اردو پل • کلک ۳: انگریزی معنی
+                  Tap any word to sound it out. Click repeatedly to uncover clues: <strong>1: Diacritics</strong> → <strong>2: Spoken Bridge</strong> → <strong>3: English Gloss</strong>
                 </span>
               </div>
               <button
@@ -143,6 +150,9 @@ export default function App() {
 
       {/* Vocabulary Vault Slide-Over Drawer */}
       <VocabularyVault />
+
+      {/* Interactive Onboarding Walkthrough */}
+      <TutorialModal />
     </div>
   );
 }
