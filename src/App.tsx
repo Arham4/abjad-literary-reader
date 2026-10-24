@@ -5,6 +5,7 @@ import TokenLensPopover from './components/TokenLensPopover';
 import AudioBar from './components/AudioBar';
 import VocabularyVault from './components/VocabularyVault';
 import TutorialModal from './components/TutorialModal';
+import VoiceSettingsModal from './components/VoiceSettingsModal';
 import {
   theme,
   activeStory,
@@ -23,6 +24,7 @@ import {
   scriptTradition,
   toastMessage,
   openTutorial,
+  openVoiceSettings,
   allStorySentences,
   playSentence,
 } from './store/readerStore';
@@ -62,13 +64,16 @@ export default function App() {
   };
 
   onMount(async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('voiceSettings')) {
+      openVoiceSettings();
+    }
+
     await loadStories();
     loadVault();
 
-    const urlParams = new URLSearchParams(window.location.search);
-
     // First time visitor onboarding
-    if (!localStorage.getItem('abjad_tutorial_seen') && !urlParams.has('notutorial')) {
+    if (!localStorage.getItem('abjad_tutorial_seen') && !urlParams.has('notutorial') && !urlParams.has('voiceSettings')) {
       openTutorial();
     }
 
@@ -324,6 +329,9 @@ export default function App() {
 
       {/* Interactive Onboarding Walkthrough */}
       <TutorialModal />
+
+      {/* Urdu Voice & Narrator Settings Modal */}
+      <VoiceSettingsModal />
     </div>
   );
 }

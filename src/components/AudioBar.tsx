@@ -6,8 +6,10 @@ import {
   playSentence,
   toggleAudio,
   theme,
+  openVoiceSettings,
+  ttsVoice,
 } from '../store/readerStore';
-import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-solid';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Mic } from 'lucide-solid';
 
 export default function AudioBar() {
   const activeS = () => currentSentence();
@@ -110,6 +112,35 @@ export default function AudioBar() {
             onClick={handleNext}
           >
             <SkipForward size={14} />
+          </button>
+
+          <div class="h-4 w-px bg-black/10 dark:bg-white/10 mx-0.5 shrink-0" />
+
+          {/* Voice Selector Quick Pill */}
+          <button
+            type="button"
+            title="Urdu Voice & Narrator Settings (آواز اور راوی)"
+            onClick={openVoiceSettings}
+            class={`flex items-center gap-1.5 px-2 py-1 rounded-lg border text-xs font-semibold transition-all cursor-pointer shadow-xs active:scale-95 shrink-0 ${
+              theme() === 'sepia'
+                ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border-[#D8CCBA] text-[#28201A]'
+                : theme() === 'midnight'
+                ? 'bg-[#1E2026] hover:bg-[#282B33] border-neutral-700 text-[#E7E2D8]'
+                : 'bg-white hover:bg-neutral-100 border-neutral-200 text-neutral-800'
+            }`}
+          >
+            <Mic size={12} class="shrink-0" />
+            <span class="font-nastaliq text-xs font-bold leading-none inline" dir="rtl">
+              {ttsVoice() === 'ur-asad'
+                ? 'اسد'
+                : ttsVoice() === 'ur-uzma'
+                ? 'عظمیٰ'
+                : ttsVoice() === 'ur-salman'
+                ? 'سلمان'
+                : ttsVoice() === 'ur-gul'
+                ? 'گُل'
+                : 'آواز'}
+            </span>
           </button>
 
           <Show when={activeS() && sentencesList().length > 0}>

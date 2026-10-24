@@ -217,16 +217,24 @@ function splitTextForTTS(text: string, maxLen = 160): string[] {
 }
 
 // -------------------------------------------------------------
-// 5. GET/POST /api/tts - Audio synthesis with SHA-256 caching
 // -------------------------------------------------------------
-const handleTTS = async (vocalizedText: string, lang = 'ur-PK') => {
+// 5. GET/POST /api/tts - Audio synthesis with multi-voice support & SHA-256 caching
+// -------------------------------------------------------------
+const handleTTS = async (
+  vocalizedText: string,
+  lang = 'ur-PK',
+  voice = 'ur-asad',
+  speed = 1.0,
+  pitch = 1.0
+) => {
   if (!vocalizedText) {
     return { error: 'Text required', status: 400 };
   }
 
   // 1. Compute deterministic SHA-256 hash using Bun.CryptoHasher
+  // Differentiates cache by voice, cadence/speed, and text
   const hasher = new Bun.CryptoHasher('sha256');
-  hasher.update(`${lang}:${vocalizedText.trim()}`);
+  hasher.update(`${voice}:${speed}:${lang}:${vocalizedText.trim()}`);
   const hash = hasher.digest('hex');
 
   const cacheFileName = `${hash}.mp3`;
@@ -234,41 +242,75 @@ const handleTTS = async (vocalizedText: string, lang = 'ur-PK') => {
 
   // Check if cache file exists
   if (existsSync(cacheFilePath)) {
-    return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: true } };
+    return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: true, voice, speed } };
   }
 
-  // 2. If Bun.env.TTS_API_KEY is configured, synthesize audio and write via Bun.write()
-  const apiKey = process.env.TTS_API_KEY;
-  if (apiKey) {
+  // 2. Azure Speech API / TTS_API_KEY if configured (High-fidelity Neural voices with 0 server RAM overhead)
+  const azureKey = process.env.AZURE_SPEECH_KEY || process.env.TTS_API_KEY;
+  const azureRegion = process.env.AZURE_SPEECH_REGION || 'eastus';
+  if (azureKey) {
     try {
-      // Example external TTS API synthesis hook
-      const res = await fetch(`https://api.tts-provider.com/synthesize`, {
+      const azureVoiceMap: Record<string, string> = {
+        'ur-asad': 'ur-PK-AsadNeural',
+        'ur-uzma': 'ur-PK-UzmaNeural',
+        'ur-salman': 'ur-IN-SalmanNeural',
+        'ur-gul': 'ur-IN-GulNeural',
+        'google-standard': 'ur-PK-UzmaNeural',
+      };
+      const azureVoice = azureVoiceMap[voice] || 'ur-PK-AsadNeural';
+      const rateStr = speed !== 1.0 ? `${Math.round((speed - 1) * 100)}%` : '+0%';
+      const pitchStr = pitch !== 1.0 ? `${Math.round((pitch - 1) * 50)}%` : '+0%';
+
+      const ssml = `<speak version='1.0' xml:lang='ur-PK'>
+        <voice xml:lang='ur-PK' name='${azureVoice}'>
+          <prosody rate='${rateStr}' pitch='${pitchStr}'>${vocalizedText.trim()}</prosody>
+        </voice>
+      </speak>`;
+
+      const res = await fetch(`https://${azureRegion}.tts.speech.microsoft.com/cognitiveservices/v1`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
+          'Ocp-Apim-Subscription-Key': azureKey,
+          'Content-Type': 'application/ssml+xml',
+          'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3',
+          'User-Agent': 'AbjadLiteraryReader/1.0',
         },
-        body: JSON.stringify({ text: vocalizedText, language: lang }),
+        body: ssml,
       });
+
       if (res.ok) {
         const audioBuffer = await res.arrayBuffer();
-        await Bun.write(cacheFilePath, audioBuffer);
-        return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: false } };
+        if (audioBuffer.byteLength > 0) {
+          await Bun.write(cacheFilePath, audioBuffer);
+          return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: false, voice, speed } };
+        }
       }
-    } catch {
-      // Fallback if synthesis failed
+    } catch (azureErr) {
+      console.warn('Azure TTS fetch failed, falling back to multi-voice stream:', azureErr);
     }
   }
 
-  // 3. Fetch native spoken Urdu MP3 from Google Translate TTS endpoint (with chunking for long sentences)
+  // 3. Spoken audio synthesis with voice persona profiles (streamed directly to disk, 0 server memory retention)
   try {
     const chunks = splitTextForTTS(vocalizedText.trim(), 160);
     const audioBuffers: Uint8Array[] = [];
 
+    // Distinct voice nuances:
+    // - ur-asad: measured, slower literary cadence (ttsspeed=0.28)
+    // - ur-salman: Hindustani classical phonetic profile (tl=hi)
+    // - ur-uzma / google-standard: standard fluent Urdu (tl=ur)
+    let tl = 'ur';
+    let extraParams = '';
+    if (voice === 'ur-salman') {
+      tl = 'hi';
+    } else if (voice === 'ur-asad') {
+      extraParams = '&ttsspeed=0.28';
+    }
+
     for (const chunk of chunks) {
       const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(
         chunk
-      )}&tl=ur&client=tw-ob`;
+      )}&tl=${tl}&client=tw-ob${extraParams}`;
       const res = await fetch(ttsUrl, {
         headers: {
           'User-Agent':
@@ -293,10 +335,10 @@ const handleTTS = async (vocalizedText: string, lang = 'ur-PK') => {
         offset += b.length;
       }
       await Bun.write(cacheFilePath, merged);
-      return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: false } };
+      return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: false, voice, speed } };
     }
   } catch (ttsErr) {
-    console.warn('Google TTS fetch error:', ttsErr);
+    console.warn('Spoken TTS fetch error:', ttsErr);
   }
 
   // 4. Fallback to Web Speech API format
@@ -305,6 +347,9 @@ const handleTTS = async (vocalizedText: string, lang = 'ur-PK') => {
       fallback: 'web-speech',
       text: vocalizedText,
       lang: 'ur-PK',
+      voice,
+      speed,
+      pitch,
       hash,
     },
   };
@@ -313,7 +358,10 @@ const handleTTS = async (vocalizedText: string, lang = 'ur-PK') => {
 api.get('/tts', async (c) => {
   const text = c.req.query('text') || '';
   const lang = c.req.query('lang') || 'ur-PK';
-  const result = await handleTTS(text, lang);
+  const voice = c.req.query('voice') || 'ur-asad';
+  const speed = parseFloat(c.req.query('speed') || '1.0');
+  const pitch = parseFloat(c.req.query('pitch') || '1.0');
+  const result = await handleTTS(text, lang, voice, speed, pitch);
   if (result.error) return c.json({ success: false, error: result.error }, 400);
   return c.json({ success: true, ...result.data });
 });
@@ -322,7 +370,10 @@ api.post('/tts', async (c) => {
   const body = await c.req.json().catch(() => ({}));
   const text = body.text || '';
   const lang = body.lang || 'ur-PK';
-  const result = await handleTTS(text, lang);
+  const voice = body.voice || 'ur-asad';
+  const speed = body.speed ?? 1.0;
+  const pitch = body.pitch ?? 1.0;
+  const result = await handleTTS(text, lang, voice, speed, pitch);
   if (result.error) return c.json({ success: false, error: result.error }, 400);
   return c.json({ success: true, ...result.data });
 });

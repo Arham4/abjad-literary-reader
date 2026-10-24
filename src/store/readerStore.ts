@@ -269,42 +269,288 @@ export function closeTokenLens() {
 }
 
 // -------------------------------------------------------------
-// Audio Synthesis (TTS)
+// Audio Synthesis (TTS) - Multi-Voice Persona & Zero-RAM Engine
 // -------------------------------------------------------------
-let currentAudioElement: HTMLAudioElement | null = null;
+export type VoicePersona = 'ur-asad' | 'ur-uzma' | 'ur-salman' | 'ur-gul' | 'google-standard';
+export type VoiceEngine = 'auto' | 'browser' | 'server';
 
-export async function playTTS(text: string): Promise<HTMLAudioElement | null> {
-  if (!text) return null;
+export interface VoiceOptionInfo {
+  id: VoicePersona;
+  nameUrdu: string;
+  nameEnglish: string;
+  role: string;
+  description: string;
+  gender: 'male' | 'female';
+  recommended?: boolean;
+}
 
-  // Stop currently playing audio if any
-  if (currentAudioElement) {
-    currentAudioElement.pause();
-    currentAudioElement = null;
+export const VOICE_OPTIONS: VoiceOptionInfo[] = [
+  {
+    id: 'ur-asad',
+    nameUrdu: 'اسد',
+    nameEnglish: 'Asad',
+    role: 'ادبی راوی (Literary Narrator)',
+    description: 'Deep, measured classical male cadence. Ideal for Saadat Hasan Manto.',
+    gender: 'male',
+    recommended: true,
+  },
+  {
+    id: 'ur-uzma',
+    nameUrdu: 'عظمیٰ',
+    nameEnglish: 'Uzma',
+    role: 'رواں راویہ (Natural Fluent)',
+    description: 'Natural, clear modern Pakistani female narration.',
+    gender: 'female',
+  },
+  {
+    id: 'ur-salman',
+    nameUrdu: 'سلمان',
+    nameEnglish: 'Salman',
+    role: 'کلاسیکی شائستہ (Classical Lucknow)',
+    description: 'Crisp, articulate classical male diction with poetic cadence.',
+    gender: 'male',
+  },
+  {
+    id: 'ur-gul',
+    nameUrdu: 'گُل',
+    nameEnglish: 'Gul',
+    role: 'نغمگی و اظہار (Expressive Melodic)',
+    description: 'Expressive and melodic female voice, ideal for poetic prose.',
+    gender: 'female',
+  },
+  {
+    id: 'google-standard',
+    nameUrdu: 'معیاری آواز',
+    nameEnglish: 'Standard Web',
+    role: 'عام آن لائن آواز (Standard Online)',
+    description: 'Standard baseline online speech pronunciation.',
+    gender: 'female',
+  },
+];
+
+const savedVoice = typeof localStorage !== 'undefined' ? (localStorage.getItem('abjad_tts_voice') as VoicePersona) : null;
+const savedEngine = typeof localStorage !== 'undefined' ? (localStorage.getItem('abjad_tts_engine') as VoiceEngine) : null;
+const savedRate = typeof localStorage !== 'undefined' ? parseFloat(localStorage.getItem('abjad_tts_rate') || '1.0') : 1.0;
+const savedPitch = typeof localStorage !== 'undefined' ? parseFloat(localStorage.getItem('abjad_tts_pitch') || '1.0') : 1.0;
+
+export const [ttsVoice, setTtsVoiceSignal] = createSignal<VoicePersona>(savedVoice || 'ur-asad');
+export const [ttsEngine, setTtsEngineSignal] = createSignal<VoiceEngine>(savedEngine || 'auto');
+export const [ttsRate, setTtsRateSignal] = createSignal<number>(savedRate);
+export const [ttsPitch, setTtsPitchSignal] = createSignal<number>(savedPitch);
+const initVoiceSettingsOpen = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).has('voiceSettings') : false;
+export const [isVoiceSettingsOpen, setIsVoiceSettingsOpen] = createSignal(initVoiceSettingsOpen);
+export const [isPreviewPlaying, setIsPreviewPlaying] = createSignal(false);
+export const [availableBrowserVoices, setAvailableBrowserVoices] = createSignal<SpeechSynthesisVoice[]>([]);
+
+export function setTtsVoice(v: VoicePersona) {
+  setTtsVoiceSignal(v);
+  if (typeof localStorage !== 'undefined') localStorage.setItem('abjad_tts_voice', v);
+}
+export function setTtsEngine(e: VoiceEngine) {
+  setTtsEngineSignal(e);
+  if (typeof localStorage !== 'undefined') localStorage.setItem('abjad_tts_engine', e);
+}
+export function setTtsRate(r: number) {
+  setTtsRateSignal(r);
+  if (typeof localStorage !== 'undefined') localStorage.setItem('abjad_tts_rate', r.toString());
+}
+export function setTtsPitch(p: number) {
+  setTtsPitchSignal(p);
+  if (typeof localStorage !== 'undefined') localStorage.setItem('abjad_tts_pitch', p.toString());
+}
+export function openVoiceSettings() {
+  setIsVoiceSettingsOpen(true);
+}
+export function closeVoiceSettings() {
+  setIsVoiceSettingsOpen(false);
+}
+
+// Populate browser voices when speech synthesis is ready
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  const updateVoices = () => {
+    const list = window.speechSynthesis.getVoices();
+    setAvailableBrowserVoices(list);
+  };
+  updateVoices();
+  window.speechSynthesis.onvoiceschanged = updateVoices;
+}
+
+function findBestBrowserVoice(persona: VoicePersona): SpeechSynthesisVoice | null {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+
+  const targetName = persona === 'ur-asad' ? 'asad' :
+                     persona === 'ur-uzma' ? 'uzma' :
+                     persona === 'ur-salman' ? 'salman' :
+                     persona === 'ur-gul' ? 'gul' : '';
+
+  // 1. Look for exact name match in Urdu voices (e.g. "Microsoft Asad Online (Natural)")
+  if (targetName) {
+    const namedMatch = voices.find(
+      (v) => (v.lang.startsWith('ur') || v.lang.startsWith('hi')) && v.name.toLowerCase().includes(targetName)
+    );
+    if (namedMatch) return namedMatch;
   }
 
+  // 2. Look for gender-matched Urdu voice
+  const isMale = persona === 'ur-asad' || persona === 'ur-salman';
+  const urduVoices = voices.filter((v) => v.lang.startsWith('ur'));
+  if (urduVoices.length > 0) {
+    if (isMale) {
+      const maleVoice = urduVoices.find((v) => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('asad') || v.name.toLowerCase().includes('salman'));
+      if (maleVoice) return maleVoice;
+    } else {
+      const femaleVoice = urduVoices.find((v) => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('uzma') || v.name.toLowerCase().includes('gul'));
+      if (femaleVoice) return femaleVoice;
+    }
+    return urduVoices[0];
+  }
+
+  // 3. Fallback to high-quality Hindi neural voice (identical phonology for literary Hindustani vocabulary)
+  const hindiVoices = voices.filter((v) => v.lang.startsWith('hi'));
+  if (hindiVoices.length > 0) {
+    if (isMale) {
+      const maleHindi = hindiVoices.find((v) => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('madhav') || v.name.toLowerCase().includes('hemant'));
+      if (maleHindi) return maleHindi;
+    } else {
+      const femaleHindi = hindiVoices.find((v) => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('swara') || v.name.toLowerCase().includes('kalpana'));
+      if (femaleHindi) return femaleHindi;
+    }
+    return hindiVoices[0];
+  }
+
+  return null;
+}
+
+export interface AudioPlaybackHandle {
+  pause: () => void;
+  onEnded: (cb: () => void) => void;
+  onError: (cb: () => void) => void;
+}
+
+let currentAudioElement: HTMLAudioElement | null = null;
+
+export async function playTTS(text: string): Promise<AudioPlaybackHandle | null> {
+  if (!text) return null;
+
+  // Stop currently playing audio or speech
+  stopAudio();
+
+  const voice = ttsVoice();
+  const engine = ttsEngine();
+  const rate = ttsRate();
+  const pitch = ttsPitch();
+
+  // If engine is 'browser' or 'auto' and browser has a matching voice, play with Browser Web Speech
+  const browserVoice = findBestBrowserVoice(voice);
+  const useBrowser = engine === 'browser' || (engine === 'auto' && browserVoice !== null);
+
+  if (useBrowser && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = browserVoice ? browserVoice.lang : 'ur-PK';
+    if (browserVoice) utterance.voice = browserVoice;
+
+    // Apply nuanced persona pitch adjustments
+    let effectivePitch = pitch;
+    if (voice === 'ur-asad') effectivePitch *= 0.92;
+    else if (voice === 'ur-gul') effectivePitch *= 1.08;
+    utterance.pitch = Math.max(0.5, Math.min(2.0, effectivePitch));
+    utterance.rate = Math.max(0.5, Math.min(2.0, rate));
+
+    let endedCallback: (() => void) | null = null;
+    let errorCallback: (() => void) | null = null;
+
+    utterance.onend = () => {
+      if (endedCallback) endedCallback();
+    };
+    utterance.onerror = (e) => {
+      if (e.error !== 'interrupted' && e.error !== 'canceled') {
+        if (errorCallback) errorCallback();
+      }
+    };
+
+    window.speechSynthesis.speak(utterance);
+
+    return {
+      pause: () => window.speechSynthesis.cancel(),
+      onEnded: (cb) => {
+        endedCallback = cb;
+      },
+      onError: (cb) => {
+        errorCallback = cb;
+      },
+    };
+  }
+
+  // Otherwise, synthesize or fetch from zero-RAM cached server audio stream
   try {
-    const res = await fetch(`/api/tts?text=${encodeURIComponent(text)}&lang=ur-PK`);
+    const res = await fetch(
+      `/api/tts?text=${encodeURIComponent(text)}&lang=ur-PK&voice=${encodeURIComponent(
+        voice
+      )}&speed=${rate}&pitch=${pitch}`
+    );
     const data = await res.json();
 
     if (data.audioUrl) {
       const audio = new Audio(data.audioUrl);
+      audio.playbackRate = rate;
       currentAudioElement = audio;
+
+      let endedCallback: (() => void) | null = null;
+      let errorCallback: (() => void) | null = null;
+
+      audio.onended = () => {
+        if (endedCallback) endedCallback();
+      };
+      audio.onerror = () => {
+        if (errorCallback) errorCallback();
+      };
+
       await audio.play();
-      return audio;
+
+      return {
+        pause: () => audio.pause(),
+        onEnded: (cb) => {
+          endedCallback = cb;
+        },
+        onError: (cb) => {
+          errorCallback = cb;
+        },
+      };
     } else if (data.fallback === 'web-speech') {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(data.text);
         utterance.lang = data.lang || 'ur-PK';
+        if (browserVoice) utterance.voice = browserVoice;
+        utterance.rate = rate;
+        utterance.pitch = pitch;
 
-        // Check for Urdu voices or Hindi fallback
-        const voices = window.speechSynthesis.getVoices();
-        const urduOrHindi = voices.find((v) => v.lang.startsWith('ur') || v.lang.startsWith('hi'));
-        if (urduOrHindi) {
-          utterance.voice = urduOrHindi;
-        }
+        let endedCallback: (() => void) | null = null;
+        let errorCallback: (() => void) | null = null;
+
+        utterance.onend = () => {
+          if (endedCallback) endedCallback();
+        };
+        utterance.onerror = (e) => {
+          if (e.error !== 'interrupted' && e.error !== 'canceled') {
+            if (errorCallback) errorCallback();
+          }
+        };
 
         window.speechSynthesis.speak(utterance);
+
+        return {
+          pause: () => window.speechSynthesis.cancel(),
+          onEnded: (cb) => {
+            endedCallback = cb;
+          },
+          onError: (cb) => {
+            errorCallback = cb;
+          },
+        };
       }
     }
   } catch (err) {
@@ -313,10 +559,28 @@ export async function playTTS(text: string): Promise<HTMLAudioElement | null> {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'ur-PK';
+      utterance.rate = rate;
       window.speechSynthesis.speak(utterance);
     }
   }
   return null;
+}
+
+export async function testVoicePreview() {
+  if (isPlaying() || isPreviewPlaying()) {
+    stopAudio();
+    setIsPreviewPlaying(false);
+    return;
+  }
+  setIsPreviewPlaying(true);
+  const sampleText = 'کھول دو اور سنہری دھوپ کا انتظار کرو۔';
+  const handle = await playTTS(sampleText);
+  if (handle) {
+    handle.onEnded(() => setIsPreviewPlaying(false));
+    handle.onError(() => setIsPreviewPlaying(false));
+  } else {
+    setIsPreviewPlaying(false);
+  }
 }
 
 // -------------------------------------------------------------
@@ -350,23 +614,23 @@ export async function playSentence(globalIndex: number) {
     }, 60);
   }
 
-  // Play audio through native stream
-  const audio = await playTTS(s.text);
+  // Play audio through unified handle
+  const handle = await playTTS(s.text);
 
-  if (audio) {
-    audio.onended = () => {
+  if (handle) {
+    handle.onEnded(() => {
       if (isPlaying()) {
         playSentence(globalIndex + 1);
       }
-    };
-    audio.onerror = () => {
+    });
+    handle.onError(() => {
       const fallbackDuration = Math.max(3500, s.text.length * 85);
       simulatedAudioTimer = setTimeout(() => {
         if (isPlaying()) {
           playSentence(globalIndex + 1);
         }
       }, fallbackDuration);
-    };
+    });
   } else {
     // If Web Speech or silent fallback, timer progresses sentences automatically
     const fallbackDuration = Math.max(3500, s.text.length * 85);
@@ -391,6 +655,7 @@ export function stopAudio() {
     window.speechSynthesis.cancel();
   }
   setIsPlaying(false);
+  setIsPreviewPlaying(false);
 }
 
 export function toggleAudio() {

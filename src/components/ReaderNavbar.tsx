@@ -14,8 +14,10 @@ import {
   openVault,
   vaultItems,
   openTutorial,
+  openVoiceSettings,
+  ttsVoice,
 } from '../store/readerStore';
-import { BookMarked, HelpCircle, Check, ChevronDown, Type } from 'lucide-solid';
+import { BookMarked, HelpCircle, Check, ChevronDown, Type, Mic } from 'lucide-solid';
 
 export default function ReaderNavbar() {
   const [showAppearanceMenu, setShowAppearanceMenu] = createSignal(false);
@@ -276,6 +278,39 @@ export default function ReaderNavbar() {
                         showIzafatHighlights() ? 'left-5' : 'left-1'
                       }`}
                     />
+                  </button>
+                </div>
+
+                {/* 5. Urdu Narrator & Voice Button */}
+                <div class="pt-2 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <div>
+                    <div class="font-medium">Narrator & Voice</div>
+                    <div class="text-[10px] text-neutral-400">Choose voice persona, pace & engine</div>
+                  </div>
+                  <button
+                    type="button"
+                    class={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95 ${
+                      theme() === 'sepia'
+                        ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border-[#D8CCBA] text-[#28201A]'
+                        : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
+                    }`}
+                    onClick={() => {
+                      setShowAppearanceMenu(false);
+                      openVoiceSettings();
+                    }}
+                  >
+                    <Mic size={12} />
+                    <span class="font-nastaliq text-xs font-bold leading-none" dir="rtl">
+                      {ttsVoice() === 'ur-asad'
+                        ? 'اسد'
+                        : ttsVoice() === 'ur-uzma'
+                        ? 'عظمیٰ'
+                        : ttsVoice() === 'ur-salman'
+                        ? 'سلمان'
+                        : ttsVoice() === 'ur-gul'
+                        ? 'گُل'
+                        : 'آواز'}
+                    </span>
                   </button>
                 </div>
               </div>
