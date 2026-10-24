@@ -11,13 +11,13 @@ import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-solid';
 
 export default function AudioBar() {
   const currentSentence = () => {
-    const pList = paragraphs();
+    const pList = paragraphs().filter((p) => p.paragraphIndex >= 0);
     if (!pList.length || currentSentenceIndex() === null) return null;
     return pList[0].sentencesJson.find((s) => s.index === currentSentenceIndex());
   };
 
   const totalSentences = () => {
-    const pList = paragraphs();
+    const pList = paragraphs().filter((p) => p.paragraphIndex >= 0);
     if (!pList.length) return 0;
     return pList[0].sentencesJson.length;
   };

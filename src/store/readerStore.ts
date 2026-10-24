@@ -261,7 +261,7 @@ export async function playTTS(text: string): Promise<void> {
 // Sentence Audio Playback Controller
 // -------------------------------------------------------------
 export function playSentence(sentenceIndex: number) {
-  const pList = paragraphs();
+  const pList = paragraphs().filter((p) => p.paragraphIndex >= 0);
   if (!pList.length) return;
   const sentences = pList[0].sentencesJson;
   const sentence = sentences.find((s) => s.index === sentenceIndex);

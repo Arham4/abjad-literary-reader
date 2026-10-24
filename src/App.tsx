@@ -13,6 +13,9 @@ import {
   loadVault,
   closeTokenLens,
   openTokenLens,
+  advanceTapLevel,
+  activeTokenId,
+  paragraphs,
   tokensMap,
   isPopoverOpen,
   closeVault,
@@ -25,6 +28,24 @@ import { X, Sparkles } from 'lucide-solid';
 
 export default function App() {
   const [showTip, setShowTip] = createSignal(true);
+
+  // Title tokens for interactive 3-tap decoding of the book title (e.g. کھول دو)
+  const titleTokens = () => {
+    const titleP = paragraphs().find((p) => p.paragraphIndex === -1);
+    if (!titleP) return [];
+    return Object.values(tokensMap())
+      .filter((t) => t.paragraphId === titleP.id)
+      .sort((a, b) => a.tokenIndex - b.tokenIndex);
+  };
+
+  const handleTitleWordClick = (tokenId: string, e: MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    if (activeTokenId() === tokenId) {
+      advanceTapLevel();
+    } else {
+      openTokenLens(tokenId, target);
+    }
+  };
 
   // Open the token lens when tapping a word in Scene Vocabulary Preview
   const handleSceneWordClick = (word: string, e: MouseEvent) => {
@@ -109,12 +130,34 @@ export default function App() {
 
                 <h1
                   dir="rtl"
-                  class={`text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight py-1 ${
+                  class={`text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight py-2 select-text ${
                     scriptTradition() === 'naskh' ? 'font-naskh' : 'font-nastaliq'
                   }`}
                   style={{ 'line-height': 1.6 }}
                 >
-                  {activeStory()!.titleUrdu}
+                  <Show
+                    when={titleTokens().length > 0}
+                    fallback={<span>{activeStory()!.titleUrdu}</span>}
+                  >
+                    <For each={titleTokens()}>
+                      {(token) => {
+                        if (!token.isWord) {
+                          return <span>{token.surfaceForm}</span>;
+                        }
+                        return (
+                          <span
+                            class="abjad-word-token inline-block mx-1.5 cursor-pointer hover:opacity-85 transition-all"
+                            data-token-id={token.id}
+                            data-active={activeTokenId() === token.id ? 'true' : 'false'}
+                            onClick={(e) => handleTitleWordClick(token.id, e)}
+                            title={`Tap to decode "${token.surfaceForm}"`}
+                          >
+                            {token.surfaceForm}
+                          </span>
+                        );
+                      }}
+                    </For>
+                  </Show>
                 </h1>
 
                 <div class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 font-serif">

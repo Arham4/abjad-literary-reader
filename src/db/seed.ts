@@ -1174,15 +1174,85 @@ const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Persian compound evoking absolute catastrophic annihilation and smoldering ruins.',
   },
 
-  // Story: Khol Do (Level 1)
+  // Canonical Story Titles
   'کھول': {
-    vocalizedForm: 'کھول',
+    vocalizedForm: 'کھولْ',
     spokenUrduSynonymsJson: ['کھولنا', 'وا کرنا'],
-    urduSimpleExplanation: 'کسی بند چیز کو کھولنا',
+    urduSimpleExplanation: 'کسی بند چیز کو کھولنا (جیسے دروازہ، کھڑکی، یا گرہ)',
     tokenTier: 'common_vocab',
     familiarCousinsJson: ['کھولنا', 'کھلا', 'کھلی'],
-    englishContextualGloss: 'open / unfasten',
-    literaryNuanceNote: 'Imperative form; the central double-meaning motif of the story.',
+    englishContextualGloss: 'Open / Uncover / Untie',
+    literaryNuanceNote: 'The stark imperative title of Manto’s story. In the climax, the doctor tells Sirajuddin "Khirki khol do" (Open the window), triggering an instinctual, harrowing response.',
+  },
+  'دو': {
+    vocalizedForm: 'دو',
+    spokenUrduSynonymsJson: ['دینا', 'کرنا'],
+    urduSimpleExplanation: 'کسی کام کی اجازت یا حکم دینا (جیسے جانے دو یا کھول دو)',
+    tokenTier: 'function_word',
+    familiarCousinsJson: ['دینا', 'دیا'],
+    englishContextualGloss: 'Give / (Imperative auxiliary: "do ...")',
+    literaryNuanceNote: 'Forms the verbal imperative command "Khol Do" (Open it up / Untie it).',
+  },
+  'ٹوبہ': {
+    vocalizedForm: 'ٹوبَہ',
+    spokenUrduSynonymsJson: ['تالاب', 'پانی کا چھپڑ'],
+    urduSimpleExplanation: 'پنجابی میں تالاب کو ٹوبہ کہتے ہیں۔ یہاں یہ ایک شہر اور کردار کا نام ہے۔',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'Toba (literally a pond or reservoir in Punjabi; a town in Punjab)',
+    literaryNuanceNote: 'Named after a Sikh philanthropist Tek Singh who tended a pond (Toba) for weary travelers; represents the protagonist Bishan Singh’s displaced ancestral home.',
+  },
+  'ٹیک': {
+    vocalizedForm: 'ٹیکْ',
+    spokenUrduSynonymsJson: ['سہارا', 'پناہ'],
+    urduSimpleExplanation: 'سہارا دینا یا ٹیک لگانا، اور ایک نام',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['ٹیکنا', 'سہارا'],
+    englishContextualGloss: 'Tek (support / refuge; personal name)',
+    literaryNuanceNote: 'Means support or foundation; paired with Singh to form the name of the revered founder of Toba Tek Singh.',
+  },
+  'سنگھ': {
+    vocalizedForm: 'سِنْگھ',
+    spokenUrduSynonymsJson: ['شیر', 'بہادر'],
+    urduSimpleExplanation: 'سکھ مردوں کا روایتی لقب جس کے معنی شیر کے ہیں',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'Singh (Lion; traditional Sikh title)',
+    literaryNuanceNote: 'A title of dignity and valor in Sikh heritage; Bishan Singh is inextricably tied to his village Toba Tek Singh.',
+  },
+  'گڈریا': {
+    vocalizedForm: 'گَڈَرِیا',
+    spokenUrduSynonymsJson: ['چرواہا', 'بکریاں چرانے والا'],
+    urduSimpleExplanation: 'بھیڑ بکریاں چرانے والا۔ یہاں ایک شریف اور باوقار استاد کی خاکساری کی علامت ہے۔',
+    tokenTier: 'literary_vocab',
+    familiarCousinsJson: ['گلہ بان', 'چرواہا'],
+    englishContextualGloss: 'The Shepherd / Grazier',
+    literaryNuanceNote: 'Ashfaq Ahmed’s central metaphor for the saintly scholar Dau Ji, who gently shepherds his students through classical knowledge.',
+  },
+  'شہرِ': {
+    vocalizedForm: 'شَہْرِ',
+    spokenUrduSynonymsJson: ['نگر', 'بستی'],
+    urduSimpleExplanation: 'بڑی بستی یا نگر۔ زیرِ اضافت کے ساتھ "افسوس کا شہر"',
+    tokenTier: 'literary_vocab',
+    izafatBreakdownUrdu: 'شہر + ِ (اضافت) + افسوس = افسوس اور ماتم کا شہر',
+    englishContextualGloss: 'City / Realm (with Persian Izafat)',
+    literaryNuanceNote: 'The Persian Izafat (ِ) links Shehr to Afsos, designating a realm defined by collective trauma and grief.',
+  },
+  'شہر': {
+    vocalizedForm: 'شَہْر',
+    spokenUrduSynonymsJson: ['نگر', 'بستی', 'بلدیہ'],
+    urduSimpleExplanation: 'بڑی بستی یا آبادی',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['شہری', 'شہریت'],
+    englishContextualGloss: 'City / Town',
+    literaryNuanceNote: 'A central recurring symbol in Intizar Husain’s fiction, evoking ancient Delhi, mythological Ayodhya, and modern Lahore.',
+  },
+  'افسوس': {
+    vocalizedForm: 'اَفْسوس',
+    spokenUrduSynonymsJson: ['غم', 'پچھتاوا', 'حسرت'],
+    urduSimpleExplanation: 'غم، رنج، پچھتاوا یا دکھ',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['تاسف', 'حسرت'],
+    englishContextualGloss: 'Sorrow / Regret / Lamentation',
+    literaryNuanceNote: 'Intizar Husain’s allegorical lament for destroyed homelands and moral guilt following partition and war.',
   },
   'امرتسر': {
     vocalizedForm: 'امْرِتْسَر',
@@ -2224,6 +2294,75 @@ async function seed() {
         createdAt: new Date(),
       })
       .run();
+
+    // Insert Title as special paragraph -1 so every word in the book title has full 3-tap decoding support
+    const titlePId = `p_${storyId}_title`;
+    db.insert(schema.paragraphs)
+      .values({
+        id: titlePId,
+        storyId,
+        paragraphIndex: -1,
+        rawText: sData.titleUrdu,
+        audioUrl: null,
+        sentencesJson: [{ index: 0, text: sData.titleUrdu }],
+      })
+      .run();
+
+    const titleSpans = UrduLanguagePack.tokenizeParagraph(sData.titleUrdu);
+    for (const span of titleSpans) {
+      const tokenId = `tok_${titlePId}_${span.tokenIndex}`;
+      db.insert(schema.tokens)
+        .values({
+          id: tokenId,
+          paragraphId: titlePId,
+          tokenIndex: span.tokenIndex,
+          surfaceForm: span.surface,
+          normalizedForm: span.normalized,
+          isWord: span.isWord,
+          sentenceIndex: span.sentenceIndex,
+          izafatGroupId: span.izafatGroupId || null,
+          compoundGroupId: span.compoundGroupId || null,
+        })
+        .run();
+
+      if (span.isWord) {
+        const baseKey = span.surface.trim();
+        const normKey = span.normalized.trim();
+
+        const lexData: LexemeAnalysisData =
+          CONTEXTUAL_VOCAB[baseKey] ||
+          CONTEXTUAL_VOCAB[normKey] ||
+          FUNCTION_WORDS_DICT[baseKey] ||
+          FUNCTION_WORDS_DICT[normKey] || {
+            vocalizedForm: span.surface,
+            spokenUrduSynonymsJson: [span.normalized],
+            urduSimpleExplanation: `${span.surface} - کتاب کا عنوان`,
+            tokenTier: 'literary_vocab',
+            englishContextualGloss: span.surface,
+          };
+
+        const graphemes = UrduLanguagePack.decomposeWordToGraphemes(span.surface);
+        const phoneticBreakdown = makePhoneticPills(lexData.vocalizedForm);
+
+        db.insert(schema.tokenAnalyses)
+          .values({
+            id: `ana_${tokenId}`,
+            tokenId,
+            vocalizedForm: lexData.vocalizedForm,
+            phoneticBreakdownJson: phoneticBreakdown,
+            graphemesJson: graphemes,
+            spokenUrduSynonymsJson: lexData.spokenUrduSynonymsJson,
+            urduSimpleExplanation: lexData.urduSimpleExplanation,
+            izafatBreakdownUrdu: lexData.izafatBreakdownUrdu || null,
+            tokenTier: lexData.tokenTier,
+            arabicRoot: lexData.arabicRoot || null,
+            familiarCousinsJson: lexData.familiarCousinsJson || null,
+            englishContextualGloss: lexData.englishContextualGloss,
+            literaryNuanceNote: lexData.literaryNuanceNote || null,
+          })
+          .run();
+      }
+    }
 
     const pList = (sData as any).paragraphsList || [
       {

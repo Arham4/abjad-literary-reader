@@ -57,7 +57,7 @@ export default function ReaderSurface() {
       role="region"
       aria-label="Urdu Literary Text Reader Surface"
     >
-      <For each={paragraphs()}>
+      <For each={paragraphs().filter((p) => p.paragraphIndex >= 0)}>
         {(paragraph) => {
           // Collect all tokens for this paragraph
           const pTokens = Object.values(tokensMap()).filter(
