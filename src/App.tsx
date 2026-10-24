@@ -6,6 +6,7 @@ import AudioBar from './components/AudioBar';
 import VocabularyVault from './components/VocabularyVault';
 import TutorialModal from './components/TutorialModal';
 import VoiceSettingsModal from './components/VoiceSettingsModal';
+import TextSelectionToolbar from './components/TextSelectionToolbar';
 import {
   theme,
   activeStory,
@@ -323,6 +324,9 @@ export default function App() {
 
       {/* Synchronized Sentence Audio Bar */}
       <AudioBar />
+
+      {/* Floating Text Selection Phrase Playback Toolbar */}
+      <TextSelectionToolbar />
 
       {/* Vocabulary Vault Slide-Over Drawer */}
       <VocabularyVault />

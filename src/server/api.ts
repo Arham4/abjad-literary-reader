@@ -220,6 +220,14 @@ function splitTextForTTS(text: string, maxLen = 160): string[] {
 // -------------------------------------------------------------
 // 5. GET/POST /api/tts - Audio synthesis with multi-voice support & SHA-256 caching
 // -------------------------------------------------------------
+export function cleanUrduForTTS(text: string): string {
+  if (!text) return '';
+  // Strip combining diacritics / harakat / jazm (U+064B - U+0652, U+0656 - U+065F, U+06DF - U+06E8)
+  // Standalone diacritics (especially jazm/sukūn \u0652) on isolated words cause neural Urdu TTS models
+  // to spell out individual letter phonemes rather than reading the natural word vocabulary.
+  return text.replace(/[\u064B-\u0652\u0656-\u065F\u06DF-\u06E8]/g, '').trim();
+}
+
 const handleTTS = async (
   vocalizedText: string,
   lang = 'ur-PK',
@@ -227,14 +235,18 @@ const handleTTS = async (
   speed = 1.0,
   pitch = 1.0
 ) => {
-  if (!vocalizedText) {
+  const rawText = (vocalizedText || '').trim();
+  if (!rawText) {
     return { error: 'Text required', status: 400 };
   }
+
+  // Sanitize text for neural TTS: strip problematic combining jazm/diacritics
+  const textToSpeak = cleanUrduForTTS(rawText) || rawText;
 
   // 1. Compute deterministic SHA-256 hash using Bun.CryptoHasher
   // Uses v2-neural prefix to bust any stale CDN/Cloudflare caches from older Google audio
   const hasher = new Bun.CryptoHasher('sha256');
-  hasher.update(`v2-neural:${voice}:${speed}:${pitch}:${lang}:${vocalizedText.trim()}`);
+  hasher.update(`v2-neural:${voice}:${speed}:${pitch}:${lang}:${textToSpeak}`);
   const hash = hasher.digest('hex');
 
   const cacheFileName = `${hash}.mp3`;
@@ -274,7 +286,7 @@ const handleTTS = async (
         '--pitch',
         pitchStr,
         '--text',
-        vocalizedText.trim(),
+        textToSpeak,
         '--write-media',
         cacheFilePath,
       ]);
@@ -309,7 +321,7 @@ const handleTTS = async (
 
       const ssml = `<speak version='1.0' xml:lang='ur-PK'>
         <voice xml:lang='ur-PK' name='${azureVoice}'>
-          <prosody rate='${rateStr}' pitch='${pitchStr}'>${vocalizedText.trim()}</prosody>
+          <prosody rate='${rateStr}' pitch='${pitchStr}'>${textToSpeak}</prosody>
         </voice>
       </speak>`;
 
@@ -338,7 +350,7 @@ const handleTTS = async (
 
   // 3. Spoken audio synthesis with voice persona profiles (streamed directly to disk, 0 server memory retention)
   try {
-    const chunks = splitTextForTTS(vocalizedText.trim(), 160);
+    const chunks = splitTextForTTS(textToSpeak, 160);
     const audioBuffers: Uint8Array[] = [];
 
     // Distinct voice nuances:
@@ -391,7 +403,7 @@ const handleTTS = async (
   return {
     data: {
       fallback: 'web-speech',
-      text: vocalizedText,
+      text: textToSpeak,
       lang: 'ur-PK',
       voice,
       speed,

@@ -9,6 +9,7 @@ import {
   tokensMap,
   analysesMap,
   playTTS,
+  playWordAudio,
   scriptTradition,
   theme,
 } from '../store/readerStore';
@@ -87,6 +88,28 @@ export default function TokenLensPopover() {
       }
     }
   });
+
+  const [isWordAudioPlaying, setIsWordAudioPlaying] = createSignal(false);
+
+  const wordToSpeak = () => {
+    const t = token();
+    if (t?.surfaceForm) return t.surfaceForm;
+    if (t?.normalizedForm) return t.normalizedForm;
+    return analysis()?.vocalizedForm || '';
+  };
+
+  const handleListenWord = async (e: MouseEvent) => {
+    e.stopPropagation();
+    if (isWordAudioPlaying()) return;
+    setIsWordAudioPlaying(true);
+    const handle = await playWordAudio(wordToSpeak());
+    if (handle) {
+      handle.onEnded(() => setIsWordAudioPlaying(false));
+      handle.onError(() => setIsWordAudioPlaying(false));
+    } else {
+      setIsWordAudioPlaying(false);
+    }
+  };
 
   // Re-anchor when activeTargetEl changes
   createEffect(() => {
@@ -217,14 +240,11 @@ export default function TokenLensPopover() {
                     : theme() === 'midnight'
                     ? 'bg-white hover:bg-neutral-200 text-neutral-900'
                     : 'bg-neutral-900 hover:bg-neutral-800 text-white'
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  playTTS(analysis()!.vocalizedForm);
-                }}
+                } ${isWordAudioPlaying() ? 'ring-2 ring-amber-400 scale-102' : ''}`}
+                onClick={handleListenWord}
               >
-                <Volume2 size={15} />
-                <span>Listen to pronunciation</span>
+                <Volume2 size={15} class={isWordAudioPlaying() ? 'animate-pulse text-amber-300' : ''} />
+                <span>{isWordAudioPlaying() ? 'Playing pronunciation...' : 'Listen to pronunciation'}</span>
               </button>
             </div>
           </div>

@@ -14,6 +14,14 @@ import {
 export default function ReaderSurface() {
   // Delegated Click Handler on .abjad-reader-surface (Zero per-span listeners!)
   const handleSurfaceClick = (e: MouseEvent) => {
+    // If user has highlighted a text selection, do not open single word lens
+    if (typeof window !== 'undefined') {
+      const sel = window.getSelection();
+      if (sel && sel.toString().trim().length > 1) {
+        return;
+      }
+    }
+
     const target = (e.target as HTMLElement).closest<HTMLElement>('.abjad-word-token');
     if (!target) return;
     const tokenId = target.dataset.tokenId;

@@ -8,6 +8,10 @@ import {
   theme,
   openVoiceSettings,
   ttsVoice,
+  selectedText,
+  isSelectionPlaying,
+  playSelectedText,
+  stopSelectionAudio,
 } from '../store/readerStore';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Mic } from 'lucide-solid';
 
@@ -45,7 +49,7 @@ export default function AudioBar() {
       style={{ 'padding-bottom': 'max(0.4rem, env(safe-area-inset-bottom))' }}
     >
       <div class="max-w-4xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
-        {/* Active Sentence Text or Status */}
+        {/* Active Sentence Text or Status / Selected Text */}
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <div
             class={`p-1 sm:p-1.5 rounded-md shrink-0 shadow-xs ${
@@ -60,22 +64,66 @@ export default function AudioBar() {
           </div>
           <div class="text-xs truncate text-right min-w-0 flex-1" dir="rtl">
             <Show
-              when={activeS()}
+              when={selectedText()}
               fallback={
-                <span class="opacity-60 font-sans text-[11px] sm:text-xs">
-                  Tap Play to listen to sentence narration
-                </span>
+                <Show
+                  when={activeS()}
+                  fallback={
+                    <span class="opacity-60 font-sans text-[11px] sm:text-xs">
+                      Tap Play to listen to sentence narration
+                    </span>
+                  }
+                >
+                  <span class="font-nastaliq text-xs sm:text-sm font-bold leading-relaxed">
+                    {activeS()!.text}
+                  </span>
+                </Show>
               }
             >
-              <span class="font-nastaliq text-xs sm:text-sm font-bold leading-relaxed">
-                {activeS()!.text}
-              </span>
+              <div class="flex items-center gap-1.5 justify-end">
+                <span class="text-[9px] font-sans font-bold px-1.5 py-0.5 rounded tracking-wide uppercase bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0">
+                  سُنو Selection
+                </span>
+                <span class="font-nastaliq text-xs sm:text-sm font-bold leading-relaxed truncate">
+                  {selectedText()}
+                </span>
+              </div>
             </Show>
           </div>
         </div>
 
         {/* Audio Controls (compact row on all viewports) */}
         <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+          {/* Quick Selection Play Button when text is selected */}
+          <Show when={selectedText()}>
+            <button
+              type="button"
+              title={isSelectionPlaying() ? 'Pause Selection' : 'Play Selection (سُنو)'}
+              class={`px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full font-bold text-xs flex items-center gap-1 transition-all shadow-xs cursor-pointer active:scale-95 ${
+                theme() === 'sepia'
+                  ? 'bg-[#8C5D35] hover:bg-[#724B2B] text-white'
+                  : theme() === 'midnight'
+                  ? 'bg-amber-500 hover:bg-amber-400 text-neutral-900'
+                  : 'bg-[#8C5D35] hover:bg-[#724B2B] text-white'
+              }`}
+              onClick={() => {
+                if (isSelectionPlaying()) {
+                  stopSelectionAudio();
+                } else {
+                  playSelectedText();
+                }
+              }}
+            >
+              <Show when={isSelectionPlaying()} fallback={<Play size={11} fill="currentColor" />}>
+                <Pause size={11} />
+              </Show>
+              <span class="font-nastaliq text-xs font-bold leading-none inline" dir="rtl">سُنو</span>
+              <span class="hidden md:inline text-[10px] font-sans">
+                {isSelectionPlaying() ? 'Pause' : 'Selection'}
+              </span>
+            </button>
+          </Show>
+
           <button
             type="button"
             title="Previous Sentence"

@@ -405,11 +405,78 @@ export interface AudioPlaybackHandle {
 
 let currentAudioElement: HTMLAudioElement | null = null;
 
+// Stop low-level active audio playback stream without resetting narration play intent
+export function stopActiveAudioStream() {
+  if (simulatedAudioTimer) {
+    clearTimeout(simulatedAudioTimer);
+    simulatedAudioTimer = null;
+  }
+  if (currentAudioElement) {
+    currentAudioElement.onended = null;
+    currentAudioElement.onerror = null;
+    currentAudioElement.pause();
+    currentAudioElement = null;
+  }
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+// User-facing pause & stop actions
+export function pauseAudio() {
+  stopActiveAudioStream();
+  setIsPlaying(false);
+  setIsSelectionPlaying(false);
+  setIsPreviewPlaying(false);
+}
+
+export function stopAudio() {
+  pauseAudio();
+}
+
+// Selected Text Narration Signals & Actions
+export const [selectedText, setSelectedText] = createSignal<string>('');
+export const [isSelectionPlaying, setIsSelectionPlaying] = createSignal<boolean>(false);
+
+export async function playSelectedText(customText?: string): Promise<AudioPlaybackHandle | null> {
+  const text = (customText || selectedText()).trim();
+  if (!text) return null;
+
+  // Pause continuous sentence narration first
+  pauseAudio();
+  setIsSelectionPlaying(true);
+
+  const handle = await playTTS(text);
+  if (handle) {
+    handle.onEnded(() => {
+      setIsSelectionPlaying(false);
+    });
+    handle.onError(() => {
+      setIsSelectionPlaying(false);
+    });
+  } else {
+    setIsSelectionPlaying(false);
+  }
+  return handle;
+}
+
+export function stopSelectionAudio() {
+  stopActiveAudioStream();
+  setIsSelectionPlaying(false);
+}
+
+// Single Word Audio Lookup
+export async function playWordAudio(text: string): Promise<AudioPlaybackHandle | null> {
+  // Pause any continuous narration so they do not overlap
+  pauseAudio();
+  return playTTS(text);
+}
+
 export async function playTTS(text: string): Promise<AudioPlaybackHandle | null> {
   if (!text) return null;
 
-  // Stop currently playing audio or speech
-  stopAudio();
+  // Stop currently playing low-level audio stream without toggling isPlaying signal
+  stopActiveAudioStream();
 
   const voice = ttsVoice();
   const engine = ttsEngine();
@@ -476,16 +543,26 @@ export async function playTTS(text: string): Promise<AudioPlaybackHandle | null>
       let errorCallback: (() => void) | null = null;
 
       audio.onended = () => {
+        currentAudioElement = null;
         if (endedCallback) endedCallback();
       };
       audio.onerror = () => {
+        currentAudioElement = null;
         if (errorCallback) errorCallback();
       };
 
-      await audio.play();
+      try {
+        await audio.play();
+      } catch (playErr) {
+        console.warn('Audio play error:', playErr);
+        if (errorCallback) errorCallback();
+      }
 
       return {
-        pause: () => audio.pause(),
+        pause: () => {
+          audio.pause();
+          currentAudioElement = null;
+        },
         onEnded: (cb) => {
           endedCallback = cb;
         },
@@ -541,9 +618,8 @@ export async function playTTS(text: string): Promise<AudioPlaybackHandle | null>
 }
 
 export async function testVoicePreview() {
-  if (isPlaying() || isPreviewPlaying()) {
-    stopAudio();
-    setIsPreviewPlaying(false);
+  if (isPlaying() || isPreviewPlaying() || isSelectionPlaying()) {
+    pauseAudio();
     return;
   }
   setIsPreviewPlaying(true);
@@ -558,25 +634,22 @@ export async function testVoicePreview() {
 }
 
 // -------------------------------------------------------------
-// Sentence Audio Playback Controller
+// Sentence Audio Playback Controller (Auto-Advance Continuous Narration)
 // -------------------------------------------------------------
 export async function playSentence(globalIndex: number) {
   const sentenceList = allStorySentences();
   if (!sentenceList.length) return;
 
   if (globalIndex < 0 || globalIndex >= sentenceList.length) {
-    stopAudio();
+    // Reached the end of the story
+    pauseAudio();
     return;
   }
 
   const s = sentenceList[globalIndex];
   setCurrentSentence(s);
   setIsPlaying(true);
-
-  if (simulatedAudioTimer) {
-    clearTimeout(simulatedAudioTimer);
-    simulatedAudioTimer = null;
-  }
+  setIsSelectionPlaying(false);
 
   // Smooth scroll active sentence into view if off-screen
   if (typeof document !== 'undefined') {
@@ -593,15 +666,24 @@ export async function playSentence(globalIndex: number) {
 
   if (handle) {
     handle.onEnded(() => {
+      // Auto-advance continuous narration to the next sentence
       if (isPlaying()) {
-        playSentence(globalIndex + 1);
+        if (globalIndex + 1 < sentenceList.length) {
+          playSentence(globalIndex + 1);
+        } else {
+          pauseAudio();
+        }
       }
     });
     handle.onError(() => {
       const fallbackDuration = Math.max(3500, s.text.length * 85);
       simulatedAudioTimer = setTimeout(() => {
         if (isPlaying()) {
-          playSentence(globalIndex + 1);
+          if (globalIndex + 1 < sentenceList.length) {
+            playSentence(globalIndex + 1);
+          } else {
+            pauseAudio();
+          }
         }
       }, fallbackDuration);
     });
@@ -610,31 +692,21 @@ export async function playSentence(globalIndex: number) {
     const fallbackDuration = Math.max(3500, s.text.length * 85);
     simulatedAudioTimer = setTimeout(() => {
       if (isPlaying()) {
-        playSentence(globalIndex + 1);
+        if (globalIndex + 1 < sentenceList.length) {
+          playSentence(globalIndex + 1);
+        } else {
+          pauseAudio();
+        }
       }
     }, fallbackDuration);
   }
 }
 
-export function stopAudio() {
-  if (simulatedAudioTimer) {
-    clearTimeout(simulatedAudioTimer);
-    simulatedAudioTimer = null;
-  }
-  if (currentAudioElement) {
-    currentAudioElement.pause();
-    currentAudioElement = null;
-  }
-  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-  }
-  setIsPlaying(false);
-  setIsPreviewPlaying(false);
-}
-
 export function toggleAudio() {
   if (isPlaying()) {
-    stopAudio();
+    pauseAudio();
+  } else if (isSelectionPlaying()) {
+    stopSelectionAudio();
   } else {
     const current = currentSentence();
     playSentence(current ? current.globalIndex : 0);

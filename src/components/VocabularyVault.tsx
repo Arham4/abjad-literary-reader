@@ -4,6 +4,7 @@ import {
   closeVault,
   vaultItems,
   playTTS,
+  playWordAudio,
   theme,
 } from '../store/readerStore';
 import { X, Volume2, Search, BookMarked, Sparkles } from 'lucide-solid';
@@ -171,7 +172,7 @@ export default function VocabularyVault() {
                         type="button"
                         title="Listen to pronunciation"
                         class="p-2 rounded-lg bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white transition-colors cursor-pointer shrink-0 mt-1"
-                        onClick={() => playTTS(item.vocalizedSurface)}
+                        onClick={() => playWordAudio(item.normalizedSurface || item.vocalizedSurface)}
                       >
                         <Volume2 size={16} />
                       </button>

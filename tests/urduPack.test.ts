@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { UrduLanguagePack } from '../src/lib/abjad/packs/urdu';
+import { cleanUrduForTTS } from '../src/server/api';
 
 describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
   test('Aspirated digraph grouping: پڑھنا -> ["پڑھ", "ن", "ا"]', () => {
@@ -72,5 +73,26 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
 
     // Sentence ending creates sentenceIndex increment
     expect(tokens[tokens.length - 1].sentenceIndex).toBeGreaterThanOrEqual(0);
+  });
+
+  test('cleanUrduForTTS strips distracting jazm and diacritics for neural speech models', () => {
+    // Amritsar with jazm and diacritics
+    expect(cleanUrduForTTS('امْرِتْسَر')).toBe('امرتسر');
+
+    // Special with zer, jazm, zabar
+    expect(cleanUrduForTTS('اِسْپیشَل')).toBe('اسپیشل');
+
+    // Train with jazm and zer
+    expect(cleanUrduForTTS('ٹْرِین')).toBe('ٹرین');
+
+    // Afternoon with zabars
+    expect(cleanUrduForTTS('دَوپَہَر')).toBe('دوپہر');
+
+    // Mughalpura with pesh and zabar
+    expect(cleanUrduForTTS('مُغَل پُورَہ')).toBe('مغل پورہ');
+
+    // Sentence with preserved Madda (آ) and consonants
+    const sentence = 'امرتسر سے اسپیشل ٹرین دوپہر دو بجے کو چلی اور آٹھ گھنٹوں کے بعد مغل پورہ پہنچی۔';
+    expect(cleanUrduForTTS(sentence)).toBe(sentence);
   });
 });
