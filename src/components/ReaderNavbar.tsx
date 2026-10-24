@@ -57,7 +57,7 @@ export default function ReaderNavbar() {
               <For each={stories()}>
                 {(s) => (
                   <option value={s.slug}>
-                    {s.titleEnglish} ({s.titleUrdu})
+                    L{s.level} · {s.titleEnglish} ({s.titleUrdu})
                   </option>
                 )}
               </For>

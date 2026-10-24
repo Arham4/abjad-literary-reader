@@ -1173,10 +1173,953 @@ const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     englishContextualGloss: 'reduced to ashes / burnt to cinders / annihilated',
     literaryNuanceNote: 'Persian compound evoking absolute catastrophic annihilation and smoldering ruins.',
   },
+
+  // Story: Khol Do (Level 1)
+  'کھول': {
+    vocalizedForm: 'کھول',
+    spokenUrduSynonymsJson: ['کھولنا', 'وا کرنا'],
+    urduSimpleExplanation: 'کسی بند چیز کو کھولنا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['کھولنا', 'کھلا', 'کھلی'],
+    englishContextualGloss: 'open / unfasten',
+    literaryNuanceNote: 'Imperative form; the central double-meaning motif of the story.',
+  },
+  'امرتسر': {
+    vocalizedForm: 'امْرِتْسَر',
+    spokenUrduSynonymsJson: ['پنجاب کا تاریخی شہر'],
+    urduSimpleExplanation: 'پنجاب کا ایک تاریخی اور معروف شہر',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'Amritsar (historic city in Punjab)',
+  },
+  'اسپیشل': {
+    vocalizedForm: 'اِسْپیشَل',
+    spokenUrduSynonymsJson: ['خاص ٹرین'],
+    urduSimpleExplanation: 'خاص طور پر چلائی جانے والی پناہ گزینوں کی ریل گاڑی',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'special (partition refugee train)',
+  },
+  'ٹرین': {
+    vocalizedForm: 'ٹرین',
+    spokenUrduSynonymsJson: ['ریل گاڑی'],
+    urduSimpleExplanation: 'پٹری پر چلنے والی گاڑی',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'train',
+  },
+  'دوپہر': {
+    vocalizedForm: 'دوپَہَر',
+    spokenUrduSynonymsJson: ['دن کا درمیانی وقت'],
+    urduSimpleExplanation: 'بارہ بجے کے بعد کا وقت، نصف النہار',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'afternoon / midday',
+  },
+  'مغل پورہ': {
+    vocalizedForm: 'مُغَل پُورَہ',
+    spokenUrduSynonymsJson: ['لاہور کا ریلوے علاقہ'],
+    urduSimpleExplanation: 'لاہور کا ایک ریلوے اسٹیشن اور علاقہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'Mughalpura (suburb and railway junction in Lahore)',
+  },
+  'مارے': {
+    vocalizedForm: 'مارے',
+    spokenUrduSynonymsJson: ['قتل کیے گئے'],
+    urduSimpleExplanation: 'جان سے مارے جانا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'killed / murdered',
+  },
+  'متعدد': {
+    vocalizedForm: 'مُتَعَدِّد',
+    spokenUrduSynonymsJson: ['بہت سے', 'کئی'],
+    urduSimpleExplanation: 'ایک سے زیادہ، کئی ایک',
+    tokenTier: 'common_vocab',
+    arabicRoot: 'ع-د-د',
+    familiarCousinsJson: ['تعداد', 'عدد'],
+    englishContextualGloss: 'numerous / several',
+  },
+  'زخمی': {
+    vocalizedForm: 'زَخْمی',
+    spokenUrduSynonymsJson: ['گھائل'],
+    urduSimpleExplanation: 'چوٹ کھایا ہوا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['زخم', 'زخموں'],
+    englishContextualGloss: 'injured / wounded',
+  },
+  'بھٹک': {
+    vocalizedForm: 'بَھٹَک',
+    spokenUrduSynonymsJson: ['راستہ بھول گئے'],
+    urduSimpleExplanation: 'سیدھے راستے سے بے راہ ہو جانا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['بھٹکنا'],
+    englishContextualGloss: 'wandered off / lost their way',
+  },
+  'کیمپ': {
+    vocalizedForm: 'کَیمپ',
+    spokenUrduSynonymsJson: ['پناہ گاہ'],
+    urduSimpleExplanation: 'مہاجرین کی عارضی جائے پناہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'refugee camp',
+  },
+  'ٹھنڈی': {
+    vocalizedForm: 'ٹَھنْڈی',
+    spokenUrduSynonymsJson: ['سرد'],
+    urduSimpleExplanation: 'سرد، جس میں حرارت نہ ہو',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['ٹھنڈا', 'ٹھنڈک'],
+    englishContextualGloss: 'cold / chilled',
+  },
+  'زمین': {
+    vocalizedForm: 'زَمِین',
+    spokenUrduSynonymsJson: ['فرش', 'دھرتی'],
+    urduSimpleExplanation: 'فرش یا مٹی کی سطح',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'ground / earth / floor',
+  },
+  'سراج الدین': {
+    vocalizedForm: 'سِراجُ الدِّین',
+    spokenUrduSynonymsJson: ['بوڑھا باپ'],
+    urduSimpleExplanation: 'منٹو کے افسانے کا غمزدہ بوڑھا باپ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'Sirajuddin (the elderly, grieving father)',
+  },
+  'آنکھیں': {
+    vocalizedForm: 'آنْکھیں',
+    spokenUrduSynonymsJson: ['چشم'],
+    urduSimpleExplanation: 'دیکھنے کا عضو',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['آنکھ'],
+    englishContextualGloss: 'eyes',
+  },
+  'مردوں': {
+    vocalizedForm: 'مَرْدوں',
+    spokenUrduSynonymsJson: ['آدمیوں'],
+    urduSimpleExplanation: 'مرد کی جمع',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'men',
+  },
+  'عورتوں': {
+    vocalizedForm: 'عَورَتوں',
+    spokenUrduSynonymsJson: ['خواتین'],
+    urduSimpleExplanation: 'عورت کی جمع',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'women',
+  },
+  'بچوں': {
+    vocalizedForm: 'بَچّوں',
+    spokenUrduSynonymsJson: ['چھوٹے لڑکے لڑکیاں'],
+    urduSimpleExplanation: 'بچہ کی جمع',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'children',
+  },
+  'متلاطم': {
+    vocalizedForm: 'مُتَلاطِم',
+    spokenUrduSynonymsJson: ['طوفانی', 'موجیں مارتا ہوا'],
+    urduSimpleExplanation: 'جس میں شدید لہریں اور طوفان اٹھ رہا ہو',
+    tokenTier: 'literary_vocab',
+    arabicRoot: 'ل-ط-م',
+    familiarCousinsJson: ['تلاطم'],
+    englishContextualGloss: 'surging / tempestuous / storm-tossed like an ocean',
+  },
+  'سمندر': {
+    vocalizedForm: 'سَمَنْدَر',
+    spokenUrduSynonymsJson: ['بحر'],
+    urduSimpleExplanation: 'پانی کا وسیع ذخیرہ، بے پناہ ہجوم',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'ocean / sea (crowd metaphor)',
+  },
+  'سوچنے': {
+    vocalizedForm: 'سوچنے',
+    spokenUrduSynonymsJson: ['غور کرنے'],
+    urduSimpleExplanation: 'سوچ بچار کرنا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['سوچ', 'سوچنا'],
+    englishContextualGloss: 'thinking / reflecting',
+  },
+  'سمجھنے': {
+    vocalizedForm: 'سَمَجْھنے',
+    spokenUrduSynonymsJson: ['جاننے'],
+    urduSimpleExplanation: 'عقل میں بات آنا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['سمجھ', 'سمجھنا'],
+    englishContextualGloss: 'comprehending / understanding',
+  },
+  'قوتیں': {
+    vocalizedForm: 'قُوَّتیں',
+    spokenUrduSynonymsJson: ['طاقتیں'],
+    urduSimpleExplanation: 'سوچنے سمجھنے کی صلاحیتیں',
+    tokenTier: 'common_vocab',
+    arabicRoot: 'ق-و-ی',
+    familiarCousinsJson: ['قوت', 'قوی'],
+    englishContextualGloss: 'faculties / mental strength',
+  },
+  'ضعیف': {
+    vocalizedForm: 'ضَعِیف',
+    spokenUrduSynonymsJson: ['کمزور'],
+    urduSimpleExplanation: 'ناتواں اور کمزور ہو جانا',
+    tokenTier: 'literary_vocab',
+    arabicRoot: 'ض-ع-ف',
+    familiarCousinsJson: ['ضعف'],
+    englishContextualGloss: 'frail / feeble / weakened',
+  },
+  'گدلے': {
+    vocalizedForm: 'گَدْلے',
+    spokenUrduSynonymsJson: ['دھندلے', 'مٹیالے'],
+    urduSimpleExplanation: 'دھول سے اٹا ہوا، میلا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['گدلا'],
+    englishContextualGloss: 'murky / dusty / hazy',
+  },
+  'ٹکٹکی': {
+    vocalizedForm: 'ٹِکْٹِکی',
+    spokenUrduSynonymsJson: ['مسلسل گھورنا'],
+    urduSimpleExplanation: 'بغیر پلک جھپکائے نظر جمائے رکھنا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'unblinking stare / fixed gaze',
+  },
+  'باندھے': {
+    vocalizedForm: 'بانْدھے',
+    spokenUrduSynonymsJson: ['جمائے ہوئے'],
+    urduSimpleExplanation: 'ٹکٹکی باندھنا (نظریں جما لینا)',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'fixing (one’s gaze)',
+  },
+  'شور': {
+    vocalizedForm: 'شور',
+    spokenUrduSynonymsJson: ['ہنگامہ', 'آوازیں'],
+    urduSimpleExplanation: 'بلند آوازوں کا ہنگامہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'clamor / uproar / din',
+  },
+  'برپا': {
+    vocalizedForm: 'بَرْپا',
+    spokenUrduSynonymsJson: ['قائم', 'جاری'],
+    urduSimpleExplanation: 'کھڑا ہونا، طوفان یا شور اٹھنا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'erupted / raging',
+  },
+  'بوڑھے': {
+    vocalizedForm: 'بُوڑھے',
+    spokenUrduSynonymsJson: ['بزرگ'],
+    urduSimpleExplanation: 'جس کی عمر زیادہ ہو',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['بوڑھا', 'بڑھاپا'],
+    englishContextualGloss: 'elderly / old man',
+  },
+  'کان': {
+    vocalizedForm: 'کان',
+    spokenUrduSynonymsJson: ['گوش'],
+    urduSimpleExplanation: 'سننے کا عضو',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'ears',
+  },
+  'سنائی': {
+    vocalizedForm: 'سُنائی',
+    spokenUrduSynonymsJson: ['سننے میں آنا'],
+    urduSimpleExplanation: 'کانوں میں آواز آنا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['سننا', 'سنا'],
+    englishContextualGloss: 'audible / hearing',
+  },
+  'شل': {
+    vocalizedForm: 'شَل',
+    spokenUrduSynonymsJson: ['بے حس', 'سن'],
+    urduSimpleExplanation: 'جس میں حرکت یا حس نہ رہے',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'paralyzed / numb / stunned',
+  },
+  'معلق': {
+    vocalizedForm: 'مُعَلَّق',
+    spokenUrduSynonymsJson: ['لٹکا ہوا'],
+    urduSimpleExplanation: 'جو فضا میں لٹکا ہوا ہو',
+    tokenTier: 'literary_vocab',
+    arabicRoot: 'ع-ل-ق',
+    familiarCousinsJson: ['تعلق'],
+    englishContextualGloss: 'suspended / adrift in emptiness',
+  },
+  'خلا': {
+    vocalizedForm: 'خَلا',
+    spokenUrduSynonymsJson: ['خالی پن'],
+    urduSimpleExplanation: 'خالی جگہ، سونا پن',
+    tokenTier: 'common_vocab',
+    arabicRoot: 'خ-ل-و',
+    familiarCousinsJson: ['خالی', 'خلوت'],
+    englishContextualGloss: 'vacuum / empty void',
+  },
+  'سورج': {
+    vocalizedForm: 'سُورَج',
+    spokenUrduSynonymsJson: ['آفتاب'],
+    urduSimpleExplanation: 'دن کا روشن ستارہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'sun',
+  },
+  'رگ و ریشے': {
+    vocalizedForm: 'رَگ و رِیشے',
+    spokenUrduSynonymsJson: ['ہر نس اور تار میں'],
+    urduSimpleExplanation: 'جسم کی ہر رگ اور عضو میں',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'every fiber, vein, and sinew',
+  },
+  'تصویریں': {
+    vocalizedForm: 'تَصْوِیریں',
+    spokenUrduSynonymsJson: ['نقوش', 'یادیں'],
+    urduSimpleExplanation: 'تصویر کی جمع، ذہن میں آنے والے مناظر',
+    tokenTier: 'common_vocab',
+    arabicRoot: 'ص-و-ر',
+    familiarCousinsJson: ['تصویر', 'مصور', 'صورت'],
+    englishContextualGloss: 'images / scenes',
+  },
+  'لوٹ': {
+    vocalizedForm: 'لُوٹ',
+    spokenUrduSynonymsJson: ['ڈاکہ', 'چھینا جھپٹی'],
+    urduSimpleExplanation: 'مال چھین لینا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['لوٹنا'],
+    englishContextualGloss: 'plunder / looting',
+  },
+  'آگ': {
+    vocalizedForm: 'آگ',
+    spokenUrduSynonymsJson: ['شعلے', 'آتش'],
+    urduSimpleExplanation: 'آگ اور شعلے',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'fire / arson',
+  },
+  'بھاگم بھاگ': {
+    vocalizedForm: 'بھاگَم بھاگ',
+    spokenUrduSynonymsJson: ['افراتفری', 'بھاگ دوڑ'],
+    urduSimpleExplanation: 'ہر طرف خوف سے بھاگنے کا عالم',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'chaotic stampede / mad panic',
+  },
+  'اسٹیشن': {
+    vocalizedForm: 'اِسْٹیشن',
+    spokenUrduSynonymsJson: ['گاڑی کی جگہ'],
+    urduSimpleExplanation: 'ریلوے اسٹیشن',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'railway station',
+  },
+  'گولیاں': {
+    vocalizedForm: 'گولِیاں',
+    spokenUrduSynonymsJson: ['بندوق کی گولیاں'],
+    urduSimpleExplanation: 'بندوق یا پستول کی گولی کی جمع',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['گولی'],
+    englishContextualGloss: 'bullets / gunfire',
+  },
+  'سکینہ': {
+    vocalizedForm: 'سَکِینَہ',
+    spokenUrduSynonymsJson: ['بیٹی کا نام'],
+    urduSimpleExplanation: 'سراج الدین کی نوجوان مظلوم بیٹی',
+    tokenTier: 'common_vocab',
+    arabicRoot: 'س-ک-ن',
+    familiarCousinsJson: ['سکون', 'مسکن'],
+    englishContextualGloss: 'Sakina (the tragic protagonist daughter)',
+  },
+  'اکلوتی': {
+    vocalizedForm: 'اِکْلَوتی',
+    spokenUrduSynonymsJson: ['اکیلی بیٹی'],
+    urduSimpleExplanation: 'تنہا اولاد، جس کا کوئی اور بھائی بہن نہ ہو',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['اکلوتا'],
+    englishContextualGloss: 'only child / sole daughter',
+  },
+  'دھاندلی': {
+    vocalizedForm: 'دھانْدْلی',
+    spokenUrduSynonymsJson: ['بے نظمی', 'افراتفری'],
+    urduSimpleExplanation: 'بے ترتیبی کا ہنگامہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'disorder / chaos',
+  },
+  'انتڑیاں': {
+    vocalizedForm: 'اَنْتْڑِیاں',
+    spokenUrduSynonymsJson: ['آنتیں'],
+    urduSimpleExplanation: 'پیٹ کی اندرونی آنتیں',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'entrails / intestines',
+  },
+  'لاش': {
+    vocalizedForm: 'لاش',
+    spokenUrduSynonymsJson: ['مردہ جسم', 'جنازہ'],
+    urduSimpleExplanation: 'بے جان انسانی جسم',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'corpse / dead body',
+  },
+  'ننگے': {
+    vocalizedForm: 'نَن٘گے',
+    spokenUrduSynonymsJson: ['برہنہ'],
+    urduSimpleExplanation: 'بغیر جوتے یا کپڑے کے',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'bare (barefoot)',
+  },
+  'پاؤں': {
+    vocalizedForm: 'پاؤں',
+    spokenUrduSynonymsJson: ['قدم'],
+    urduSimpleExplanation: 'چلنے کا عضو',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'feet',
+  },
+  'دوپٹہ': {
+    vocalizedForm: 'دُو پَٹَّہ',
+    spokenUrduSynonymsJson: ['اوڑھنی', 'چادر'],
+    urduSimpleExplanation: 'سر اور سینے کا کپڑا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'dupatta (traditional scarf/veil)',
+  },
+  'ابا جی': {
+    vocalizedForm: 'اَبّا جی',
+    spokenUrduSynonymsJson: ['والد صاحب'],
+    urduSimpleExplanation: 'والد کو محبت سے پکارنے کا نام',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'father / papa (affectionate)',
+  },
+  'چھوڑیے': {
+    vocalizedForm: 'چھوڑیے',
+    spokenUrduSynonymsJson: ['رہنے دیں'],
+    urduSimpleExplanation: 'چھوڑ دینے کی التجا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['چھوڑنا'],
+    englishContextualGloss: 'leave it / let it be',
+  },
+  'کوٹ': {
+    vocalizedForm: 'کوٹ',
+    spokenUrduSynonymsJson: ['اوپر کا لباس'],
+    urduSimpleExplanation: 'سردی میں پہنا جانے والا لباس',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'coat / jacket',
+  },
+  'جیب': {
+    vocalizedForm: 'جِیب',
+    spokenUrduSynonymsJson: ['کپڑے کا خانہ'],
+    urduSimpleExplanation: 'کپڑے میں بنی تھیلی',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'pocket',
+  },
+  'کپڑا': {
+    vocalizedForm: 'کَپْڑا',
+    spokenUrduSynonymsJson: ['پارچہ'],
+    urduSimpleExplanation: 'کپڑے کا ٹکڑا',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['کپڑے'],
+    englishContextualGloss: 'cloth / fabric',
+  },
+  'بلوائی': {
+    vocalizedForm: 'بَلْوائی',
+    spokenUrduSynonymsJson: ['فسادی'],
+    urduSimpleExplanation: 'ہنگامہ کرنے والے شرپسند',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['بلوا'],
+    englishContextualGloss: 'rioters / mob marauders',
+  },
+  'رضاکار': {
+    vocalizedForm: 'رَضا کار',
+    spokenUrduSynonymsJson: ['مددگار نوجوان'],
+    urduSimpleExplanation: 'اپنی مرضی سے بلا معاوضہ خدمت کرنے والا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'volunteers / rescue workers',
+  },
+  'بندوقیں': {
+    vocalizedForm: 'بَنْدُوقیں',
+    spokenUrduSynonymsJson: ['رائفلیں'],
+    urduSimpleExplanation: 'ہتھیار',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['بندوق'],
+    englishContextualGloss: 'guns / rifles',
+  },
+  'دعائیں': {
+    vocalizedForm: 'دُعائیں',
+    spokenUrduSynonymsJson: ['نیک تمنائیں'],
+    urduSimpleExplanation: 'دعا کی جمع',
+    tokenTier: 'common_vocab',
+    arabicRoot: 'د-ع-و',
+    familiarCousinsJson: ['دعا', 'داعی'],
+    englishContextualGloss: 'prayers / blessings',
+  },
+  'حلیہ': {
+    vocalizedForm: 'حُلْیَہ',
+    spokenUrduSynonymsJson: ['شکل و صورت'],
+    urduSimpleExplanation: 'چہرے مہرے کا نقشہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'physical description',
+  },
+  'گورا': {
+    vocalizedForm: 'گورا',
+    spokenUrduSynonymsJson: ['سفید رنگت'],
+    urduSimpleExplanation: 'صاف اور سفید رنگ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'fair-complexioned',
+  },
+  'خوبصورت': {
+    vocalizedForm: 'خُوبْصُورَت',
+    spokenUrduSynonymsJson: ['حسین', 'پیاری'],
+    urduSimpleExplanation: 'اچھی صورت والی',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'beautiful',
+  },
+  'سیاہ': {
+    vocalizedForm: 'سِیاہ',
+    spokenUrduSynonymsJson: ['کالے'],
+    urduSimpleExplanation: 'کالا رنگ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'black (hair)',
+  },
+  'داہنے': {
+    vocalizedForm: 'داہْنے',
+    spokenUrduSynonymsJson: ['سیدھے'],
+    urduSimpleExplanation: 'سیدھی طرف، دایاں رخ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'right (right-hand side)',
+  },
+  'گال': {
+    vocalizedForm: 'گال',
+    spokenUrduSynonymsJson: ['رخسار'],
+    urduSimpleExplanation: 'چہرے کا رخسار',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'cheek',
+  },
+  'تل': {
+    vocalizedForm: 'تِل',
+    spokenUrduSynonymsJson: ['کالا نشان'],
+    urduSimpleExplanation: 'چہرے پر پیدائشی نشان',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'mole / beauty spot',
+  },
+  'ہتھیلیوں': {
+    vocalizedForm: 'ہَتھِیلِیوں',
+    spokenUrduSynonymsJson: ['ہاتھ کے تلوے'],
+    urduSimpleExplanation: 'جان ہتھیلی پر رکھنا (شدید خطرہ مول لینا)',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'palms (idiom: risking one’s life)',
+  },
+  'محفوظ': {
+    vocalizedForm: 'مَحْفُوظ',
+    spokenUrduSynonymsJson: ['سلامت'],
+    urduSimpleExplanation: 'جو خطرے سے محفوظ ہو',
+    tokenTier: 'common_vocab',
+    arabicRoot: 'ح-ف-ظ',
+    familiarCousinsJson: ['حفاظت'],
+    englishContextualGloss: 'safe / secure',
+  },
+  'کھیت': {
+    vocalizedForm: 'کھیت',
+    spokenUrduSynonymsJson: ['فصل والی زمین'],
+    urduSimpleExplanation: 'اناج اگانے کی جگہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'field',
+  },
+  'اسٹریچر': {
+    vocalizedForm: 'اِسْٹْریچَر',
+    spokenUrduSynonymsJson: ['مریض لٹانے کا تختہ'],
+    urduSimpleExplanation: 'بیمار یا زخمی کو لے جانے والا تختہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'stretcher',
+  },
+  'نبض': {
+    vocalizedForm: 'نَبْض',
+    spokenUrduSynonymsJson: ['رگ کی حرکت'],
+    urduSimpleExplanation: 'کلائی کی وہ رگ جس سے زندگی معلوم ہوتی ہے',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'pulse',
+  },
+  'کھڑکی': {
+    vocalizedForm: 'کھِڑْکی',
+    spokenUrduSynonymsJson: ['دریچہ'],
+    urduSimpleExplanation: 'دیوار میں ہوا اور روشنی کا چھوٹا دروازہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'window',
+  },
+  'جنبش': {
+    vocalizedForm: 'جُنْبِش',
+    spokenUrduSynonymsJson: ['ہلکی حرکت'],
+    urduSimpleExplanation: 'ہلکا سا ہلنا',
+    tokenTier: 'literary_vocab',
+    familiarCousinsJson: ['جنبش دینا'],
+    englishContextualGloss: 'slight twitch / faint movement',
+  },
+  'ازار بند': {
+    vocalizedForm: 'اِزار بَنْد',
+    spokenUrduSynonymsJson: ['شلوار کا ناڑا'],
+    urduSimpleExplanation: 'شلوار باندھنے کی ڈوری',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'trouser drawstring / salwar cord',
+  },
+  'سرکا': {
+    vocalizedForm: 'سَرکا',
+    spokenUrduSynonymsJson: ['نیچے کھسکا دینا'],
+    urduSimpleExplanation: 'آہستہ سے نیچے سرکانا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'slid down / pushed down',
+  },
+  'زندہ': {
+    vocalizedForm: 'زِنْدَہ',
+    spokenUrduSynonymsJson: ['حیات'],
+    urduSimpleExplanation: 'جو مرا نہ ہو، جس میں سانس ہو',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['زندگی'],
+    englishContextualGloss: 'alive / living',
+  },
+  'پسینے': {
+    vocalizedForm: 'پَسِینے',
+    spokenUrduSynonymsJson: ['عرق'],
+    urduSimpleExplanation: 'خوف یا گرمی سے جسم سے نکلنے والی بوندیں',
+    tokenTier: 'common_vocab',
+    familiarCousinsJson: ['پسینہ'],
+    englishContextualGloss: 'cold sweat',
+  },
 };
 
 // Canonical Stories Specifications
 const STORIES_DATA = [
+  {
+    slug: 'khol-do',
+    authorUrdu: 'سعادت حسن منٹو',
+    authorEnglish: 'Saadat Hasan Manto',
+    titleUrdu: 'کھول دو',
+    titleEnglish: 'Khol Do',
+    level: 1,
+    descriptionEnglish: 'The ultimate script warm-up: conversational vocabulary with an unforgettable psychological narrative.',
+    sceneVocabPreview: ['کھڑکی', 'دوپٹہ', 'زندہ', 'رضاکار', 'سراج الدین'],
+    paragraphsList: [
+      {
+        paragraphText:
+          'امرتسر سے اسپیشل ٹرین دوپہر دو بجے کو چلی اور آٹھ گھنٹوں کے بعد مغل پورہ پہنچی۔ راستے میں کئی آدمی مارے گئے۔ متعدد زخمی ہوئے اور کچھ ادھر ادھر بھٹک گئے۔',
+        sentences: [
+          {
+            index: 0,
+            text: 'امرتسر سے اسپیشل ٹرین دوپہر دو بجے کو چلی اور آٹھ گھنٹوں کے بعد مغل پورہ پہنچی۔',
+            startTimeMs: 0,
+            endTimeMs: 6500,
+          },
+          {
+            index: 1,
+            text: 'راستے میں کئی آدمی مارے گئے۔ متعدد زخمی ہوئے اور کچھ ادھر ادھر بھٹک گئے۔',
+            startTimeMs: 6500,
+            endTimeMs: 13000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'صبح دس بجے کیمپ کی ٹھنڈی زمین پر جب سراج الدین نے آنکھیں کھولیں اور اپنے چاروں طرف مردوں، عورتوں اور بچوں کا ایک متلاطم سمندر دیکھا تو اس کی سوچنے سمجھنے کی قوتیں اور بھی ضعیف ہو گئیں۔ وہ دیر تک گدلے آسمان کو ٹکٹکی باندھے دیکھتا رہا۔ یوں تو کیمپ میں ہر طرف شور برپا تھا، لیکن بوڑھے سراج الدین کے کان جیسے بند تھے، اسے کچھ سنائی نہیں دیتا تھا۔ کوئی اسے دیکھتا تو یہ خیال کرتا کہ وہ کسی گہری فکر میں غرق ہے، مگر ایسا نہیں تھا۔ اس کے ہوش و حواس شل تھے۔ اس کا سارا وجود خلا میں معلق تھا۔',
+        sentences: [
+          {
+            index: 0,
+            text: 'صبح دس بجے کیمپ کی ٹھنڈی زمین پر جب سراج الدین نے آنکھیں کھولیں اور اپنے چاروں طرف مردوں، عورتوں اور بچوں کا ایک متلاطم سمندر دیکھا تو اس کی سوچنے سمجھنے کی قوتیں اور بھی ضعیف ہو گئیں۔',
+            startTimeMs: 0,
+            endTimeMs: 11000,
+          },
+          {
+            index: 1,
+            text: 'وہ دیر تک گدلے آسمان کو ٹکٹکی باندھے دیکھتا رہا۔',
+            startTimeMs: 11000,
+            endTimeMs: 15000,
+          },
+          {
+            index: 2,
+            text: 'یوں تو کیمپ میں ہر طرف شور برپا تھا، لیکن بوڑھے سراج الدین کے کان جیسے بند تھے، اسے کچھ سنائی نہیں دیتا تھا۔',
+            startTimeMs: 15000,
+            endTimeMs: 22000,
+          },
+          {
+            index: 3,
+            text: 'کوئی اسے دیکھتا تو یہ خیال کرتا کہ وہ کسی گہری فکر میں غرق ہے، مگر ایسا نہیں تھا، اس کے ہوش و حواس شل تھے اور اس کا سارا وجود خلا میں معلق تھا۔',
+            startTimeMs: 22000,
+            endTimeMs: 31000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'گدلے آسمان کی طرف بغیر کسی ارادے کے دیکھتے دیکھتے سراج الدین کی نگاہیں سورج سے ٹکرائیں۔ تیز روشنی اس کے وجود کے رگ و ریشے میں اتر گئی اور وہ جاگ اٹھا۔ اوپر تلے اس کے دماغ پر کئی تصویریں دوڑ گئیں۔ لوٹ… آگ… بھاگم بھاگ… اسٹیشن… گولیاں… رات اور سکینہ…',
+        sentences: [
+          {
+            index: 0,
+            text: 'گدلے آسمان کی طرف بغیر کسی ارادے کے دیکھتے دیکھتے سراج الدین کی نگاہیں سورج سے ٹکرائیں۔',
+            startTimeMs: 0,
+            endTimeMs: 6500,
+          },
+          {
+            index: 1,
+            text: 'تیز روشنی اس کے وجود کے رگ و ریشے میں اتر گئی اور وہ جاگ اٹھا۔',
+            startTimeMs: 6500,
+            endTimeMs: 12000,
+          },
+          {
+            index: 2,
+            text: 'اوپر تلے اس کے دماغ پر کئی تصویریں دوڑ گئیں۔ لوٹ… آگ… بھاگم بھاگ… اسٹیشن… گولیاں… رات اور سکینہ…',
+            startTimeMs: 12000,
+            endTimeMs: 20000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'سراج الدین ایک دم اٹھ کھڑا ہوا اور پاگلوں کی طرح اس نے اپنے چاروں طرف پھیلے ہوئے انسانوں کے سمندر کو کھنگالنا شروع کیا۔ پورے تین گھنٹے وہ ”سکینہ، سکینہ“ پکارتا کیمپ کی خاک چھانتا رہا، مگر اسے اپنی جوان اکلوتی بیٹی کا کوئی پتا نہ مل سکا۔ چاروں طرف ایک دھاندلی سی مچی تھی۔ کوئی اپنا بچہ ڈھونڈ رہا تھا، کوئی ماں، کوئی بیوی اور کوئی بیٹی۔ سراج الدین تھک ہار کر ایک طرف بیٹھ گیا اور حافظے پر زور دے کر سوچنے لگا کہ سکینہ اس سے کب اور کہاں جدا ہوئی تھی؟',
+        sentences: [
+          {
+            index: 0,
+            text: 'سراج الدین ایک دم اٹھ کھڑا ہوا اور پاگلوں کی طرح اس نے اپنے چاروں طرف پھیلے ہوئے انسانوں کے سمندر کو کھنگالنا شروع کیا۔',
+            startTimeMs: 0,
+            endTimeMs: 8000,
+          },
+          {
+            index: 1,
+            text: 'پورے تین گھنٹے وہ ”سکینہ، سکینہ“ پکارتا کیمپ کی خاک چھانتا رہا، مگر اسے اپنی جوان اکلوتی بیٹی کا کوئی پتا نہ مل سکا۔',
+            startTimeMs: 8000,
+            endTimeMs: 16000,
+          },
+          {
+            index: 2,
+            text: 'چاروں طرف ایک دھاندلی سی مچی تھی؛ کوئی اپنا بچہ ڈھونڈ رہا تھا، کوئی ماں، کوئی بیوی اور کوئی بیٹی۔',
+            startTimeMs: 16000,
+            endTimeMs: 24000,
+          },
+          {
+            index: 3,
+            text: 'سراج الدین تھک ہار کر ایک طرف بیٹھ گیا اور حافظے پر زور دے کر سوچنے لگا کہ سکینہ اس سے کب اور کہاں جدا ہوئی تھی؟',
+            startTimeMs: 24000,
+            endTimeMs: 32000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'لیکن سوچتے سوچتے اس کا دماغ سکینہ کی ماں کی لاش پر جا کر جم جاتا، جس کی ساری انتڑیاں باہر نکلی ہوئی تھیں۔ اس سے آگے وہ اور کچھ نہ سوچ سکا۔ سکینہ کی ماں مر چکی تھی۔ اس نے سراج الدین کی آنکھوں کے سامنے دم توڑا تھا، لیکن سکینہ کہاں تھی، جس کے متعلق مرتے وقت اس کی ماں نے کہا تھا، ”مجھے چھوڑو اور سکینہ کو لے کر جلدی سے یہاں سے بھاگ جاؤ۔“',
+        sentences: [
+          {
+            index: 0,
+            text: 'لیکن سوچتے سوچتے اس کا دماغ سکینہ کی ماں کی لاش پر جا کر جم جاتا، جس کی ساری انتڑیاں باہر نکلی ہوئی تھیں۔',
+            startTimeMs: 0,
+            endTimeMs: 8000,
+          },
+          {
+            index: 1,
+            text: 'اس سے آگے وہ اور کچھ نہ سوچ سکا۔ سکینہ کی ماں مر چکی تھی اور اس نے سراج الدین کی آنکھوں کے سامنے دم توڑا تھا۔',
+            startTimeMs: 8000,
+            endTimeMs: 17000,
+          },
+          {
+            index: 2,
+            text: 'لیکن سکینہ کہاں تھی، جس کے متعلق مرتے وقت اس کی ماں نے کہا تھا، ”مجھے چھوڑو اور سکینہ کو لے کر جلدی سے یہاں سے بھاگ جاؤ۔“',
+            startTimeMs: 17000,
+            endTimeMs: 27000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'سکینہ اس کے ساتھ تھی۔ دونوں ننگے پاؤں بھاگ رہے تھے۔ سکینہ کا دوپٹہ گر پڑا تھا۔ اسے اٹھانے کے لیے سراج الدین نے رکنا چاہا تھا مگر سکینہ نے چلا کر کہا تھا، ”ابا جی! چھوڑیے۔“ لیکن اس نے دوپٹہ اٹھا لیا تھا… یہ سوچتے سوچتے اس نے اپنے کوٹ کی ابھری ہوئی جیب کی طرف دیکھا اور اس میں ہاتھ ڈال کر ایک کپڑا نکالا… سکینہ کا وہی دوپٹہ تھا… مگر سکینہ کہاں تھی؟',
+        sentences: [
+          {
+            index: 0,
+            text: 'سکینہ اس کے ساتھ تھی اور دونوں ننگے پاؤں بھاگ رہے تھے۔',
+            startTimeMs: 0,
+            endTimeMs: 5000,
+          },
+          {
+            index: 1,
+            text: 'سکینہ کا دوپٹہ گر پڑا تھا اور اسے اٹھانے کے لیے سراج الدین نے رکنا چاہا تھا مگر سکینہ نے چلا کر کہا تھا، ”ابا جی! چھوڑیے۔“',
+            startTimeMs: 5000,
+            endTimeMs: 14000,
+          },
+          {
+            index: 2,
+            text: 'لیکن اس نے دوپٹہ اٹھا لیا تھا… یہ سوچتے سوچتے اس نے اپنے کوٹ کی ابھری ہوئی جیب میں ہاتھ ڈال کر ایک کپڑا نکالا… سکینہ کا وہی دوپٹہ تھا… مگر سکینہ کہاں تھی؟',
+            startTimeMs: 14000,
+            endTimeMs: 25000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'سراج الدین نے اپنے تھکے ہوئے دماغ پر بہت زور دیا، لیکن وہ کسی نتیجے پر نہ پہنچ سکا۔ کیا وہ سکینہ کو اپنے ساتھ اسٹیشن تک لے آیا تھا؟ کیا وہ اس کے ساتھ گاڑی میں سوار تھی؟ راستے میں جب گاڑی روکی گئی تھی اور بلوائی اندر گھس آئے تھے تو کیا وہ بے ہوش ہو گیا تھا جو سکینہ کو وہ اٹھا کر لے گئے؟ سراج الدین کے دماغ میں سوال ہی سوال تھے، لیکن جواب ایک بھی نہیں تھا۔',
+        sentences: [
+          {
+            index: 0,
+            text: 'سراج الدین نے اپنے تھکے ہوئے دماغ پر بہت زور دیا، لیکن وہ کسی نتیجے پر نہ پہنچ سکا۔',
+            startTimeMs: 0,
+            endTimeMs: 6500,
+          },
+          {
+            index: 1,
+            text: 'کیا وہ سکینہ کو اپنے ساتھ اسٹیشن تک لے آیا تھا؟ کیا وہ اس کے ساتھ گاڑی میں سوار تھی؟',
+            startTimeMs: 6500,
+            endTimeMs: 14000,
+          },
+          {
+            index: 2,
+            text: 'راستے میں جب گاڑی روکی گئی تھی اور بلوائی اندر گھس آئے تھے تو کیا وہ بے ہوش ہو گیا تھا جو سکینہ کو وہ اٹھا کر لے گئے؟',
+            startTimeMs: 14000,
+            endTimeMs: 23000,
+          },
+          {
+            index: 3,
+            text: 'سراج الدین کے دماغ میں سوال ہی سوال تھے، لیکن جواب ایک بھی نہیں تھا۔',
+            startTimeMs: 23000,
+            endTimeMs: 29000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'چھ روز کے بعد جب ہوش و حواس کسی قدر درست ہوئے تو سراج الدین ان لوگوں سے ملا جو اس کی مدد کرنے کے لیے تیار تھے۔ آٹھ نوجوان تھے، جن کے پاس لاری تھی، بندوقیں تھیں۔ سراج الدین نے ان کو لاکھ لاکھ دعائیں دیں اور سکینہ کا حلیہ بتایا: ”گورا رنگ ہے اور بہت ہی خوبصورت ہے… مجھ پر نہیں اپنی ماں پر تھی… عمر سترہ برس کے قریب ہے… آنکھیں بڑی بڑی… بال سیاہ، داہنے گال پر موٹا سا تل… میری اکلوتی لڑکی ہے، ڈھونڈ لاؤ، تمہارا خدا بھلا کرے گا۔“',
+        sentences: [
+          {
+            index: 0,
+            text: 'چھ روز کے بعد جب ہوش و حواس کسی قدر درست ہوئے تو سراج الدین ان لوگوں سے ملا جو اس کی مدد کرنے کے لیے تیار تھے۔',
+            startTimeMs: 0,
+            endTimeMs: 8000,
+          },
+          {
+            index: 1,
+            text: 'آٹھ نوجوان تھے جن کے پاس لاری تھی اور بندوقیں تھیں۔ سراج الدین نے ان کو دعائیں دیں اور سکینہ کا حلیہ بتایا۔',
+            startTimeMs: 8000,
+            endTimeMs: 16000,
+          },
+          {
+            index: 2,
+            text: '”گورا رنگ ہے اور بہت ہی خوبصورت ہے… عمر سترہ برس کے قریب ہے… بال سیاہ، داہنے گال پر موٹا سا تل… میری اکلوتی لڑکی ہے، ڈھونڈ لاؤ، تمہارا خدا بھلا کرے گا۔“',
+            startTimeMs: 16000,
+            endTimeMs: 28000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'نوجوان رضاکاروں نے بڑے جذبے کے ساتھ بوڑھے سراج الدین کو یقین دلایا کہ اگر اس کی بیٹی زندہ ہوئی تو چند ہی دنوں میں اس کے پاس ہوگی۔ آٹھوں نوجوانوں نے کوشش کی۔ جان ہتھیلیوں پر رکھ کر وہ امرتسر گئے۔ کئی عورتوں، کئی مردوں اور کئی بچوں کو نکال نکال کر انہوں نے محفوظ مقاموں پر پہنچایا۔ دس روز گزر گئے مگر انہیں سکینہ کہیں نہ ملی۔',
+        sentences: [
+          {
+            index: 0,
+            text: 'نوجوان رضاکاروں نے بڑے جذبے کے ساتھ بوڑھے سراج الدین کو یقین دلایا کہ اگر اس کی بیٹی زندہ ہوئی تو چند ہی دنوں میں اس کے پاس ہوگی۔',
+            startTimeMs: 0,
+            endTimeMs: 9000,
+          },
+          {
+            index: 1,
+            text: 'آٹھوں نوجوانوں نے کوشش کی۔ جان ہتھیلیوں پر رکھ کر وہ امرتسر گئے اور کئی بے گناہوں کو محفوظ مقاموں پر پہنچایا۔',
+            startTimeMs: 9000,
+            endTimeMs: 18000,
+          },
+          {
+            index: 2,
+            text: 'دس روز گزر گئے مگر انہیں سکینہ کہیں نہ ملی۔',
+            startTimeMs: 18000,
+            endTimeMs: 23000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'ایک روز وہ اسی خدمت کے لیے لاری پر امرتسر جا رہے تھے کہ چھ ہرٹہ کے پاس سڑک پر انہیں ایک لڑکی دکھائی دی۔ لاری کی آواز سن کر وہ بدکی اور بھاگنا شروع کر دیا۔ رضاکاروں نے موٹر روکی اور سب کے سب اس کے پیچھے بھاگے۔ کھیت میں انہوں نے اس لڑکی کو پکڑ لیا۔ دیکھا تو بہت خوبصورت تھی… داہنے گال پر موٹا سا تل تھا۔ ایک نوجوان نے اس سے کہا، ”ڈرو نہیں… کیا تمہارا نام سکینہ ہے؟“ لڑکی نے اقرار کیا کہ وہ سراج الدین کی بیٹی ہے۔',
+        sentences: [
+          {
+            index: 0,
+            text: 'ایک روز وہ لاری پر جا رہے تھے کہ چھ ہرٹہ کے پاس سڑک پر انہیں ایک لڑکی دکھائی دی۔',
+            startTimeMs: 0,
+            endTimeMs: 7000,
+          },
+          {
+            index: 1,
+            text: 'لاری کی آواز سن کر وہ بدکی اور بھاگنا شروع کر دیا۔ رضاکاروں نے موٹر روکی اور سب کے سب اس کے پیچھے بھاگے۔',
+            startTimeMs: 7000,
+            endTimeMs: 15000,
+          },
+          {
+            index: 2,
+            text: 'کھیت میں انہوں نے اس لڑکی کو پکڑ لیا؛ دیکھا تو بہت خوبصورت تھی اور داہنے گال پر موٹا سا تل تھا۔',
+            startTimeMs: 15000,
+            endTimeMs: 23000,
+          },
+          {
+            index: 3,
+            text: 'ایک نوجوان نے اس سے کہا، ”ڈرو نہیں… کیا تمہارا نام سکینہ ہے؟“ لڑکی نے اقرار کیا کہ وہ سراج الدین کی بیٹی ہے۔',
+            startTimeMs: 23000,
+            endTimeMs: 31000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'آٹھوں نوجوانوں نے اس کے ساتھ بڑی محبت کا برتاؤ کیا۔ اس کو کھانا کھلایا، دودھ پلایا اور لاری میں بٹھا دیا۔ ایک نے اپنا کوٹ اتار کر اس کو دیا، کیونکہ اس کے پاس دوپٹہ نہیں تھا اور وہ بار بار اپنے سینے کو ہاتھوں سے ڈھانکنے کی ناکام کوشش کر رہی تھی۔ کئی دن گزر گئے۔ سراج الدین کو سکینہ کی کوئی خبر نہ ملی۔ وہ دن بھر مختلف کیمپوں کے چکر کاٹتا رہا۔ رات کو وہ ان نوجوان رضاکاروں کے لیے دیر تک دعائیں مانگتا رہتا۔',
+        sentences: [
+          {
+            index: 0,
+            text: 'آٹھوں نوجوانوں نے اس کو کھانا کھلایا، دودھ پلایا اور لاری میں بٹھا دیا۔',
+            startTimeMs: 0,
+            endTimeMs: 6500,
+          },
+          {
+            index: 1,
+            text: 'ایک نے اپنا کوٹ اتار کر اس کو دیا، کیونکہ اس کے پاس دوپٹہ نہیں تھا اور وہ بار بار اپنے سینے کو ہاتھوں سے ڈھانکنے کی کوشش کر رہی تھی۔',
+            startTimeMs: 6500,
+            endTimeMs: 16000,
+          },
+          {
+            index: 2,
+            text: 'کئی دن گزر گئے اور سراج الدین کو سکینہ کی کوئی خبر نہ ملی۔ وہ دن بھر کیمپوں کے چکر کاٹتا رہا اور رات کو رضاکاروں کے لیے دعائیں مانگتا رہا۔',
+            startTimeMs: 16000,
+            endTimeMs: 27000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'ایک دن سراج الدین نے دیکھا کہ رضاکاروں کی لاری چلی آ رہی ہے۔ سراج الدین نے دوڑ کر ان سے پوچھا، ”بیٹا! کیا میری سکینہ کا کچھ پتا چلا؟“ رضاکاروں نے نظریں چرا کر سر جھکا لیا اور بولے، ”مل جائے گی، مل جائے گی…“ اور وہ آگے بڑھ گئے۔',
+        sentences: [
+          {
+            index: 0,
+            text: 'ایک دن سراج الدین نے دیکھا کہ رضاکاروں کی لاری چلی آ رہی ہے۔',
+            startTimeMs: 0,
+            endTimeMs: 5000,
+          },
+          {
+            index: 1,
+            text: 'سراج الدین نے دوڑ کر ان سے پوچھا، ”بیٹا! کیا میری سکینہ کا کچھ پتا چلا؟“',
+            startTimeMs: 5000,
+            endTimeMs: 11000,
+          },
+          {
+            index: 2,
+            text: 'رضاکاروں نے نظریں چرا کر سر جھکا لیا اور بولے، ”مل جائے گی، مل جائے گی…“ اور وہ آگے بڑھ گئے۔',
+            startTimeMs: 11000,
+            endTimeMs: 19000,
+          },
+        ],
+      },
+      {
+        paragraphText:
+          'اسی شام کیمپ کے ہسپتال میں سراج الدین کے سامنے ایک اسٹریچر لایا گیا جس پر ایک لڑکی بے حس و حرکت پڑی تھی۔ ڈاکٹر نے لیمپ کی روشنی اس کے چہرے پر ڈالی۔ سراج الدین نے جھک کر دیکھا… داہنے گال پر موٹا سا تل تھا! اس کے منہ سے ایک چیخ نکلی، ”سکینہ!…“ ڈاکٹر نے اسٹریچر کے قریب آ کر لڑکی کی نبض ٹٹولی اور سراج الدین سے کہا: ”کھڑکی کھول دو۔“ اسٹریچر پر پڑی ہوئی نیم مردہ لڑکی کے جسم میں ایک ہلکی سی جنبش ہوئی۔ اس کے بے جان ہاتھوں نے آہستہ سے اپنا ازار بند کھولا اور شلوار نیچے سرکا دی۔ بوڑھا سراج الدین خوشی سے چلایا: ”زندہ ہے… میری بیٹی زندہ ہے!…“ ڈاکٹر کے ماتھے پر سرد پسینے کے قطرے نمودار ہو گئے۔',
+        sentences: [
+          {
+            index: 0,
+            text: 'اسی شام کیمپ کے ہسپتال میں سراج الدین کے سامنے ایک اسٹریچر لایا گیا جس پر ایک لڑکی بے حس و حرکت پڑی تھی۔',
+            startTimeMs: 0,
+            endTimeMs: 8000,
+          },
+          {
+            index: 1,
+            text: 'ڈاکٹر نے لیمپ کی روشنی اس کے چہرے پر ڈالی۔ سراج الدین نے جھک کر دیکھا… داہنے گال پر موٹا سا تل تھا! اس کے منہ سے چیخ نکلی، ”سکینہ!…“',
+            startTimeMs: 8000,
+            endTimeMs: 18000,
+          },
+          {
+            index: 2,
+            text: 'ڈاکٹر نے لڑکی کی نبض ٹٹولی اور سراج الدین سے کہا: ”کھڑکی کھول دو۔“',
+            startTimeMs: 18000,
+            endTimeMs: 24000,
+          },
+          {
+            index: 3,
+            text: 'اسٹریچر پر پڑی ہوئی نیم مردہ لڑکی کے جسم میں جنبش ہوئی۔ اس کے بے جان ہاتھوں نے آہستہ سے اپنا ازار بند کھولا اور شلوار نیچے سرکا دی۔',
+            startTimeMs: 24000,
+            endTimeMs: 34000,
+          },
+          {
+            index: 4,
+            text: 'بوڑھا سراج الدین خوشی سے چلایا: ”زندہ ہے… میری بیٹی زندہ ہے!…“ اور ڈاکٹر کے ماتھے پر سرد پسینے کے قطرے نمودار ہو گئے۔',
+            startTimeMs: 34000,
+            endTimeMs: 44000,
+          },
+        ],
+      },
+    ],
+  },
   {
     slug: 'toba-tek-singh',
     authorUrdu: 'سعادت حسن منٹو',
@@ -1184,6 +2127,8 @@ const STORIES_DATA = [
     titleUrdu: 'ٹوبہ ٹیک سنگھ',
     titleEnglish: 'Toba Tek Singh',
     level: 2,
+    descriptionEnglish: 'Saadat Hasan Manto’s masterwork on the absurdities of partition, sanity, and human belonging.',
+    sceneVocabPreview: ['تبادلہ', 'پاگل خانہ', 'بٹوارے', 'حکومتوں'],
     paragraphText:
       'بٹوارے کے دو تین سال بعد پاکستان اور ہندوستان کی حکومتوں کو خیال آیا کہ جس طرح عام قیدیوں کا تبادلہ ہوا ہے اسی طرح پاگلوں کا بھی تبادلہ ہونا چاہیے یعنی جو مسلمان پاگل ہندوستان کے پاگل خانوں میں ہیں انہیں پاکستان پہنچا دیا جائے اور جو ہندو اور سکھ پاکستان کے پاگل خانوں میں ہیں انہیں ہندوستان کے حوالے کر دیا جائے۔',
     sentences: [
@@ -1202,6 +2147,8 @@ const STORIES_DATA = [
     titleUrdu: 'گڈریا',
     titleEnglish: 'Gadaria',
     level: 2,
+    descriptionEnglish: 'Ashfaq Ahmed’s revered portrait of scholarly grace, cultural synthesis, and heartbreaking displacement.',
+    sceneVocabPreview: ['چٹائی', 'پروقار', 'پرسکون', 'چشمہ'],
     paragraphText:
       'داؤ جی بڑے سویرے اٹھتے اور اپنے مختصر سے کمرے میں چٹائی پر بیٹھ کر پڑھنے لکھنے میں مصروف ہو جاتے۔ ان کے چہرے پر ایک پروقار اور پرسکون مسکراہٹ ہمیشہ کھیلتی رہتی تھی جو ہر آنے والے کا دل موہ لیتی اور یوں محسوس ہوتا جیسے علم و حکمت کا کوئی خاموش چشمہ رواں دواں ہو۔',
     sentences: [
@@ -1226,6 +2173,8 @@ const STORIES_DATA = [
     titleUrdu: 'شہرِ افسوس',
     titleEnglish: 'Shehr-e-Afsos',
     level: 3,
+    descriptionEnglish: 'Intizar Husain’s allegorical masterpiece on grief, desolate ruined cities, and historic memory.',
+    sceneVocabPreview: ['شہرِ افسوس', 'خاکستر', 'سناٹا', 'ویران'],
     paragraphText:
       'جب ہم اس ویران اور اجڑے ہوئے شہرِ افسوس کے اندر داخل ہوئے تو چاروں طرف ہو کا عالم طاری تھا اور گلی کوچوں میں سناٹا چیخ رہا تھا۔ یوں گمان گزرتا تھا جیسے وقت کی رفتار یکایک تھم گئی ہو اور صدیوں کی گرد نے ہر زندہ وجود کو اپنی لپیٹ میں لے کر خاکستر کر دیا ہو۔',
     sentences: [
@@ -1259,7 +2208,7 @@ async function seed() {
 
   for (const sData of STORIES_DATA) {
     const storyId = `story_${sData.slug}`;
-    console.log(`Inserting story: ${sData.titleEnglish} (${sData.titleUrdu})`);
+    console.log(`Inserting story: ${sData.titleEnglish} (${sData.titleUrdu}) [Level ${sData.level}]`);
 
     db.insert(schema.stories)
       .values({
@@ -1270,86 +2219,99 @@ async function seed() {
         titleUrdu: sData.titleUrdu,
         titleEnglish: sData.titleEnglish,
         level: sData.level,
+        descriptionEnglish: sData.descriptionEnglish || null,
+        sceneVocabPreviewJson: sData.sceneVocabPreview || null,
         createdAt: new Date(),
       })
       .run();
 
-    const paragraphId = `p_${storyId}_0`;
-    db.insert(schema.paragraphs)
-      .values({
-        id: paragraphId,
-        storyId,
-        paragraphIndex: 0,
-        rawText: sData.paragraphText,
-        audioUrl: null, // triggers synthesized simulation timer fallback
-        sentencesJson: sData.sentences,
-      })
-      .run();
+    const pList = (sData as any).paragraphsList || [
+      {
+        paragraphText: (sData as any).paragraphText!,
+        sentences: (sData as any).sentences!,
+      },
+    ];
 
-    // Tokenize paragraph using UrduLanguagePack
-    const tokenSpans = UrduLanguagePack.tokenizeParagraph(sData.paragraphText);
-    console.log(`  -> Tokenized into ${tokenSpans.length} tokens (${tokenSpans.filter((t) => t.isWord).length} words)`);
-
-    for (const span of tokenSpans) {
-      const tokenId = `tok_${paragraphId}_${span.tokenIndex}`;
-
-      db.insert(schema.tokens)
+    let pIdx = 0;
+    for (const pItem of pList) {
+      const paragraphId = `p_${storyId}_${pIdx}`;
+      db.insert(schema.paragraphs)
         .values({
-          id: tokenId,
-          paragraphId,
-          tokenIndex: span.tokenIndex,
-          surfaceForm: span.surface,
-          normalizedForm: span.normalized,
-          isWord: span.isWord,
-          sentenceIndex: span.sentenceIndex,
-          izafatGroupId: span.izafatGroupId || null,
-          compoundGroupId: span.compoundGroupId || null,
+          id: paragraphId,
+          storyId,
+          paragraphIndex: pIdx,
+          rawText: pItem.paragraphText,
+          audioUrl: null, // triggers synthesized simulation timer fallback
+          sentencesJson: pItem.sentences,
         })
         .run();
 
-      if (span.isWord) {
-        // Resolve analysis from contextual vocab, function words, or fallback
-        const baseKey = span.surface.trim();
-        const normKey = span.normalized.trim();
+      // Tokenize paragraph using UrduLanguagePack
+      const tokenSpans = UrduLanguagePack.tokenizeParagraph(pItem.paragraphText);
 
-        const lexData: LexemeAnalysisData =
-          CONTEXTUAL_VOCAB[baseKey] ||
-          CONTEXTUAL_VOCAB[normKey] ||
-          FUNCTION_WORDS_DICT[baseKey] ||
-          FUNCTION_WORDS_DICT[normKey] || {
-            vocalizedForm: span.surface,
-            spokenUrduSynonymsJson: [span.normalized],
-            urduSimpleExplanation: `${span.surface} کا لفظی مطلب`,
-            tokenTier: 'common_vocab',
-            englishContextualGloss: span.surface,
-            literaryNuanceNote: 'Contextual Urdu literary vocabulary item.',
-          };
+      for (const span of tokenSpans) {
+        const tokenId = `tok_${paragraphId}_${span.tokenIndex}`;
 
-        // Graphemes are ALWAYS computed deterministically via UrduLanguagePack
-        const graphemes = UrduLanguagePack.decomposeWordToGraphemes(span.surface);
-
-        // Phonetic breakdown computed from vocalized form
-        const phoneticBreakdown = makePhoneticPills(lexData.vocalizedForm);
-
-        db.insert(schema.tokenAnalyses)
+        db.insert(schema.tokens)
           .values({
-            id: `ana_${tokenId}`,
-            tokenId,
-            vocalizedForm: lexData.vocalizedForm,
-            phoneticBreakdownJson: phoneticBreakdown,
-            graphemesJson: graphemes,
-            spokenUrduSynonymsJson: lexData.spokenUrduSynonymsJson,
-            urduSimpleExplanation: lexData.urduSimpleExplanation,
-            izafatBreakdownUrdu: lexData.izafatBreakdownUrdu || null,
-            tokenTier: lexData.tokenTier,
-            arabicRoot: lexData.arabicRoot || null,
-            familiarCousinsJson: lexData.familiarCousinsJson || null,
-            englishContextualGloss: lexData.englishContextualGloss,
-            literaryNuanceNote: lexData.literaryNuanceNote || null,
+            id: tokenId,
+            paragraphId,
+            tokenIndex: span.tokenIndex,
+            surfaceForm: span.surface,
+            normalizedForm: span.normalized,
+            isWord: span.isWord,
+            sentenceIndex: span.sentenceIndex,
+            izafatGroupId: span.izafatGroupId || null,
+            compoundGroupId: span.compoundGroupId || null,
           })
           .run();
+
+        if (span.isWord) {
+          // Resolve analysis from contextual vocab, function words, or fallback
+          const baseKey = span.surface.trim();
+          const normKey = span.normalized.trim();
+
+          const lexData: LexemeAnalysisData =
+            CONTEXTUAL_VOCAB[baseKey] ||
+            CONTEXTUAL_VOCAB[normKey] ||
+            FUNCTION_WORDS_DICT[baseKey] ||
+            FUNCTION_WORDS_DICT[normKey] || {
+              vocalizedForm: span.surface,
+              spokenUrduSynonymsJson: [span.normalized],
+              urduSimpleExplanation: `${span.surface} کا لفظی مطلب`,
+              tokenTier: 'common_vocab',
+              englishContextualGloss: span.surface,
+              literaryNuanceNote: 'Contextual Urdu literary vocabulary item.',
+            };
+
+          // Graphemes are ALWAYS computed deterministically via UrduLanguagePack
+          const graphemes = UrduLanguagePack.decomposeWordToGraphemes(span.surface);
+
+          // Phonetic breakdown computed from vocalized form
+          const phoneticBreakdown = makePhoneticPills(lexData.vocalizedForm);
+
+          db.insert(schema.tokenAnalyses)
+            .values({
+              id: `ana_${tokenId}`,
+              tokenId,
+              vocalizedForm: lexData.vocalizedForm,
+              phoneticBreakdownJson: phoneticBreakdown,
+              graphemesJson: graphemes,
+              spokenUrduSynonymsJson: lexData.spokenUrduSynonymsJson,
+              urduSimpleExplanation: lexData.urduSimpleExplanation,
+              izafatBreakdownUrdu: lexData.izafatBreakdownUrdu || null,
+              tokenTier: lexData.tokenTier,
+              arabicRoot: lexData.arabicRoot || null,
+              familiarCousinsJson: lexData.familiarCousinsJson || null,
+              englishContextualGloss: lexData.englishContextualGloss,
+              literaryNuanceNote: lexData.literaryNuanceNote || null,
+            })
+            .run();
+        }
       }
+      pIdx++;
     }
+    console.log(`  -> Inserted ${pList.length} paragraphs`);
   }
 
   // Pre-seed a few sample telemetry items for Vocabulary Vault display

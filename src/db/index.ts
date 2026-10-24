@@ -17,6 +17,8 @@ sqlite.exec(`
     title_urdu TEXT NOT NULL,
     title_english TEXT NOT NULL,
     level INTEGER NOT NULL,
+    description_english TEXT,
+    scene_vocab_preview_json TEXT,
     created_at INTEGER NOT NULL
   );
 
@@ -70,6 +72,14 @@ sqlite.exec(`
   );
   CREATE UNIQUE INDEX IF NOT EXISTS idx_telemetry_lexeme ON user_telemetry(normalized_surface, vocalized_surface);
 `);
+
+// Safe migrations for newly added columns
+try {
+  sqlite.exec('ALTER TABLE stories ADD COLUMN description_english TEXT;');
+} catch (_) {}
+try {
+  sqlite.exec('ALTER TABLE stories ADD COLUMN scene_vocab_preview_json TEXT;');
+} catch (_) {}
 
 export const db = drizzle(sqlite, { schema });
 export { sqlite };

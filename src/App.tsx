@@ -123,6 +123,29 @@ export default function App() {
               </header>
             </Show>
 
+            {/* Scene Vocabulary Preview (Pre-reading scaffolding) */}
+            <Show when={activeStory()?.sceneVocabPreview && activeStory()!.sceneVocabPreview!.length > 0}>
+              <div class="mb-6 p-3 sm:p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-serif font-bold uppercase tracking-wider text-neutral-500">
+                    Scene Vocabulary Preview (الفاظِ پیش نظر)
+                  </span>
+                  <span class="text-[10px] text-amber-600 dark:text-amber-400 font-sans">
+                    Key words in this story
+                  </span>
+                </div>
+                <div class="flex flex-wrap gap-2" dir="rtl">
+                  <For each={activeStory()!.sceneVocabPreview}>
+                    {(word) => (
+                      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-200 text-sm font-nastaliq shadow-xs">
+                        {word}
+                      </span>
+                    )}
+                  </For>
+                </div>
+              </div>
+            </Show>
+
             {/* Reading Instructions / Pedagogical Note (Dismissible) */}
             <Show when={showTip()}>
               <div class="mb-6 p-2.5 sm:p-3 rounded-xl bg-amber-500/5 border border-amber-500/15 text-[11px] sm:text-xs text-neutral-600 dark:text-neutral-400 flex items-center justify-between gap-2 transition-all">

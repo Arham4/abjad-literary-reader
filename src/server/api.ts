@@ -24,7 +24,10 @@ if (!existsSync(AUDIO_CACHE_DIR)) {
 // -------------------------------------------------------------
 api.get('/stories', async (c) => {
   try {
-    const allStories = db.select().from(schema.stories).all();
+    const allStories = db.select().from(schema.stories).all().map((s) => ({
+      ...s,
+      sceneVocabPreview: s.sceneVocabPreviewJson,
+    }));
     return c.json({ success: true, data: allStories });
   } catch (error: any) {
     return c.json({ success: false, error: error.message }, 500);
@@ -85,7 +88,10 @@ api.get('/stories/:slug', async (c) => {
     return c.json({
       success: true,
       data: {
-        story,
+        story: {
+          ...story,
+          sceneVocabPreview: story.sceneVocabPreviewJson,
+        },
         paragraphs: paragraphsList,
         tokens: allTokens,
         analyses: allAnalyses,

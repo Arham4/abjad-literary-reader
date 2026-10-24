@@ -9,6 +9,8 @@ export interface Story {
   titleUrdu: string;
   titleEnglish: string;
   level: number;
+  descriptionEnglish?: string | null;
+  sceneVocabPreview?: string[] | null;
 }
 
 export interface SentenceTiming {
