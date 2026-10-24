@@ -12,6 +12,8 @@ import {
   loadStories,
   loadVault,
   closeTokenLens,
+  openTokenLens,
+  tokensMap,
   isPopoverOpen,
   closeVault,
   isVaultOpen,
@@ -23,6 +25,18 @@ import { X, Sparkles } from 'lucide-solid';
 
 export default function App() {
   const [showTip, setShowTip] = createSignal(true);
+
+  // Open the token lens when tapping a word in Scene Vocabulary Preview
+  const handleSceneWordClick = (word: string, e: MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const allTokens = Object.values(tokensMap());
+    const match = allTokens.find(
+      (t) => t.isWord && (t.normalizedForm === word || t.surfaceForm === word)
+    );
+    if (match) {
+      openTokenLens(match.id, target);
+    }
+  };
 
   onMount(() => {
     loadStories();
@@ -57,12 +71,12 @@ export default function App() {
   const getLevelLabel = (lvl: number) => {
     switch (lvl) {
       case 1:
-        return 'Level 1: Novice (درجہ ۱)';
+        return 'Level 1 · Novice';
       case 2:
-        return 'Level 2: Literary (درجہ ۲ - ادبی)';
+        return 'Level 2 · Literary';
       case 3:
       default:
-        return 'Level 3: Classical Masterpiece (درجہ ۳ - کلاسیکی)';
+        return 'Level 3 · Classical Masterpiece';
     }
   };
 
@@ -79,7 +93,7 @@ export default function App() {
             <div class="flex items-center justify-center py-24 text-neutral-400">
               <div class="animate-pulse flex flex-col items-center gap-3">
                 <div class="w-8 h-8 rounded-full border-2 border-neutral-900 dark:border-white border-t-transparent animate-spin" />
-                <span class="text-xs font-medium">تحریر لوڈ کی جا رہی ہے...</span>
+                <span class="text-xs font-medium">Loading story text...</span>
               </div>
             </div>
           }
@@ -107,11 +121,6 @@ export default function App() {
                   <span class="font-bold">{activeStory()!.titleEnglish}</span>
                   <span class="mx-2 opacity-40">·</span>
                   <span class="italic">by {activeStory()!.authorEnglish}</span>
-                  <span class="mx-1.5 opacity-40">(</span>
-                  <span dir="rtl" class="font-nastaliq text-sm sm:text-base text-neutral-800 dark:text-neutral-200">
-                    {activeStory()!.authorUrdu}
-                  </span>
-                  <span class="opacity-40">)</span>
                 </div>
 
                 {/* Classic Calligraphic / Ornamental Divider */}
@@ -123,23 +132,28 @@ export default function App() {
               </header>
             </Show>
 
-            {/* Scene Vocabulary Preview (Pre-reading scaffolding) */}
+            {/* Scene Vocabulary Preview (Pre-reading scaffolding - tap to decode in renderer) */}
             <Show when={activeStory()?.sceneVocabPreview && activeStory()!.sceneVocabPreview!.length > 0}>
               <div class="mb-6 p-3 sm:p-4 rounded-xl bg-neutral-100/80 dark:bg-neutral-800/80 border-2 border-neutral-300 dark:border-neutral-700 space-y-2.5">
                 <div class="flex items-center justify-between">
                   <span class="text-[11px] font-sans font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-200">
-                    Scene Vocabulary Preview (الفاظِ پیش نظر)
+                    Scene Vocabulary Preview
                   </span>
-                  <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-300 font-sans">
-                    Key words in this story
+                  <span class="text-xs font-medium text-neutral-500 font-sans">
+                    Tap any word to decode
                   </span>
                 </div>
                 <div class="flex flex-wrap gap-2" dir="rtl">
                   <For each={activeStory()!.sceneVocabPreview}>
                     {(word) => (
-                      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-900 border-2 border-neutral-300 dark:border-neutral-600 text-neutral-950 dark:text-white text-base font-nastaliq font-bold shadow-xs">
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-900 border-2 border-neutral-300 dark:border-neutral-600 hover:border-neutral-900 dark:hover:border-white text-neutral-950 dark:text-white text-base font-nastaliq font-bold shadow-xs cursor-pointer active:scale-95 transition-all"
+                        onClick={(e) => handleSceneWordClick(word, e)}
+                        title={`Tap to decode ${word}`}
+                      >
                         {word}
-                      </span>
+                      </button>
                     )}
                   </For>
                 </div>

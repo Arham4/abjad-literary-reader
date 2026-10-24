@@ -58,7 +58,7 @@ export default function AudioBar() {
               when={currentSentence()}
               fallback={
                 <span class="text-neutral-500 font-sans text-[11px] sm:text-xs">
-                  Tap Play to listen to sentence narration (صوتی قرأت)
+                  Tap Play to listen to sentence narration
                 </span>
               }
             >

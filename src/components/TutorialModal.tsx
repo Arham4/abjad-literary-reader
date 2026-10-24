@@ -140,7 +140,7 @@ export default function TutorialModal() {
                       </span>
                     </div>
                     <p class="text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed pl-1">
-                      Hear the isolated word spoken aloud, see full vowel markings (<span class="font-nastaliq font-bold">پیش، زبر، زیر</span>), and see each letter separated into clean phonics blocks so your eyes decode the cursive connections.
+                      Hear the isolated word spoken aloud, see full vowel markings (Pesh, Zer, Zabar), and see each letter separated into clean phonics blocks so your eyes decode the cursive connections.
                     </p>
                   </div>
 
@@ -223,7 +223,7 @@ export default function TutorialModal() {
                         onClick={() => playTTS('کھڑکی')}
                       >
                         <Volume2 size={15} class="text-white dark:text-neutral-900" />
-                        <span>Listen to pronunciation (صوتی تلفظ)</span>
+                        <span>Listen to pronunciation</span>
                       </button>
                     </div>
                   </div>
@@ -231,7 +231,7 @@ export default function TutorialModal() {
                   {/* CLUE 1 CONTENT: Letters & Vowels */}
                   <div class="space-y-2 pt-2 border-t border-neutral-200 dark:border-neutral-800">
                     <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 text-left">
-                      Isolated Letter Blocks (حروف):
+                      Isolated Letter Blocks:
                     </div>
                     <div class="flex justify-center gap-2" dir="rtl">
                       <div class="flex flex-col items-center min-w-[50px] px-2 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-300 dark:border-neutral-600 shadow-xs">
@@ -261,7 +261,7 @@ export default function TutorialModal() {
                   <Show when={demoTapLevel() >= 2}>
                     <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-300 dark:border-emerald-700 space-y-1 text-left">
                       <div class="text-xs font-bold text-emerald-900 dark:text-emerald-200">
-                        Everyday Spoken Urdu Bridge (روزمرہ بول چال):
+                        Everyday Spoken Urdu Bridge:
                       </div>
                       <p class="text-sm font-bold font-nastaliq text-emerald-950 dark:text-emerald-100" dir="rtl">
                         کھڑکی (کمرے کی کھڑکی / دریچہ)

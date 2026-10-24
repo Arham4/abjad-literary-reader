@@ -177,7 +177,7 @@ export default function TokenLensPopover() {
                 }}
               >
                 <Volume2 size={15} class="text-white dark:text-neutral-900" />
-                <span>Listen to pronunciation (صوتی تلفظ)</span>
+                <span>Listen to pronunciation</span>
               </button>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function TokenLensPopover() {
           <Show when={analysis()!.phoneticBreakdownJson.length > 0}>
             <div class="space-y-1.5">
               <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
-                <span>Vowel Marks (اعراب):</span>
+                <span>Vowel Marks:</span>
                 <span class="text-[11px] font-normal text-neutral-500">Pesh (ُ), Zer (ِ), Zabar (َ)</span>
               </div>
               <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
@@ -212,7 +212,7 @@ export default function TokenLensPopover() {
           <Show when={analysis()!.graphemesJson.length > 0}>
             <div class="space-y-1.5">
               <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
-                <span>Letter-by-Letter Breakdown (حروف):</span>
+                <span>Letter-by-Letter Breakdown:</span>
                 <span class="text-[11px] font-normal text-neutral-500">Isolated alphabet blocks</span>
               </div>
               <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
@@ -247,7 +247,7 @@ export default function TokenLensPopover() {
             <Show when={analysis()!.spokenUrduSynonymsJson.length > 0}>
               <div class="space-y-1.5">
                 <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
-                  <span>Everyday Spoken Equivalent (Rozmarra):</span>
+                  <span>Everyday Spoken Equivalent:</span>
                   <span class="text-[11px] font-normal text-neutral-500">Words you say at home</span>
                 </div>
                 <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
@@ -284,7 +284,7 @@ export default function TokenLensPopover() {
             <Show when={analysis()!.arabicRoot || (analysis()!.familiarCousinsJson && analysis()!.familiarCousinsJson!.length > 0)}>
               <div class="space-y-1.5">
                 <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 flex items-center justify-between font-sans">
-                  <span>Word Root Family (مادہ): {analysis()!.arabicRoot ? `[${analysis()!.arabicRoot}]` : ''}</span>
+                  <span>Word Root Family: {analysis()!.arabicRoot ? `[${analysis()!.arabicRoot}]` : ''}</span>
                   <span class="text-[11px] font-normal text-neutral-500">Related cousin words</span>
                 </div>
                 <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
@@ -305,7 +305,7 @@ export default function TokenLensPopover() {
             <Show when={analysis()!.izafatBreakdownUrdu}>
               <div class="bg-purple-50 dark:bg-purple-950/40 border-2 border-purple-300 dark:border-purple-700 p-3 rounded-xl space-y-1">
                 <div class="text-xs font-bold text-purple-950 dark:text-purple-200 font-sans">
-                  Persian Izafat Relationship (ترکیبِ اضافت):
+                  Persian Izafat Relationship:
                 </div>
                 <p dir="rtl" class="text-xs font-nastaliq font-bold leading-relaxed text-purple-950 dark:text-purple-100 text-right">
                   {analysis()!.izafatBreakdownUrdu}

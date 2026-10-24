@@ -99,10 +99,12 @@ body.theme-midnight .abjad-book-page {
   }
 }
 
+.font-nastaliq,
 .abjad-reader-surface.font-nastaliq {
   font-family: "Mehr Nastaliq Web", "Noto Nastaliq Urdu", Gulzar, serif;
 }
 
+.font-naskh,
 .abjad-reader-surface.font-naskh {
   font-family: "Amiri", "Noto Sans Arabic", serif;
   line-height: 2.0;

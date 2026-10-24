@@ -69,13 +69,13 @@ export default function VocabularyVault() {
               <BookMarked size={18} />
             </div>
             <div>
-              <h2 class="text-base font-bold tracking-tight">Vocabulary Vault (ذخیرہ الفاظ)</h2>
+              <h2 class="text-base font-bold tracking-tight">Vocabulary Vault</h2>
               <p class="text-xs text-neutral-500">Words you've looked up while reading</p>
             </div>
           </div>
           <button
             type="button"
-            title="Close Vault (بند کریں)"
+            title="Close Vault"
             class="p-2 rounded-lg hover:bg-neutral-500/10 text-neutral-500 transition-colors cursor-pointer"
             onClick={closeVault}
           >
@@ -90,7 +90,7 @@ export default function VocabularyVault() {
             <Search size={14} class="absolute left-3 top-3 text-neutral-400" />
             <input
               type="text"
-              placeholder="Search words (تلاش کریں)..."
+              placeholder="Search saved words..."
               class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 focus:outline-none focus:ring-2 focus:ring-neutral-800 dark:focus:ring-white"
               value={searchQuery()}
               onInput={(e) => setSearchQuery(e.currentTarget.value)}

@@ -40,7 +40,7 @@ export default function ReaderNavbar() {
               ابجد
             </span>
             <span class="font-serif font-bold text-sm tracking-wide hidden sm:inline">
-              Abjad <span class="text-[11px] font-normal text-neutral-400">/ ادبی قاری</span>
+              Abjad Reader
             </span>
           </div>
 
@@ -57,7 +57,7 @@ export default function ReaderNavbar() {
               <For each={stories()}>
                 {(s) => (
                   <option value={s.slug}>
-                    L{s.level} · {s.titleEnglish} ({s.titleUrdu})
+                    Level {s.level} · {s.titleEnglish}
                   </option>
                 )}
               </For>
@@ -142,7 +142,7 @@ export default function ReaderNavbar() {
 
                 {/* 2. Script Tradition (Nastaliq vs Naskh) */}
                 <div class="space-y-1.5">
-                  <span class="text-xs text-neutral-500">Script Tradition (رسم الخط)</span>
+                  <span class="text-xs text-neutral-500">Script Style</span>
                   <div class="grid grid-cols-2 gap-2">
                     <button
                       type="button"
@@ -166,7 +166,7 @@ export default function ReaderNavbar() {
                       }`}
                       onClick={() => setScriptTradition('naskh')}
                     >
-                      <div class="font-naskh text-sm leading-none mb-1">عربی نسخ</div>
+                      <div class="font-naskh text-sm leading-none mb-1">نسخ</div>
                       <div class="text-[10px] font-sans opacity-70">Naskh (Linear)</div>
                     </button>
                   </div>
@@ -235,8 +235,8 @@ export default function ReaderNavbar() {
                 {/* 4. Persian Izafat Toggle */}
                 <div class="pt-2 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
                   <div>
-                    <div class="font-medium">Izafat Compounds (ِ)</div>
-                    <div class="text-[10px] text-neutral-400">Underline Persian connective phrases</div>
+                    <div class="font-medium">Persian Connectives (Izafat)</div>
+                    <div class="text-[10px] text-neutral-400">Dashed underline on linked compound pairs</div>
                   </div>
                   <button
                     type="button"
@@ -259,7 +259,7 @@ export default function ReaderNavbar() {
           {/* Vocabulary Vault Button */}
           <button
             type="button"
-            title="Vocabulary Vault (ذخیرہ الفاظ)"
+            title="Vocabulary Vault"
             class="flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-bold transition-colors shadow-xs cursor-pointer"
             onClick={openVault}
           >

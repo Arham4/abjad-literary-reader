@@ -238,12 +238,12 @@ export async function playTTS(text: string): Promise<void> {
         if (urduVoice) {
           utterance.voice = urduVoice;
         } else {
-          showToast(`صوتی تلفظ: ${data.text}`);
+          showToast(`Pronunciation: ${data.text}`);
         }
 
         window.speechSynthesis.speak(utterance);
       } else {
-        showToast(`صوتی تلفظ: ${data.text}`);
+        showToast(`Pronunciation: ${data.text}`);
       }
     }
   } catch (err) {
