@@ -1,4 +1,4 @@
-import { createSignal, Show, For } from 'solid-js';
+import { createSignal, Show, For, onMount } from 'solid-js';
 import { isTutorialOpen, closeTutorial, playTTS, theme } from '../store/readerStore';
 import {
   X,
@@ -9,10 +9,21 @@ import {
   CheckCircle2,
   Ear,
   Sparkles,
+  BookOpen,
+  Headphones,
+  Keyboard,
 } from 'lucide-solid';
 
 export default function TutorialModal() {
-  const [currentSlide, setCurrentSlide] = createSignal(1);
+  const initialSlide = () => {
+    if (typeof window !== 'undefined') {
+      const q = new URLSearchParams(window.location.search).get('slide');
+      if (q && ['1', '2', '3', '4'].includes(q)) return parseInt(q, 10);
+    }
+    return 1;
+  };
+
+  const [currentSlide, setCurrentSlide] = createSignal(initialSlide());
   const [demoTapLevel, setDemoTapLevel] = createSignal<1 | 2 | 3>(1);
 
   const totalSlides = 4;
@@ -31,32 +42,40 @@ export default function TutorialModal() {
     }
   };
 
+  // Sample words spoken at home for Slide 1
+  const spokenSampleWords = [
+    { urdu: 'پانی', roman: 'paani', english: 'water' },
+    { urdu: 'دروازہ', roman: 'darwaza', english: 'door' },
+    { urdu: 'کھڑکی', roman: 'khirki', english: 'window' },
+    { urdu: 'حکومت', roman: 'hukumat', english: 'government' },
+  ];
+
   return (
     <Show when={isTutorialOpen()}>
       {/* Backdrop */}
       <div
-        class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fadeIn"
+        class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-fadeIn"
         onClick={closeTutorial}
       >
         {/* Modal Window */}
         <div
-          class={`relative w-full max-w-xl rounded-2xl shadow-2xl border flex flex-col max-h-[92vh] overflow-hidden ${
+          class={`relative w-full max-w-2xl rounded-2xl sm:rounded-3xl shadow-2xl border flex flex-col max-h-[92vh] overflow-hidden ${
             theme() === 'midnight'
               ? 'bg-[#18191D] border-neutral-700/80 text-[#ECE7DE]'
               : theme() === 'sepia'
-              ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#28201A] shadow-[0_20px_50px_-10px_rgba(45,30,15,0.25)]'
-              : 'bg-[#FCFBF8] border-neutral-300 text-neutral-900'
+              ? 'bg-[#FAF5EC] border-[#D8CCBA] text-[#201813] shadow-[0_25px_60px_-15px_rgba(45,30,15,0.3)]'
+              : 'bg-[#FCFBF8] border-[#DCD3C5] text-[#1F1B17]'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div
-            class={`px-5 py-4 border-b flex items-center justify-between ${
+            class={`px-5 sm:px-7 py-4 border-b flex items-center justify-between ${
               theme() === 'sepia'
                 ? 'bg-[#F4ECE1] border-[#D8CCBA]'
                 : theme() === 'midnight'
                 ? 'bg-[#1F2026] border-neutral-800'
-                : 'bg-white border-neutral-200'
+                : 'bg-[#F6F2EA] border-[#E0D7C8]'
             }`}
           >
             <div class="flex items-center gap-2.5">
@@ -71,7 +90,7 @@ export default function TutorialModal() {
               >
                 <HelpCircle size={16} />
               </span>
-              <span class="font-bold text-sm tracking-tight">
+              <span class="font-bold text-sm tracking-tight font-serif">
                 How Abjad Reader Works
               </span>
             </div>
@@ -91,234 +110,380 @@ export default function TutorialModal() {
           </div>
 
           {/* Slide Content (Scrollable) */}
-          <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-sm leading-relaxed">
-            {/* SLIDE 1: The Mission */}
+          <div class="flex-1 overflow-y-auto p-5 sm:p-7 space-y-5 text-sm leading-relaxed">
+            {/* SLIDE 1: The Core Insight */}
             <Show when={currentSlide() === 1}>
               <div class="space-y-4">
-                <div class="w-14 h-14 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white border-2 border-neutral-200 dark:border-neutral-700 flex items-center justify-center mx-auto shadow-xs">
+                <div
+                  class={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto shadow-xs border ${
+                    theme() === 'sepia'
+                      ? 'bg-[#F4ECE1] border-[#D8CCBA] text-[#3A2D23]'
+                      : theme() === 'midnight'
+                      ? 'bg-neutral-800 border-neutral-700 text-white'
+                      : 'bg-neutral-100 border-neutral-200 text-neutral-900'
+                  }`}
+                >
                   <Ear size={28} />
                 </div>
+
                 <div class="text-center space-y-1.5">
-                  <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                  <h3 class="text-xl sm:text-2xl font-bold font-serif tracking-tight">
                     You already know the spoken language.
                   </h3>
-                  <p class="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 font-medium">
-                    The written script is the only hurdle between you and Urdu literature.
+                  <p class="text-sm font-medium opacity-80 max-w-lg mx-auto">
+                    The written cursive script is the only hurdle between you and Urdu literature.
                   </p>
                 </div>
 
-                <div class="p-4 rounded-xl bg-white dark:bg-neutral-900 border-2 border-neutral-200 dark:border-neutral-700 shadow-xs space-y-2">
-                  <div class="flex items-start gap-3">
-                    <span class="text-lg leading-none mt-0.5">💡</span>
-                    <div class="space-y-1.5 text-xs">
-                      <p class="font-bold text-neutral-900 dark:text-white text-sm">
-                        Does your brain freeze when looking at Nastaliq script?
-                      </p>
-                      <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                        That is completely normal. In everyday conversation, you already understand words like{' '}
-                        <strong class="text-neutral-950 dark:text-white underline decoration-neutral-400">دروازہ (darwaza)</strong>,{' '}
-                        <strong class="text-neutral-950 dark:text-white underline decoration-neutral-400">کھڑکی (khirki)</strong>,{' '}
-                        <strong class="text-neutral-950 dark:text-white underline decoration-neutral-400">پانی (paani)</strong>, and{' '}
-                        <strong class="text-neutral-950 dark:text-white underline decoration-neutral-400">حکومت (hukumat)</strong>.
-                      </p>
-                      <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                        However, when printed in cursive Nastaliq calligraphy, your eyes can't immediately see where one letter ends and another begins. Abjad Reader trains your eyes to break that cursive code step-by-step.
-                      </p>
-                    </div>
+                {/* Spoken Word Examples */}
+                <div
+                  class={`p-4 sm:p-5 rounded-2xl border space-y-3 ${
+                    theme() === 'sepia'
+                      ? 'bg-[#F2EAE0] border-[#D8CCBA]'
+                      : theme() === 'midnight'
+                      ? 'bg-[#202229] border-neutral-700'
+                      : 'bg-white border-[#E0D7C8]'
+                  }`}
+                >
+                  <div class="text-xs font-bold uppercase tracking-wider opacity-75 font-sans">
+                    Words you already use at home every day:
+                  </div>
+
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <For each={spokenSampleWords}>
+                      {(item) => (
+                        <button
+                          type="button"
+                          class={`p-3 rounded-xl border flex flex-col items-center justify-center text-center gap-1 shadow-xs transition-all cursor-pointer hover:scale-[1.02] active:scale-95 ${
+                            theme() === 'sepia'
+                              ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border-[#D8CCBA] text-[#201813]'
+                              : theme() === 'midnight'
+                              ? 'bg-[#252830] hover:bg-[#2D303A] border-neutral-600 text-white'
+                              : 'bg-[#FCFBF8] hover:bg-neutral-50 border-neutral-200 text-neutral-900'
+                          }`}
+                          onClick={() => playTTS(item.urdu)}
+                          title={`Click to listen to "${item.urdu}"`}
+                        >
+                          <div class="flex items-center gap-1">
+                            <span class="font-nastaliq text-2xl font-bold leading-tight" dir="rtl">
+                              {item.urdu}
+                            </span>
+                            <Volume2 size={13} class="opacity-50" />
+                          </div>
+                          <span class="text-xs font-bold opacity-80">{item.roman}</span>
+                          <span class="text-[11px] opacity-60 italic">{item.english}</span>
+                        </button>
+                      )}
+                    </For>
                   </div>
                 </div>
 
-                <p class="text-xs font-medium text-neutral-600 dark:text-neutral-400 text-center">
-                  Instead of frustrating you with a dictionary, we give you 3 progressive clues for every word.
-                </p>
+                {/* The Core Mechanism Explanation */}
+                <div
+                  class={`p-4 rounded-xl border space-y-1.5 ${
+                    theme() === 'sepia'
+                      ? 'bg-[#F7EFE4] border-[#DECFC0]'
+                      : theme() === 'midnight'
+                      ? 'bg-[#1D2027] border-neutral-700'
+                      : 'bg-[#F8F5EE] border-neutral-200'
+                  }`}
+                >
+                  <p class="text-sm font-semibold leading-relaxed">
+                    💡 Why does your brain freeze when looking at Nastaliq?
+                  </p>
+                  <p class="text-xs sm:text-sm leading-relaxed opacity-85">
+                    Because letters connect into complex calligraphic ligatures. Your eyes cannot immediately tell where one letter ends and another begins.
+                  </p>
+                  <p class="text-xs sm:text-sm leading-relaxed opacity-85">
+                    Abjad Reader gives you <strong>3 progressive clues</strong> for every single word so you can decode the cursive script step-by-step.
+                  </p>
+                </div>
               </div>
             </Show>
 
-            {/* SLIDE 2: The 3-Tap Rule */}
+            {/* SLIDE 2: The 3 Progressive Clues */}
             <Show when={currentSlide() === 2}>
-              <div class="space-y-3.5">
+              <div class="space-y-4">
                 <div class="text-center space-y-1">
-                  <h3 class="text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-                    The 3-Tap Progressive Clues
+                  <h3 class="text-xl sm:text-2xl font-bold font-serif tracking-tight">
+                    The 3-Tap Clue Rule
                   </h3>
-                  <p class="text-xs text-neutral-600 dark:text-neutral-400 font-medium">
+                  <p class="text-sm font-medium opacity-80">
                     Why we don't immediately give away the English translation:
                   </p>
                 </div>
 
                 <div class="space-y-3">
-                  {/* Step 1 Card */}
-                  <div class="p-3.5 rounded-xl border-2 border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-xs space-y-1.5">
-                    <div class="flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded-md bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-xs">
+                  {/* Clue 1 Card */}
+                  <div
+                    class={`p-4 rounded-2xl border space-y-2 shadow-xs ${
+                      theme() === 'sepia'
+                        ? 'bg-[#F2EAE0] border-[#D8CCBA]'
+                        : theme() === 'midnight'
+                        ? 'bg-[#202229] border-neutral-700'
+                        : 'bg-white border-[#E0D7C8]'
+                    }`}
+                  >
+                    <div class="flex items-center gap-2.5">
+                      <span
+                        class={`px-2.5 py-1 rounded-full text-xs font-serif font-bold text-white shrink-0 ${
+                          theme() === 'sepia' ? 'bg-[#3A2D23]' : 'bg-neutral-900 dark:bg-white dark:text-neutral-900'
+                        }`}
+                      >
                         Tap 1
                       </span>
-                      <span class="font-bold text-sm text-neutral-900 dark:text-white">
+                      <span class="font-bold text-sm sm:text-base">
                         Sound It Out (Zero Spoilers)
                       </span>
                     </div>
-                    <p class="text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed pl-1">
-                      Hear the isolated word spoken aloud, see full vowel markings (Pesh, Zer, Zabar), and see each letter separated into clean phonics blocks so your eyes decode the cursive connections.
+                    <p class="text-xs sm:text-sm leading-relaxed opacity-85">
+                      Hear the isolated word spoken aloud, see full vowel marks (<em>Pesh ُ, Zer ِ, Zabar َ</em>), and see each letter separated into clean phonics blocks so your eyes break the cursive connection.
                     </p>
                   </div>
 
-                  {/* Step 2 Card */}
-                  <div class="p-3.5 rounded-xl border-2 border-emerald-300 dark:border-emerald-700 bg-emerald-50/60 dark:bg-emerald-950/30 shadow-xs space-y-1.5">
-                    <div class="flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded-md bg-emerald-700 text-white font-bold text-xs">
+                  {/* Clue 2 Card */}
+                  <div
+                    class={`p-4 rounded-2xl border space-y-2 shadow-xs ${
+                      theme() === 'sepia'
+                        ? 'bg-[#EBF3EC] border-[#A2CCA6]'
+                        : theme() === 'midnight'
+                        ? 'bg-emerald-950/40 border-emerald-800'
+                        : 'bg-emerald-50 border-emerald-200'
+                    }`}
+                  >
+                    <div class="flex items-center gap-2.5">
+                      <span class="px-2.5 py-1 rounded-full text-xs font-serif font-bold bg-[#1E4D2B] text-white shrink-0">
                         Tap 2
                       </span>
-                      <span class="font-bold text-sm text-emerald-950 dark:text-emerald-200">
+                      <span class="font-bold text-sm sm:text-base text-[#194324] dark:text-emerald-200">
                         The Spoken Bridge (Rozmarra)
                       </span>
                     </div>
-                    <p class="text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed pl-1">
-                      Still stuck? Tap again to see the simple, everyday spoken word you say at home and related root family words you already know.
+                    <p class="text-xs sm:text-sm leading-relaxed text-[#194324] dark:text-emerald-100 opacity-90">
+                      Still stuck? Tap again to see the simple, everyday spoken word you say at home and related root-family words you already know from everyday conversation.
                     </p>
                   </div>
 
-                  {/* Step 3 Card */}
-                  <div class="p-3.5 rounded-xl border-2 border-indigo-300 dark:border-indigo-700 bg-indigo-50/60 dark:bg-indigo-950/30 shadow-xs space-y-1.5">
-                    <div class="flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded-md bg-indigo-700 text-white font-bold text-xs">
+                  {/* Clue 3 Card */}
+                  <div
+                    class={`p-4 rounded-2xl border space-y-2 shadow-xs ${
+                      theme() === 'sepia'
+                        ? 'bg-[#EEF1F6] border-[#B9C6DA]'
+                        : theme() === 'midnight'
+                        ? 'bg-indigo-950/40 border-indigo-800'
+                        : 'bg-indigo-50 border-indigo-200'
+                    }`}
+                  >
+                    <div class="flex items-center gap-2.5">
+                      <span class="px-2.5 py-1 rounded-full text-xs font-serif font-bold bg-[#2B3A67] text-white shrink-0">
                         Tap 3
                       </span>
-                      <span class="font-bold text-sm text-indigo-950 dark:text-indigo-200">
-                        English Meaning (Final Safety Net)
+                      <span class="font-bold text-sm sm:text-base text-[#1E2E4A] dark:text-indigo-200">
+                        English Meaning & Literary Nuance
                       </span>
                     </div>
-                    <p class="text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed pl-1">
-                      If the spoken clues weren't enough, the third tap reveals the full literary English translation and cultural nuance notes.
+                    <p class="text-xs sm:text-sm leading-relaxed text-[#1E2E4A] dark:text-indigo-100 opacity-90">
+                      If the spoken clues weren't enough, the third tap reveals the full literary English definition and historical nuance notes from classical Urdu literature.
                     </p>
                   </div>
                 </div>
               </div>
             </Show>
 
-            {/* SLIDE 3: Live Interactive Practice (Using the word 'Khirki') */}
+            {/* SLIDE 3: Live Interactive Practice */}
             <Show when={currentSlide() === 3}>
-              <div class="space-y-3.5">
+              <div class="space-y-4">
                 <div class="text-center space-y-1">
-                  <h3 class="text-base sm:text-lg font-bold tracking-tight text-neutral-900 dark:text-white">
-                    Try It Live: Practice on the word 'Khirki'
+                  <h3 class="text-xl sm:text-2xl font-bold font-serif tracking-tight">
+                    Try It Live: Practice on 'کھِڑْکی'
                   </h3>
-                  <p class="text-xs text-neutral-600 dark:text-neutral-400 font-medium">
-                    Tap the button below to see how clues advance step-by-step:
+                  <p class="text-sm font-medium opacity-80">
+                    Tap the button below to see clues reveal step-by-step:
                   </p>
                 </div>
 
                 {/* Interactive Demo Sandbox Card */}
-                <div class="p-4 rounded-xl border-2 border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-md space-y-3">
+                <div
+                  class={`p-5 rounded-2xl border space-y-4 shadow-md ${
+                    theme() === 'sepia'
+                      ? 'bg-[#F2EAE0] border-[#D8CCBA]'
+                      : theme() === 'midnight'
+                      ? 'bg-[#202229] border-neutral-700'
+                      : 'bg-white border-[#E0D7C8]'
+                  }`}
+                >
                   {/* Step indicator */}
-                  <div class="flex items-center justify-between text-xs pb-2.5 border-b border-neutral-200 dark:border-neutral-800">
+                  <div class="flex items-center justify-between pb-3 border-b border-black/10 dark:border-white/10 select-none">
                     <span
-                      class={`px-2.5 py-1 rounded-md font-bold text-xs ${
+                      class={`px-2.5 py-1 rounded-full text-xs font-serif font-bold text-white shrink-0 ${
                         demoTapLevel() === 1
-                          ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
+                          ? theme() === 'sepia'
+                            ? 'bg-[#3A2D23]'
+                            : 'bg-neutral-900 dark:bg-white dark:text-neutral-900'
                           : demoTapLevel() === 2
-                          ? 'bg-emerald-700 text-white'
-                          : 'bg-indigo-700 text-white'
+                          ? 'bg-[#1E4D2B]'
+                          : 'bg-[#2B3A67]'
                       }`}
                     >
                       Clue {demoTapLevel()} of 3
                     </span>
-                    <span class="font-bold text-xs text-neutral-800 dark:text-neutral-200">
-                      {demoTapLevel() === 1 && '1: Sound It Out'}
+                    <span class="font-bold text-xs sm:text-sm opacity-85">
+                      {demoTapLevel() === 1 && '1: Sound It Out (Zero Spoilers)'}
                       {demoTapLevel() === 2 && '2: Everyday Spoken Bridge'}
-                      {demoTapLevel() === 3 && '3: English Meaning'}
+                      {demoTapLevel() === 3 && '3: English Meaning & Nuance'}
                     </span>
                   </div>
 
                   {/* Vocalized Display & Audio */}
                   <div class="text-center py-2 space-y-2">
-                    <div class="font-nastaliq text-5xl font-bold text-neutral-950 dark:text-white" dir="rtl">
+                    <div class="font-nastaliq text-5xl sm:text-6xl font-bold leading-tight" dir="rtl">
                       کھِڑْکی
                     </div>
                     <div>
                       <button
                         type="button"
-                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 text-xs font-bold shadow-sm transition-all cursor-pointer"
+                        class={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold shadow-xs transition-all cursor-pointer ${
+                          theme() === 'sepia'
+                            ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
+                            : theme() === 'midnight'
+                            ? 'bg-white hover:bg-neutral-200 text-neutral-900'
+                            : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+                        }`}
                         onClick={() => playTTS('کھڑکی')}
                       >
-                        <Volume2 size={15} class="text-white dark:text-neutral-900" />
+                        <Volume2 size={15} />
                         <span>Listen to pronunciation</span>
                       </button>
                     </div>
                   </div>
 
-                  {/* CLUE 1 CONTENT: Letters & Vowels */}
-                  <div class="space-y-2 pt-2 border-t border-neutral-200 dark:border-neutral-800">
-                    <div class="text-xs font-bold text-neutral-800 dark:text-neutral-200 text-left">
-                      Isolated Letter Blocks:
+                  {/* CLUE 1: Phonics Tiles */}
+                  <div class="space-y-2 pt-2 border-t border-black/10 dark:border-white/10">
+                    <div class="text-xs font-bold opacity-80 text-left font-sans">
+                      Letter-by-Letter Phonics Breakdown:
                     </div>
-                    <div class="flex justify-center gap-2" dir="rtl">
-                      <div class="flex flex-col items-center min-w-[50px] px-2 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-300 dark:border-neutral-600 shadow-xs">
-                        <span class="text-lg font-bold font-nastaliq text-neutral-900 dark:text-white leading-tight">کھ</span>
-                        <div class="w-full h-px bg-neutral-300 dark:bg-neutral-700 my-1" />
-                        <span class="text-[10px] font-bold text-neutral-600 dark:text-neutral-400 font-sans">کھے</span>
+                    <div class="flex justify-center gap-2.5" dir="rtl">
+                      <div
+                        class={`flex flex-col items-center min-w-[56px] px-2.5 py-2 rounded-xl border shadow-xs ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA]'
+                            : theme() === 'midnight'
+                            ? 'bg-[#252830] border-neutral-600'
+                            : 'bg-neutral-100 border-neutral-200'
+                        }`}
+                      >
+                        <span class="text-xl font-bold font-nastaliq leading-tight">کھ</span>
+                        <div class="w-full h-px bg-black/10 dark:bg-white/10 my-1" />
+                        <span class="text-xs font-bold opacity-75 font-nastaliq">کھے</span>
                       </div>
-                      <div class="flex flex-col items-center min-w-[50px] px-2 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-300 dark:border-neutral-600 shadow-xs">
-                        <span class="text-lg font-bold font-nastaliq text-neutral-900 dark:text-white leading-tight">ڑ</span>
-                        <div class="w-full h-px bg-neutral-300 dark:bg-neutral-700 my-1" />
-                        <span class="text-[10px] font-bold text-neutral-600 dark:text-neutral-400 font-sans">ڑے</span>
+                      <div
+                        class={`flex flex-col items-center min-w-[56px] px-2.5 py-2 rounded-xl border shadow-xs ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA]'
+                            : theme() === 'midnight'
+                            ? 'bg-[#252830] border-neutral-600'
+                            : 'bg-neutral-100 border-neutral-200'
+                        }`}
+                      >
+                        <span class="text-xl font-bold font-nastaliq leading-tight">ڑ</span>
+                        <div class="w-full h-px bg-black/10 dark:bg-white/10 my-1" />
+                        <span class="text-xs font-bold opacity-75 font-nastaliq">ڑے</span>
                       </div>
-                      <div class="flex flex-col items-center min-w-[50px] px-2 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-300 dark:border-neutral-600 shadow-xs">
-                        <span class="text-lg font-bold font-nastaliq text-neutral-900 dark:text-white leading-tight">ک</span>
-                        <div class="w-full h-px bg-neutral-300 dark:bg-neutral-700 my-1" />
-                        <span class="text-[10px] font-bold text-neutral-600 dark:text-neutral-400 font-sans">کاف</span>
+                      <div
+                        class={`flex flex-col items-center min-w-[56px] px-2.5 py-2 rounded-xl border shadow-xs ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA]'
+                            : theme() === 'midnight'
+                            ? 'bg-[#252830] border-neutral-600'
+                            : 'bg-neutral-100 border-neutral-200'
+                        }`}
+                      >
+                        <span class="text-xl font-bold font-nastaliq leading-tight">ک</span>
+                        <div class="w-full h-px bg-black/10 dark:bg-white/10 my-1" />
+                        <span class="text-xs font-bold opacity-75 font-nastaliq">کاف</span>
                       </div>
-                      <div class="flex flex-col items-center min-w-[50px] px-2 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border-2 border-neutral-300 dark:border-neutral-600 shadow-xs">
-                        <span class="text-lg font-bold font-nastaliq text-neutral-900 dark:text-white leading-tight">ی</span>
-                        <div class="w-full h-px bg-neutral-300 dark:bg-neutral-700 my-1" />
-                        <span class="text-[10px] font-bold text-neutral-600 dark:text-neutral-400 font-sans">چھوٹی یے</span>
+                      <div
+                        class={`flex flex-col items-center min-w-[56px] px-2.5 py-2 rounded-xl border shadow-xs ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF6EC] border-[#D8CCBA]'
+                            : theme() === 'midnight'
+                            ? 'bg-[#252830] border-neutral-600'
+                            : 'bg-neutral-100 border-neutral-200'
+                        }`}
+                      >
+                        <span class="text-xl font-bold font-nastaliq leading-tight">ی</span>
+                        <div class="w-full h-px bg-black/10 dark:bg-white/10 my-1" />
+                        <span class="text-xs font-bold opacity-75 font-nastaliq">چھوٹی یے</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* CLUE 2 CONTENT: Spoken Bridge */}
+                  {/* CLUE 2: Spoken Bridge */}
                   <Show when={demoTapLevel() >= 2}>
-                    <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-300 dark:border-emerald-700 space-y-1 text-left">
-                      <div class="text-xs font-bold text-emerald-900 dark:text-emerald-200">
+                    <div
+                      class={`p-3.5 rounded-xl border space-y-1 text-left ${
+                        theme() === 'sepia'
+                          ? 'bg-[#EBF3EC] border-[#A2CCA6]'
+                          : theme() === 'midnight'
+                          ? 'bg-emerald-950/40 border-emerald-800'
+                          : 'bg-emerald-50 border-emerald-200'
+                      }`}
+                    >
+                      <div class="text-xs font-bold text-[#194324] dark:text-emerald-200 font-sans">
                         Everyday Spoken Urdu Bridge:
                       </div>
-                      <p class="text-sm font-bold font-nastaliq text-emerald-950 dark:text-emerald-100" dir="rtl">
-                        کھڑکی (کمرے کی کھڑکی / دریچہ)
+                      <p class="text-base font-bold font-nastaliq text-[#194324] dark:text-emerald-100" dir="rtl">
+                        کھڑکی (کمرے کی کھڑکی)
                       </p>
-                      <p class="text-xs text-neutral-700 dark:text-neutral-300 font-medium">
+                      <p class="text-xs sm:text-sm text-[#194324] dark:text-emerald-100 opacity-90">
                         The window in your room—the exact word you say at home every day!
                       </p>
                     </div>
                   </Show>
 
-                  {/* CLUE 3 CONTENT: English Meaning */}
+                  {/* CLUE 3: English Translation */}
                   <Show when={demoTapLevel() >= 3}>
-                    <div class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-300 dark:border-indigo-700 space-y-1 text-left">
-                      <div class="text-xs font-bold text-indigo-900 dark:text-indigo-200">
+                    <div
+                      class={`p-3.5 rounded-xl border space-y-1 text-left ${
+                        theme() === 'sepia'
+                          ? 'bg-[#EEF1F6] border-[#B9C6DA]'
+                          : theme() === 'midnight'
+                          ? 'bg-indigo-950/40 border-indigo-800'
+                          : 'bg-indigo-50 border-indigo-200'
+                      }`}
+                    >
+                      <div class="text-xs font-bold text-[#1E2E4A] dark:text-indigo-200 uppercase tracking-wider font-sans">
                         English Contextual Meaning:
                       </div>
-                      <p class="text-sm font-bold text-neutral-900 dark:text-white">
-                        Window / Casement (opening in a wall for light and air)
+                      <p class="text-base font-bold font-serif text-[#1E2E4A] dark:text-white">
+                        Window (opening in a wall for light and air)
                       </p>
-                      <p class="text-xs text-neutral-700 dark:text-neutral-300">
-                        In Manto's story *Khol Do*, the doctor commands: <em>"Khirki khol do"</em> (Open the window).
+                      <p class="text-xs sm:text-sm text-[#1E2E4A] dark:text-indigo-100 opacity-85">
+                        In Manto's story <em>Khol Do</em>, the doctor commands: <strong>"Khirki khol do"</strong> (Open the window).
                       </p>
                     </div>
                   </Show>
 
-                  {/* Demo Button to advance clue */}
+                  {/* Advance Button */}
                   <div class="pt-2">
                     <button
                       type="button"
-                      class="w-full py-2.5 px-4 rounded-xl bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
+                      class={`w-full py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer active:scale-[0.99] ${
+                        theme() === 'sepia'
+                          ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
+                          : theme() === 'midnight'
+                          ? 'bg-white hover:bg-neutral-200 text-neutral-900'
+                          : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+                      }`}
                       onClick={() => {
                         const next = demoTapLevel() < 3 ? ((demoTapLevel() + 1) as 1 | 2 | 3) : 1;
                         setDemoTapLevel(next);
                       }}
                     >
                       <span>
-                        {demoTapLevel() === 1 && 'Click for Clue 2: Show Spoken Bridge →'}
-                        {demoTapLevel() === 2 && 'Click for Clue 3: Show English Meaning →'}
-                        {demoTapLevel() === 3 && '↺ Reset Clues to Clue 1'}
+                        {demoTapLevel() === 1 && 'Next Clue: Show Spoken Bridge (Tap 2) →'}
+                        {demoTapLevel() === 2 && 'Next Clue: Show English Meaning (Tap 3) →'}
+                        {demoTapLevel() === 3 && '↺ Reset Practice to Clue 1'}
                       </span>
                     </button>
                   </div>
@@ -326,48 +491,93 @@ export default function TutorialModal() {
               </div>
             </Show>
 
-            {/* SLIDE 4: Ready to Read */}
+            {/* SLIDE 4: Quick Controls */}
             <Show when={currentSlide() === 4}>
               <div class="space-y-4">
-                <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-700 flex items-center justify-center mx-auto shadow-xs">
+                <div
+                  class={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto shadow-xs border ${
+                    theme() === 'sepia'
+                      ? 'bg-[#EBF3EC] border-[#A2CCA6] text-[#194324]'
+                      : theme() === 'midnight'
+                      ? 'bg-emerald-950/60 border-emerald-700 text-emerald-300'
+                      : 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                  }`}
+                >
                   <CheckCircle2 size={30} />
                 </div>
+
                 <div class="text-center space-y-1">
-                  <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                  <h3 class="text-xl sm:text-2xl font-bold font-serif tracking-tight">
                     You're ready to start reading!
                   </h3>
-                  <p class="text-xs text-neutral-600 dark:text-neutral-400 font-medium">
+                  <p class="text-sm font-medium opacity-80">
                     A few quick tips for your reading session:
                   </p>
                 </div>
 
-                <div class="space-y-2.5 text-xs">
-                  <div class="p-3.5 rounded-xl bg-white dark:bg-neutral-900 border-2 border-neutral-200 dark:border-neutral-700 shadow-xs flex items-start gap-3">
-                    <span class="text-lg">📖</span>
-                    <div>
-                      <span class="font-bold text-sm text-neutral-900 dark:text-white">Start with Level 1: Khol Do (کھول دو)</span>
-                      <p class="text-neutral-700 dark:text-neutral-300 mt-0.5 leading-relaxed">
-                        Manto’s masterpiece uses everyday colloquial words you know from speaking (*darwaza, khirki, kapra, pani*). Perfect for your first read!
+                <div class="space-y-3">
+                  <div
+                    class={`p-4 rounded-2xl border flex items-start gap-3.5 shadow-xs ${
+                      theme() === 'sepia'
+                        ? 'bg-[#F2EAE0] border-[#D8CCBA]'
+                        : theme() === 'midnight'
+                        ? 'bg-[#202229] border-neutral-700'
+                        : 'bg-white border-[#E0D7C8]'
+                    }`}
+                  >
+                    <span class="p-2 rounded-xl bg-black/5 dark:bg-white/10 shrink-0">
+                      <BookOpen size={18} />
+                    </span>
+                    <div class="space-y-1">
+                      <span class="font-bold text-sm sm:text-base font-serif">
+                        Start with Level 1: Khol Do (کھول دو)
+                      </span>
+                      <p class="text-xs sm:text-sm leading-relaxed opacity-85">
+                        Manto’s masterpiece uses simple conversational words you already say at home (<em>darwaza, khirki, kapra, pani</em>). Perfect for training your eyes!
                       </p>
                     </div>
                   </div>
 
-                  <div class="p-3.5 rounded-xl bg-white dark:bg-neutral-900 border-2 border-neutral-200 dark:border-neutral-700 shadow-xs flex items-start gap-3">
-                    <span class="text-lg">🎧</span>
-                    <div>
-                      <span class="font-bold text-sm text-neutral-900 dark:text-white">Use the Audio Narration Bar</span>
-                      <p class="text-neutral-700 dark:text-neutral-300 mt-0.5 leading-relaxed">
-                        At the bottom of the screen, tap "Play Narration" to hear the whole sentence read aloud while watching the script highlight.
+                  <div
+                    class={`p-4 rounded-2xl border flex items-start gap-3.5 shadow-xs ${
+                      theme() === 'sepia'
+                        ? 'bg-[#F2EAE0] border-[#D8CCBA]'
+                        : theme() === 'midnight'
+                        ? 'bg-[#202229] border-neutral-700'
+                        : 'bg-white border-[#E0D7C8]'
+                    }`}
+                  >
+                    <span class="p-2 rounded-xl bg-black/5 dark:bg-white/10 shrink-0">
+                      <Headphones size={18} />
+                    </span>
+                    <div class="space-y-1">
+                      <span class="font-bold text-sm sm:text-base font-serif">
+                        Use the Audio Narration Bar
+                      </span>
+                      <p class="text-xs sm:text-sm leading-relaxed opacity-85">
+                        At the bottom of the screen, tap "Play Narration" to hear the sentence spoken aloud in native Urdu while watching the golden karaoke highlight.
                       </p>
                     </div>
                   </div>
 
-                  <div class="p-3.5 rounded-xl bg-white dark:bg-neutral-900 border-2 border-neutral-200 dark:border-neutral-700 shadow-xs flex items-start gap-3">
-                    <span class="text-lg">⌨️</span>
-                    <div>
-                      <span class="font-bold text-sm text-neutral-900 dark:text-white">Keyboard Shortcuts</span>
-                      <p class="text-neutral-700 dark:text-neutral-300 mt-0.5 leading-relaxed">
-                        Press <kbd class="px-2 py-0.5 rounded bg-neutral-200 dark:bg-neutral-800 font-mono font-bold">Space</kbd> to advance clues, and <kbd class="px-2 py-0.5 rounded bg-neutral-200 dark:bg-neutral-800 font-mono font-bold">Esc</kbd> to close any card.
+                  <div
+                    class={`p-4 rounded-2xl border flex items-start gap-3.5 shadow-xs ${
+                      theme() === 'sepia'
+                        ? 'bg-[#F2EAE0] border-[#D8CCBA]'
+                        : theme() === 'midnight'
+                        ? 'bg-[#202229] border-neutral-700'
+                        : 'bg-white border-[#E0D7C8]'
+                    }`}
+                  >
+                    <span class="p-2 rounded-xl bg-black/5 dark:bg-white/10 shrink-0">
+                      <Keyboard size={18} />
+                    </span>
+                    <div class="space-y-1">
+                      <span class="font-bold text-sm sm:text-base font-serif">
+                        Keyboard & Tap Shortcuts
+                      </span>
+                      <p class="text-xs sm:text-sm leading-relaxed opacity-85">
+                        Tap any word to decode. Press <kbd class="px-2 py-0.5 rounded border border-black/20 dark:border-white/20 font-mono font-bold text-xs">Space</kbd> to reveal the next clue, and <kbd class="px-2 py-0.5 rounded border border-black/20 dark:border-white/20 font-mono font-bold text-xs">Esc</kbd> to close any card.
                       </p>
                     </div>
                   </div>
@@ -378,17 +588,17 @@ export default function TutorialModal() {
 
           {/* Footer Controls */}
           <div
-            class={`px-5 py-3.5 border-t flex items-center justify-between ${
+            class={`px-5 sm:px-7 py-4 border-t flex items-center justify-between ${
               theme() === 'sepia'
                 ? 'bg-[#F4ECE1] border-[#D8CCBA]'
                 : theme() === 'midnight'
                 ? 'bg-[#1F2026] border-neutral-800'
-                : 'bg-white border-neutral-200'
+                : 'bg-[#F6F2EA] border-[#E0D7C8]'
             }`}
           >
             <button
               type="button"
-              class="px-3 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 disabled:opacity-20 cursor-pointer flex items-center gap-1 transition-opacity"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 disabled:opacity-20 cursor-pointer flex items-center gap-1 transition-opacity"
               disabled={currentSlide() === 1}
               onClick={prevSlide}
             >
@@ -417,7 +627,7 @@ export default function TutorialModal() {
 
             <button
               type="button"
-              class={`px-4 py-2 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+              class={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
                 theme() === 'sepia'
                   ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
                   : theme() === 'midnight'
