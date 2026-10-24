@@ -1,7 +1,7 @@
 import { Show } from 'solid-js';
 import {
-  paragraphs,
-  currentSentenceIndex,
+  currentSentence,
+  allStorySentences,
   isPlaying,
   playSentence,
   toggleAudio,
@@ -10,29 +10,24 @@ import {
 import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-solid';
 
 export default function AudioBar() {
-  const currentSentence = () => {
-    const pList = paragraphs().filter((p) => p.paragraphIndex >= 0);
-    if (!pList.length || currentSentenceIndex() === null) return null;
-    return pList[0].sentencesJson.find((s) => s.index === currentSentenceIndex());
-  };
-
-  const totalSentences = () => {
-    const pList = paragraphs().filter((p) => p.paragraphIndex >= 0);
-    if (!pList.length) return 0;
-    return pList[0].sentencesJson.length;
-  };
+  const activeS = () => currentSentence();
+  const sentencesList = () => allStorySentences();
 
   const handleNext = () => {
-    const nextIdx = (currentSentenceIndex() ?? -1) + 1;
-    if (nextIdx < totalSentences()) {
-      playSentence(nextIdx);
+    const list = sentencesList();
+    if (!list.length) return;
+    const currentIdx = activeS() ? activeS()!.globalIndex : -1;
+    if (currentIdx + 1 < list.length) {
+      playSentence(currentIdx + 1);
     }
   };
 
   const handlePrev = () => {
-    const prevIdx = (currentSentenceIndex() ?? 1) - 1;
-    if (prevIdx >= 0) {
-      playSentence(prevIdx);
+    const list = sentencesList();
+    if (!list.length) return;
+    const currentIdx = activeS() ? activeS()!.globalIndex : 1;
+    if (currentIdx - 1 >= 0) {
+      playSentence(currentIdx - 1);
     }
   };
 
@@ -55,7 +50,7 @@ export default function AudioBar() {
           </div>
           <div class="text-xs truncate text-right min-w-0 flex-1" dir="rtl">
             <Show
-              when={currentSentence()}
+              when={activeS()}
               fallback={
                 <span class="text-neutral-500 font-sans text-[11px] sm:text-xs">
                   Tap Play to listen to sentence narration
@@ -63,7 +58,7 @@ export default function AudioBar() {
               }
             >
               <span class="font-nastaliq text-xs sm:text-sm font-bold leading-relaxed text-neutral-950 dark:text-white">
-                {currentSentence()!.text}
+                {activeS()!.text}
               </span>
             </Show>
           </div>
@@ -75,7 +70,7 @@ export default function AudioBar() {
             type="button"
             title="Previous Sentence"
             class="p-1.5 rounded-md hover:bg-black/10 dark:hover:bg-white/10 text-neutral-600 dark:text-neutral-400 disabled:opacity-30 cursor-pointer"
-            disabled={currentSentenceIndex() === null || currentSentenceIndex() === 0}
+            disabled={!activeS() || activeS()!.globalIndex === 0}
             onClick={handlePrev}
           >
             <SkipBack size={14} />
@@ -97,18 +92,15 @@ export default function AudioBar() {
             type="button"
             title="Next Sentence"
             class="p-1.5 rounded-md hover:bg-black/10 dark:hover:bg-white/10 text-neutral-600 dark:text-neutral-400 disabled:opacity-30 cursor-pointer"
-            disabled={
-              currentSentenceIndex() === null ||
-              currentSentenceIndex()! >= totalSentences() - 1
-            }
+            disabled={!activeS() || activeS()!.globalIndex >= sentencesList().length - 1}
             onClick={handleNext}
           >
             <SkipForward size={14} />
           </button>
 
-          <Show when={currentSentenceIndex() !== null}>
+          <Show when={activeS() && sentencesList().length > 0}>
             <span class="text-[10px] sm:text-[11px] font-mono opacity-60 ml-1">
-              {currentSentenceIndex()! + 1}/{totalSentences()}
+              {activeS()!.globalIndex + 1}/{sentencesList().length}
             </span>
           </Show>
         </div>

@@ -8,7 +8,7 @@ import {
   scriptTradition,
   fontSizePx,
   showIzafatHighlights,
-  currentSentenceIndex,
+  currentSentence,
 } from '../store/readerStore';
 
 export default function ReaderSurface() {
@@ -69,14 +69,18 @@ export default function ReaderSurface() {
             <div class="abjad-paragraph-block relative">
               <For each={pTokens}>
                 {(token) => {
-                  const isCurrentSentence = () =>
-                    currentSentenceIndex() !== null && token.sentenceIndex === currentSentenceIndex();
+                  const isCurrentSentence = () => {
+                    const activeS = currentSentence();
+                    if (!activeS) return false;
+                    return activeS.paragraphId === paragraph.id && token.sentenceIndex === activeS.sentenceIndex;
+                  };
 
                   if (!token.isWord) {
                     // Non-word punctuation or whitespace
                     return (
                       <span
-                        class={`${isCurrentSentence() ? 'sentence-highlight-active' : ''}`}
+                        class={isCurrentSentence() ? 'sentence-token-active' : ''}
+                        data-active-sentence={isCurrentSentence() ? 'true' : undefined}
                       >
                         {token.surfaceForm}
                       </span>
@@ -88,8 +92,9 @@ export default function ReaderSurface() {
                   return (
                     <span
                       class={`${isIzafat() ? 'izafat-group' : ''} ${
-                        isCurrentSentence() ? 'sentence-highlight-active' : ''
+                        isCurrentSentence() ? 'sentence-token-active' : ''
                       }`}
+                      data-active-sentence={isCurrentSentence() ? 'true' : undefined}
                     >
                       <span
                         role="button"

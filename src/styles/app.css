@@ -180,16 +180,27 @@ body.theme-midnight .abjad-word-token[data-active="true"] {
   /* NEVER set white-space: nowrap so multi-word Izafat chains wrap cleanly on mobile */
 }
 
-/* Active sentence audio highlight */
+/* Active sentence audio karaoke highlight */
+.sentence-token-active,
 .sentence-highlight-active {
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+  background-color: rgba(245, 158, 11, 0.22) !important;
+  border-bottom: 2px solid #D97706;
+  border-radius: 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  transition: background-color 150ms ease, border-color 150ms ease;
 }
 
+body.theme-midnight .sentence-token-active,
 body.theme-midnight .sentence-highlight-active {
-  background-color: rgba(255, 255, 255, 0.07);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  background-color: rgba(245, 158, 11, 0.3) !important;
+  border-bottom: 2px solid #FBBF24;
+}
+
+body.theme-sepia .sentence-token-active,
+body.theme-sepia .sentence-highlight-active {
+  background-color: rgba(217, 119, 6, 0.25) !important;
+  border-bottom: 2px solid #B45309;
 }
 
 /* Custom scrollbars */

@@ -198,6 +198,24 @@ api.get('/telemetry', async (c) => {
   }
 });
 
+function splitTextForTTS(text: string, maxLen = 160): string[] {
+  if (text.length <= maxLen) return [text];
+  const parts: string[] = [];
+  const words = text.split(/\s+/);
+  let current = '';
+
+  for (const w of words) {
+    if ((current ? current + ' ' + w : w).length <= maxLen) {
+      current = current ? current + ' ' + w : w;
+    } else {
+      if (current) parts.push(current);
+      current = w;
+    }
+  }
+  if (current) parts.push(current);
+  return parts;
+}
+
 // -------------------------------------------------------------
 // 5. GET/POST /api/tts - Audio synthesis with SHA-256 caching
 // -------------------------------------------------------------
@@ -242,7 +260,46 @@ const handleTTS = async (vocalizedText: string, lang = 'ur-PK') => {
     }
   }
 
-  // 3. Fallback to Web Speech API format
+  // 3. Fetch native spoken Urdu MP3 from Google Translate TTS endpoint (with chunking for long sentences)
+  try {
+    const chunks = splitTextForTTS(vocalizedText.trim(), 160);
+    const audioBuffers: Uint8Array[] = [];
+
+    for (const chunk of chunks) {
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(
+        chunk
+      )}&tl=ur&client=tw-ob`;
+      const res = await fetch(ttsUrl, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      });
+
+      if (res.ok) {
+        const buf = await res.arrayBuffer();
+        if (buf.byteLength > 0) {
+          audioBuffers.push(new Uint8Array(buf));
+        }
+      }
+    }
+
+    if (audioBuffers.length === chunks.length && audioBuffers.length > 0) {
+      const totalLen = audioBuffers.reduce((acc, b) => acc + b.length, 0);
+      const merged = new Uint8Array(totalLen);
+      let offset = 0;
+      for (const b of audioBuffers) {
+        merged.set(b, offset);
+        offset += b.length;
+      }
+      await Bun.write(cacheFilePath, merged);
+      return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: false } };
+    }
+  } catch (ttsErr) {
+    console.warn('Google TTS fetch error:', ttsErr);
+  }
+
+  // 4. Fallback to Web Speech API format
   return {
     data: {
       fallback: 'web-speech',

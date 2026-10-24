@@ -102,6 +102,21 @@ export const [theme, setTheme] = createSignal<'paper' | 'sepia' | 'midnight'>('p
 export const [showIzafatHighlights, setShowIzafatHighlights] = createSignal<boolean>(true);
 
 // 3-Tap Popover Interaction
+export interface StorySentence {
+  index: number;
+  text: string;
+  startTimeMs?: number;
+  endTimeMs?: number;
+}
+
+export interface ActiveSentenceInfo {
+  paragraphId: string;
+  paragraphIndex: number;
+  sentenceIndex: number;
+  globalIndex: number;
+  text: string;
+}
+
 export const [activeTokenId, setActiveTokenId] = createSignal<string | null>(null);
 export const [activeTargetEl, setActiveTargetEl] = createSignal<HTMLElement | null>(null);
 export const [tapLevel, setTapLevel] = createSignal<1 | 2 | 3>(1);
@@ -109,9 +124,34 @@ export const [maxTapLevelReached, setMaxTapLevelReached] = createSignal<1 | 2 | 
 export const [isPopoverOpen, setIsPopoverOpen] = createSignal<boolean>(false);
 
 // Sentence Audio Player
-export const [currentSentenceIndex, setCurrentSentenceIndex] = createSignal<number | null>(null);
+export const [currentSentence, setCurrentSentence] = createSignal<ActiveSentenceInfo | null>(null);
+export const currentSentenceIndex = () => currentSentence()?.globalIndex ?? null;
 export const [isPlaying, setIsPlaying] = createSignal<boolean>(false);
 let simulatedAudioTimer: any = null;
+
+export const allStorySentences = (): ActiveSentenceInfo[] => {
+  const pList = paragraphs()
+    .filter((p) => p.paragraphIndex >= 0)
+    .sort((a, b) => a.paragraphIndex - b.paragraphIndex);
+
+  const list: ActiveSentenceInfo[] = [];
+  let gIdx = 0;
+
+  for (const p of pList) {
+    if (Array.isArray(p.sentencesJson)) {
+      for (const s of p.sentencesJson) {
+        list.push({
+          paragraphId: p.id,
+          paragraphIndex: p.paragraphIndex,
+          sentenceIndex: s.index,
+          globalIndex: gIdx++,
+          text: s.text,
+        });
+      }
+    }
+  }
+  return list;
+};
 
 // Vocabulary Vault
 export const [isVaultOpen, setIsVaultOpen] = createSignal<boolean>(false);
@@ -209,8 +249,8 @@ export function closeTokenLens() {
 // -------------------------------------------------------------
 let currentAudioElement: HTMLAudioElement | null = null;
 
-export async function playTTS(text: string): Promise<void> {
-  if (!text) return;
+export async function playTTS(text: string): Promise<HTMLAudioElement | null> {
+  if (!text) return null;
 
   // Stop currently playing audio if any
   if (currentAudioElement) {
@@ -226,71 +266,92 @@ export async function playTTS(text: string): Promise<void> {
       const audio = new Audio(data.audioUrl);
       currentAudioElement = audio;
       await audio.play();
+      return audio;
     } else if (data.fallback === 'web-speech') {
-      if ('speechSynthesis' in window) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(data.text);
         utterance.lang = data.lang || 'ur-PK';
 
-        // Check for Urdu voices if available
+        // Check for Urdu voices or Hindi fallback
         const voices = window.speechSynthesis.getVoices();
-        const urduVoice = voices.find((v) => v.lang.startsWith('ur'));
-        if (urduVoice) {
-          utterance.voice = urduVoice;
-        } else {
-          showToast(`Pronunciation: ${data.text}`);
+        const urduOrHindi = voices.find((v) => v.lang.startsWith('ur') || v.lang.startsWith('hi'));
+        if (urduOrHindi) {
+          utterance.voice = urduOrHindi;
         }
 
         window.speechSynthesis.speak(utterance);
-      } else {
-        showToast(`Pronunciation: ${data.text}`);
       }
     }
   } catch (err) {
     console.warn('TTS playback error, falling back to speech synthesis:', err);
-    if ('speechSynthesis' in window) {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'ur-PK';
       window.speechSynthesis.speak(utterance);
     }
   }
+  return null;
 }
 
 // -------------------------------------------------------------
 // Sentence Audio Playback Controller
 // -------------------------------------------------------------
-export function playSentence(sentenceIndex: number) {
-  const pList = paragraphs().filter((p) => p.paragraphIndex >= 0);
-  if (!pList.length) return;
-  const sentences = pList[0].sentencesJson;
-  const sentence = sentences.find((s) => s.index === sentenceIndex);
-  if (!sentence) return;
+export async function playSentence(globalIndex: number) {
+  const sentenceList = allStorySentences();
+  if (!sentenceList.length) return;
 
-  setCurrentSentenceIndex(sentenceIndex);
+  if (globalIndex < 0 || globalIndex >= sentenceList.length) {
+    stopAudio();
+    return;
+  }
+
+  const s = sentenceList[globalIndex];
+  setCurrentSentence(s);
   setIsPlaying(true);
 
   if (simulatedAudioTimer) {
     clearTimeout(simulatedAudioTimer);
+    simulatedAudioTimer = null;
   }
 
-  // Play sentence via Web Speech API or simulated duration
-  playTTS(sentence.text);
+  // Smooth scroll active sentence into view if off-screen
+  if (typeof document !== 'undefined') {
+    setTimeout(() => {
+      const activeEl = document.querySelector(`[data-active-sentence="true"]`);
+      if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 60);
+  }
 
-  const durationMs = sentence.endTimeMs && sentence.startTimeMs
-    ? sentence.endTimeMs - sentence.startTimeMs
-    : Math.max(3000, sentence.text.length * 90);
+  // Play audio through native stream
+  const audio = await playTTS(s.text);
 
-  simulatedAudioTimer = setTimeout(() => {
-    // Check if there is a next sentence
-    const nextSentence = sentences.find((s) => s.index === sentenceIndex + 1);
-    if (nextSentence) {
-      playSentence(sentenceIndex + 1);
-    } else {
-      setIsPlaying(false);
-      setCurrentSentenceIndex(null);
-    }
-  }, durationMs);
+  if (audio) {
+    audio.onended = () => {
+      if (isPlaying()) {
+        playSentence(globalIndex + 1);
+      }
+    };
+    audio.onerror = () => {
+      const fallbackDuration = Math.max(3500, s.text.length * 85);
+      simulatedAudioTimer = setTimeout(() => {
+        if (isPlaying()) {
+          playSentence(globalIndex + 1);
+        }
+      }, fallbackDuration);
+    };
+  } else {
+    // If Web Speech or silent fallback, timer progresses sentences automatically
+    const fallbackDuration = Math.max(3500, s.text.length * 85);
+    simulatedAudioTimer = setTimeout(() => {
+      if (isPlaying()) {
+        playSentence(globalIndex + 1);
+      }
+    }, fallbackDuration);
+  }
 }
 
 export function stopAudio() {
@@ -302,18 +363,18 @@ export function stopAudio() {
     currentAudioElement.pause();
     currentAudioElement = null;
   }
-  if ('speechSynthesis' in window) {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     window.speechSynthesis.cancel();
   }
   setIsPlaying(false);
-  setCurrentSentenceIndex(null);
 }
 
 export function toggleAudio() {
   if (isPlaying()) {
     stopAudio();
   } else {
-    playSentence(0);
+    const current = currentSentence();
+    playSentence(current ? current.globalIndex : 0);
   }
 }
 
