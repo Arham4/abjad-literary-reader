@@ -460,28 +460,20 @@ export async function playSelectedText(customText?: string): Promise<AudioPlayba
   // Pause continuous sentence narration first
   pauseAudio();
   setIsSelectionPlaying(true);
-  const selectionSessionId = activePlaybackSessionId;
 
   const handle = await playTTS(text);
-  if (selectionSessionId !== activePlaybackSessionId || !isSelectionPlaying()) {
+  if (!isSelectionPlaying() || !handle) {
     if (handle) handle.pause();
+    setIsSelectionPlaying(false);
     return null;
   }
 
-  if (handle) {
-    handle.onEnded(() => {
-      if (selectionSessionId === activePlaybackSessionId) {
-        setIsSelectionPlaying(false);
-      }
-    });
-    handle.onError(() => {
-      if (selectionSessionId === activePlaybackSessionId) {
-        setIsSelectionPlaying(false);
-      }
-    });
-  } else {
+  handle.onEnded(() => {
     setIsSelectionPlaying(false);
-  }
+  });
+  handle.onError(() => {
+    setIsSelectionPlaying(false);
+  });
   return handle;
 }
 
@@ -721,23 +713,19 @@ export async function testVoicePreview() {
     return;
   }
   setIsPreviewPlaying(true);
-  const previewSessionId = activePlaybackSessionId;
   const sampleText = 'ٹھنڈ میں، ایک قحط زدہ گاؤں سے گزرتے وقت ایک فارغ، بااثر اور چڑچڑے شخص کو بعض جل پری نما اژدہے نظر آئے۔';
   const handle = await playTTS(sampleText);
-  if (previewSessionId !== activePlaybackSessionId || !isPreviewPlaying()) {
+  if (!isPreviewPlaying() || !handle) {
     if (handle) handle.pause();
+    setIsPreviewPlaying(false);
     return;
   }
-  if (handle) {
-    handle.onEnded(() => {
-      if (previewSessionId === activePlaybackSessionId) setIsPreviewPlaying(false);
-    });
-    handle.onError(() => {
-      if (previewSessionId === activePlaybackSessionId) setIsPreviewPlaying(false);
-    });
-  } else {
+  handle.onEnded(() => {
     setIsPreviewPlaying(false);
-  }
+  });
+  handle.onError(() => {
+    setIsPreviewPlaying(false);
+  });
 }
 
 // -------------------------------------------------------------
@@ -752,10 +740,6 @@ export async function playSentence(globalIndex: number) {
     pauseAudio();
     return;
   }
-
-  // Pre-emptively stop active playback stream and capture unique session
-  stopActiveAudioStream();
-  const sentenceSessionId = activePlaybackSessionId;
 
   const s = sentenceList[globalIndex];
   setCurrentSentence(s);
@@ -775,45 +759,31 @@ export async function playSentence(globalIndex: number) {
   // Pre-cache next sentence in the background for zero-lag transition
   prefetchSentenceAudio(globalIndex + 1);
 
-  // Play audio through unified handle
+  // Play audio through unified handle (playTTS calls stopActiveAudioStream internally)
   const handle = await playTTS(s.text);
 
-  // If user paused or clicked next/prev while fetch was in flight, abort!
-  if (sentenceSessionId !== activePlaybackSessionId || !isPlaying()) {
+  // If user paused or clicked a different sentence while fetch was in flight, abort!
+  if (!isPlaying() || currentSentence()?.globalIndex !== s.globalIndex || !handle) {
     if (handle) handle.pause();
     return;
   }
 
-  if (handle) {
-    handle.onEnded(() => {
-      // Auto-advance continuous narration to the next sentence
-      if (sentenceSessionId === activePlaybackSessionId && isPlaying()) {
-        if (globalIndex + 1 < sentenceList.length) {
-          playSentence(globalIndex + 1);
-        } else {
-          pauseAudio();
-        }
+  handle.onEnded(() => {
+    // Auto-advance continuous narration to the next sentence
+    if (isPlaying() && currentSentence()?.globalIndex === s.globalIndex) {
+      if (globalIndex + 1 < sentenceList.length) {
+        playSentence(globalIndex + 1);
+      } else {
+        pauseAudio();
       }
-    });
-    handle.onError(() => {
-      if (sentenceSessionId !== activePlaybackSessionId || !isPlaying()) return;
-      const fallbackDuration = Math.max(3500, s.text.length * 85);
-      simulatedAudioTimer = setTimeout(() => {
-        if (sentenceSessionId === activePlaybackSessionId && isPlaying()) {
-          if (globalIndex + 1 < sentenceList.length) {
-            playSentence(globalIndex + 1);
-          } else {
-            pauseAudio();
-          }
-        }
-      }, fallbackDuration);
-    });
-  } else {
-    // If Web Speech or silent fallback, timer progresses sentences automatically
-    if (sentenceSessionId !== activePlaybackSessionId || !isPlaying()) return;
+    }
+  });
+
+  handle.onError(() => {
+    if (!isPlaying() || currentSentence()?.globalIndex !== s.globalIndex) return;
     const fallbackDuration = Math.max(3500, s.text.length * 85);
     simulatedAudioTimer = setTimeout(() => {
-      if (sentenceSessionId === activePlaybackSessionId && isPlaying()) {
+      if (isPlaying() && currentSentence()?.globalIndex === s.globalIndex) {
         if (globalIndex + 1 < sentenceList.length) {
           playSentence(globalIndex + 1);
         } else {
@@ -821,7 +791,7 @@ export async function playSentence(globalIndex: number) {
         }
       }
     }, fallbackDuration);
-  }
+  });
 }
 
 export function toggleAudio() {
