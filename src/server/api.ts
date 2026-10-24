@@ -242,10 +242,56 @@ const handleTTS = async (
 
   // Check if cache file exists
   if (existsSync(cacheFilePath)) {
-    return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: true, voice, speed } };
+    const fileStats = await Bun.file(cacheFilePath).size;
+    if (fileStats > 500) {
+      return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: true, voice, speed } };
+    }
   }
 
-  // 2. Azure Speech API / TTS_API_KEY if configured (High-fidelity Neural voices with 0 server RAM overhead)
+  // 2. High-Fidelity Neural TTS via edge-tts (100% Free, zero financial cost, zero resident RAM)
+  const neuralVoiceMap: Record<string, string> = {
+    'ur-asad': 'ur-PK-AsadNeural',
+    'ur-uzma': 'ur-PK-UzmaNeural',
+    'ur-salman': 'ur-IN-SalmanNeural',
+    'ur-gul': 'ur-IN-GulNeural',
+    'google-standard': 'ur-PK-UzmaNeural',
+  };
+
+  const neuralVoice = neuralVoiceMap[voice];
+  if (neuralVoice && voice !== 'google-standard') {
+    try {
+      const ratePct = Math.round((speed - 1) * 100);
+      const rateStr = ratePct >= 0 ? `+${ratePct}%` : `${ratePct}%`;
+      const pitchHz = Math.round((pitch - 1) * 30);
+      const pitchStr = pitchHz >= 0 ? `+${pitchHz}Hz` : `${pitchHz}Hz`;
+
+      const proc = Bun.spawn([
+        'edge-tts',
+        '--voice',
+        neuralVoice,
+        '--rate',
+        rateStr,
+        '--pitch',
+        pitchStr,
+        '--text',
+        vocalizedText.trim(),
+        '--write-media',
+        cacheFilePath,
+      ]);
+
+      const exitCode = await proc.exited;
+      if (exitCode === 0 && existsSync(cacheFilePath)) {
+        const stats = await Bun.file(cacheFilePath).size;
+        if (stats > 500) {
+          return { data: { audioUrl: `/audio/cache/${cacheFileName}`, cached: false, voice, speed } };
+        }
+      }
+    } catch (edgeErr) {
+      console.warn('Edge TTS neural synthesis error, attempting fallback:', edgeErr);
+    }
+  }
+
+  // 3. Azure Speech API / TTS_API_KEY fallback if configured
   const azureKey = process.env.AZURE_SPEECH_KEY || process.env.TTS_API_KEY;
   const azureRegion = process.env.AZURE_SPEECH_REGION || 'eastus';
   if (azureKey) {

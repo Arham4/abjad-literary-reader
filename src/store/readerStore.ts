@@ -334,7 +334,7 @@ const savedRate = typeof localStorage !== 'undefined' ? parseFloat(localStorage.
 const savedPitch = typeof localStorage !== 'undefined' ? parseFloat(localStorage.getItem('abjad_tts_pitch') || '1.0') : 1.0;
 
 export const [ttsVoice, setTtsVoiceSignal] = createSignal<VoicePersona>(savedVoice || 'ur-asad');
-export const [ttsEngine, setTtsEngineSignal] = createSignal<VoiceEngine>(savedEngine || 'auto');
+export const [ttsEngine, setTtsEngineSignal] = createSignal<VoiceEngine>(savedEngine || 'server');
 export const [ttsRate, setTtsRateSignal] = createSignal<number>(savedRate);
 export const [ttsPitch, setTtsPitchSignal] = createSignal<number>(savedPitch);
 const initVoiceSettingsOpen = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).has('voiceSettings') : false;
@@ -442,9 +442,9 @@ export async function playTTS(text: string): Promise<AudioPlaybackHandle | null>
   const rate = ttsRate();
   const pitch = ttsPitch();
 
-  // If engine is 'browser' or 'auto' and browser has a matching voice, play with Browser Web Speech
+  // Use browser synthesis only if browser actually has a matching voice for Urdu/Hindi
   const browserVoice = findBestBrowserVoice(voice);
-  const useBrowser = engine === 'browser' || (engine === 'auto' && browserVoice !== null);
+  const useBrowser = (engine === 'browser' || engine === 'auto') && browserVoice !== null;
 
   if (useBrowser && typeof window !== 'undefined' && 'speechSynthesis' in window) {
     window.speechSynthesis.cancel();
