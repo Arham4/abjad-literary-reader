@@ -75,6 +75,20 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     expect(tokens[tokens.length - 1].sentenceIndex).toBeGreaterThanOrEqual(0);
   });
 
+  test('Tokenization detaches punctuation marks like "۔", "،", "؟" from word tokens', () => {
+    const tokens = UrduLanguagePack.tokenizeParagraph('مغل پورہ پہنچی۔ بہت لوگ مارے گئے تھے۔');
+    const words = tokens.filter((t) => t.isWord).map((t) => t.surface);
+    expect(words).toContain('مغل');
+    expect(words).toContain('پورہ');
+    expect(words).toContain('پہنچی');
+    expect(words).not.toContain('پہنچی۔');
+    expect(words).toContain('تھے');
+    expect(words).not.toContain('تھے۔');
+
+    const nonWords = tokens.filter((t) => !t.isWord).map((t) => t.surface);
+    expect(nonWords).toContain('۔');
+  });
+
   test('cleanUrduForTTS strips distracting jazm and diacritics for neural speech models', () => {
     // Amritsar with jazm and diacritics
     expect(cleanUrduForTTS('امْرِتْسَر')).toBe('امرتسر');

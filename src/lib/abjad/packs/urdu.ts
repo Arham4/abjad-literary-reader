@@ -179,8 +179,8 @@ export const UrduLanguagePack: AbjadLanguagePack = {
     const tokens: TokenSpan[] = [];
 
     // Regex to capture words (including ZWNJ \u200C, trailing Zer \u0650, Madda, Hamza, etc.)
-    // versus whitespace and punctuation
-    const wordPattern = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF\u200C]+|[^\s\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF\u200C]+|\s+/gu;
+    // versus punctuation and whitespace
+    const wordPattern = /[\u0621-\u064A\u0671-\u06D3\u06D5\u06EE-\u06EF\u06FA-\u06FC\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF\u200C\u064B-\u065F\u0670]+|[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!/\\\-]+|\s+|[^\s\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]+/gu;
 
     const sentencePunctuation = new Set(['۔', '؟', '?', '!', '\n']);
     let sentenceIndex = 0;
@@ -191,7 +191,9 @@ export const UrduLanguagePack: AbjadLanguagePack = {
 
     while ((match = wordPattern.exec(normalizedText)) !== null) {
       const str = match[0];
-      const isWord = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/u.test(str) && !/^[،۔؛:؟!«»"'\s\d]+$/u.test(str);
+      const isWord =
+        /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/u.test(str) &&
+        !/^[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!/\\\-\s\d]+$/u.test(str);
       rawMatches.push({ text: str, isWord });
     }
 
