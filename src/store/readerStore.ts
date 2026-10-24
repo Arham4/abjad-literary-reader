@@ -385,7 +385,7 @@ function findBestBrowserVoice(persona: VoicePersona): SpeechSynthesisVoice | nul
                      persona === 'ur-salman' ? 'salman' :
                      persona === 'ur-gul' ? 'gul' : '';
 
-  // 1. Look for exact name match in Urdu voices (e.g. "Microsoft Asad Online (Natural)")
+  // Look for exact name match in browser voices (e.g. "Microsoft Asad Online (Natural)" in Edge)
   if (targetName) {
     const namedMatch = voices.find(
       (v) => (v.lang.startsWith('ur') || v.lang.startsWith('hi')) && v.name.toLowerCase().includes(targetName)
@@ -393,33 +393,7 @@ function findBestBrowserVoice(persona: VoicePersona): SpeechSynthesisVoice | nul
     if (namedMatch) return namedMatch;
   }
 
-  // 2. Look for gender-matched Urdu voice
-  const isMale = persona === 'ur-asad' || persona === 'ur-salman';
-  const urduVoices = voices.filter((v) => v.lang.startsWith('ur'));
-  if (urduVoices.length > 0) {
-    if (isMale) {
-      const maleVoice = urduVoices.find((v) => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('asad') || v.name.toLowerCase().includes('salman'));
-      if (maleVoice) return maleVoice;
-    } else {
-      const femaleVoice = urduVoices.find((v) => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('uzma') || v.name.toLowerCase().includes('gul'));
-      if (femaleVoice) return femaleVoice;
-    }
-    return urduVoices[0];
-  }
-
-  // 3. Fallback to high-quality Hindi neural voice (identical phonology for literary Hindustani vocabulary)
-  const hindiVoices = voices.filter((v) => v.lang.startsWith('hi'));
-  if (hindiVoices.length > 0) {
-    if (isMale) {
-      const maleHindi = hindiVoices.find((v) => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('madhav') || v.name.toLowerCase().includes('hemant'));
-      if (maleHindi) return maleHindi;
-    } else {
-      const femaleHindi = hindiVoices.find((v) => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('swara') || v.name.toLowerCase().includes('kalpana'));
-      if (femaleHindi) return femaleHindi;
-    }
-    return hindiVoices[0];
-  }
-
+  // If browser does not have this exact neural voice installed, return null so server edge-tts synthesizes it
   return null;
 }
 

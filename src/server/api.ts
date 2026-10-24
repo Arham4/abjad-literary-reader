@@ -232,9 +232,9 @@ const handleTTS = async (
   }
 
   // 1. Compute deterministic SHA-256 hash using Bun.CryptoHasher
-  // Differentiates cache by voice, cadence/speed, and text
+  // Uses v2-neural prefix to bust any stale CDN/Cloudflare caches from older Google audio
   const hasher = new Bun.CryptoHasher('sha256');
-  hasher.update(`${voice}:${speed}:${lang}:${vocalizedText.trim()}`);
+  hasher.update(`v2-neural:${voice}:${speed}:${pitch}:${lang}:${vocalizedText.trim()}`);
   const hash = hasher.digest('hex');
 
   const cacheFileName = `${hash}.mp3`;
