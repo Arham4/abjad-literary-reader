@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* 2. Optional Local Mehr Nastaliq Web font with size-adjust */
 @font-face {
   font-family: 'Mehr Nastaliq Web';

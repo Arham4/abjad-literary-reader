@@ -124,11 +124,25 @@ const initialTheme = (): 'paper' | 'sepia' | 'midnight' => {
 
 export const [theme, _setTheme] = createSignal<'paper' | 'sepia' | 'midnight'>(initialTheme());
 
+export function applyThemeToDom(t: 'paper' | 'sepia' | 'midnight') {
+  if (typeof document !== 'undefined') {
+    document.body.className = `theme-${t}`;
+    document.documentElement.classList.toggle('dark', t === 'midnight');
+    document.documentElement.setAttribute('data-theme', t);
+  }
+}
+
+// Apply immediately on store initialization
+if (typeof document !== 'undefined') {
+  applyThemeToDom(initialTheme());
+}
+
 export function setTheme(t: 'paper' | 'sepia' | 'midnight') {
   _setTheme(t);
   if (typeof window !== 'undefined') {
     localStorage.setItem('abjad_theme', t);
   }
+  applyThemeToDom(t);
 }
 
 export const [showIzafatHighlights, setShowIzafatHighlights] = createSignal<boolean>(true);

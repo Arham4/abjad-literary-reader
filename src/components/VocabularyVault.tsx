@@ -115,25 +115,38 @@ export default function VocabularyVault() {
   });
 
   const getTierBadge = (level: number) => {
+    const t = theme();
     switch (level) {
       case 1:
         return {
           label: 'Tap 1: Sound Out',
           color:
-            'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white border border-neutral-300 dark:border-neutral-700 font-bold',
+            t === 'sepia'
+              ? 'bg-[#EAE0CF] text-[#3A2D23] border border-[#D4C5AD] font-bold'
+              : t === 'midnight'
+              ? 'bg-neutral-800 text-neutral-200 border border-neutral-700 font-bold'
+              : 'bg-neutral-100 text-neutral-800 border border-neutral-300 font-bold',
         };
       case 2:
         return {
           label: 'Tap 2: Spoken Bridge',
           color:
-            'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 font-bold',
+            t === 'sepia'
+              ? 'bg-[#DDE9DF] text-[#1E4D2B] border border-[#B7D2BD] font-bold'
+              : t === 'midnight'
+              ? 'bg-[#1E3326] text-emerald-300 border border-emerald-800/70 font-bold'
+              : 'bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold',
         };
       case 3:
       default:
         return {
           label: 'Tap 3: Full Gloss',
           color:
-            'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-900 dark:text-indigo-200 border border-indigo-300 dark:border-indigo-700 font-bold',
+            t === 'sepia'
+              ? 'bg-[#E3E8F0] text-[#1E2E4A] border border-[#C2D0E4] font-bold'
+              : t === 'midnight'
+              ? 'bg-[#202738] text-indigo-200 border border-indigo-800/70 font-bold'
+              : 'bg-indigo-100 text-indigo-900 border border-indigo-300 font-bold',
         };
     }
   };
@@ -216,15 +229,39 @@ export default function VocabularyVault() {
         }}
       >
         {/* Header */}
-        <div class="p-4 sm:p-5 border-b border-black/10 dark:border-white/10 flex items-center justify-between gap-3">
+        <div
+          class={`p-4 sm:p-5 border-b flex items-center justify-between gap-3 ${
+            theme() === 'sepia'
+              ? 'border-[#E2D6C0]'
+              : theme() === 'midnight'
+              ? 'border-neutral-800'
+              : 'border-[#E8DFC9]'
+          }`}
+        >
           <div class="flex items-center gap-2.5 min-w-0">
-            <div class="p-2 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xs shrink-0">
+            <div
+              class={`p-2 rounded-lg shadow-xs shrink-0 ${
+                theme() === 'sepia'
+                  ? 'bg-[#3A2D23] text-[#FAF6EC]'
+                  : theme() === 'midnight'
+                  ? 'bg-white text-neutral-900'
+                  : 'bg-neutral-900 text-white'
+              }`}
+            >
               <BookMarked size={18} />
             </div>
             <div class="min-w-0">
               <div class="flex items-center gap-2">
                 <h2 class="text-base font-bold tracking-tight truncate">Vocabulary Vault</h2>
-                <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-black/10 dark:bg-white/10 shrink-0">
+                <span
+                  class={`px-2 py-0.5 rounded-full text-xs font-mono font-bold shrink-0 ${
+                    theme() === 'sepia'
+                      ? 'bg-[#EFE6D5] text-[#3A2D23]'
+                      : theme() === 'midnight'
+                      ? 'bg-neutral-800 text-neutral-200'
+                      : 'bg-neutral-100 text-neutral-800'
+                  }`}
+                >
                   {vaultItems().length}
                 </span>
               </div>
@@ -234,13 +271,25 @@ export default function VocabularyVault() {
 
           <div class="flex items-center gap-1.5 shrink-0">
             {/* View Mode Toggle: List vs Flashcards */}
-            <div class="inline-flex rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 p-0.5 text-xs font-bold">
+            <div
+              class={`inline-flex rounded-lg border p-0.5 text-xs font-bold ${
+                theme() === 'sepia'
+                  ? 'bg-[#EFE6D5] border-[#D8CCBA]'
+                  : theme() === 'midnight'
+                  ? 'bg-neutral-800 border-neutral-700'
+                  : 'bg-neutral-100 border-neutral-200'
+              }`}
+            >
               <button
                 type="button"
                 title="List View"
                 class={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
                   viewMode() === 'list'
-                    ? 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white shadow-xs'
+                    ? theme() === 'sepia'
+                      ? 'bg-[#FAF6EC] text-[#29221E] shadow-xs'
+                      : theme() === 'midnight'
+                      ? 'bg-neutral-700 text-white shadow-xs'
+                      : 'bg-white text-neutral-900 shadow-xs'
                     : 'opacity-65 hover:opacity-100'
                 }`}
                 onClick={() => setViewMode('list')}
@@ -252,7 +301,7 @@ export default function VocabularyVault() {
                 title="Study Flashcards"
                 class={`px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
                   viewMode() === 'flashcards'
-                    ? 'bg-amber-500 text-white shadow-xs'
+                    ? 'bg-amber-600 text-white shadow-xs'
                     : 'opacity-65 hover:opacity-100'
                 }`}
                 onClick={() => {
@@ -281,14 +330,37 @@ export default function VocabularyVault() {
 
         {/* List Controls: Search & Filters (Shown in List View) */}
         <Show when={viewMode() === 'list'}>
-          <div class="p-3.5 border-b border-black/10 dark:border-white/10 space-y-2.5">
+          <div
+            class={`p-3.5 border-b space-y-2.5 ${
+              theme() === 'sepia'
+                ? 'border-[#E2D6C0]'
+                : theme() === 'midnight'
+                ? 'border-neutral-800'
+                : 'border-[#E8DFC9]'
+            }`}
+          >
             {/* Search Input */}
             <div class="relative">
-              <Search size={14} class="absolute left-3 top-3 text-neutral-400" />
+              <Search
+                size={14}
+                class={`absolute left-3 top-3 ${
+                  theme() === 'sepia'
+                    ? 'text-[#8C7E70]'
+                    : theme() === 'midnight'
+                    ? 'text-neutral-500'
+                    : 'text-neutral-400'
+                }`}
+              />
               <input
                 type="text"
                 placeholder="Search Urdu words or English definitions..."
-                class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 focus:outline-none focus:ring-2 focus:ring-neutral-800 dark:focus:ring-white"
+                class={`w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-lg border transition-colors focus:outline-none focus:ring-2 ${
+                  theme() === 'sepia'
+                    ? 'bg-[#F2EAE0] border-[#D8CCBA] text-[#29221E] placeholder:text-[#8C7E70] focus:ring-[#8C430B]'
+                    : theme() === 'midnight'
+                    ? 'bg-[#202229] border-neutral-700 text-[#ECE7DE] placeholder:text-neutral-500 focus:ring-amber-400'
+                    : 'bg-neutral-50 border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:ring-neutral-800'
+                }`}
                 value={searchQuery()}
                 onInput={(e) => setSearchQuery(e.currentTarget.value)}
               />
@@ -296,7 +368,7 @@ export default function VocabularyVault() {
                 <button
                   type="button"
                   title="Clear search"
-                  class="absolute right-2.5 top-2.5 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 cursor-pointer"
+                  class="absolute right-2.5 top-2.5 opacity-50 hover:opacity-100 cursor-pointer"
                   onClick={() => setSearchQuery('')}
                 >
                   <X size={14} />
@@ -305,13 +377,21 @@ export default function VocabularyVault() {
             </div>
 
             {/* Filter Tabs Bar */}
-            <div class="flex items-center gap-1 overflow-x-auto text-xs pb-1 scrollbar-none">
+            <div class="flex items-center gap-1.5 overflow-x-auto text-xs pb-1 scrollbar-none">
               <button
                 type="button"
                 class={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                   filterStatus() === 'all'
-                    ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-xs'
-                    : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
+                    ? theme() === 'sepia'
+                      ? 'bg-[#3A2D23] text-[#FAF6EC] shadow-xs'
+                      : theme() === 'midnight'
+                      ? 'bg-white text-neutral-900 shadow-xs'
+                      : 'bg-neutral-900 text-white shadow-xs'
+                    : theme() === 'sepia'
+                    ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] text-[#4A3E35]'
+                    : theme() === 'midnight'
+                    ? 'bg-[#202229] hover:bg-[#2A2D37] text-neutral-300'
+                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
                 }`}
                 onClick={() => setFilterStatus('all')}
               >
@@ -321,8 +401,12 @@ export default function VocabularyVault() {
                 type="button"
                 class={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1 ${
                   filterStatus() === 'starred'
-                    ? 'bg-amber-500 text-white shadow-xs'
-                    : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : theme() === 'sepia'
+                    ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] text-[#4A3E35]'
+                    : theme() === 'midnight'
+                    ? 'bg-[#202229] hover:bg-[#2A2D37] text-neutral-300'
+                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
                 }`}
                 onClick={() => setFilterStatus('starred')}
               >
@@ -333,8 +417,14 @@ export default function VocabularyVault() {
                 type="button"
                 class={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                   filterStatus() === 'learning'
-                    ? 'bg-amber-700 text-white shadow-xs'
-                    : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
+                    ? theme() === 'sepia'
+                      ? 'bg-[#8C430B] text-white shadow-xs'
+                      : 'bg-amber-600 text-white shadow-xs'
+                    : theme() === 'sepia'
+                    ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] text-[#4A3E35]'
+                    : theme() === 'midnight'
+                    ? 'bg-[#202229] hover:bg-[#2A2D37] text-neutral-300'
+                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
                 }`}
                 onClick={() => setFilterStatus('learning')}
               >
@@ -344,8 +434,14 @@ export default function VocabularyVault() {
                 type="button"
                 class={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                   filterStatus() === 'mastered'
-                    ? 'bg-emerald-700 text-white shadow-xs'
-                    : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
+                    ? theme() === 'sepia'
+                      ? 'bg-[#1E4D2B] text-white shadow-xs'
+                      : 'bg-emerald-600 text-white shadow-xs'
+                    : theme() === 'sepia'
+                    ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] text-[#4A3E35]'
+                    : theme() === 'midnight'
+                    ? 'bg-[#202229] hover:bg-[#2A2D37] text-neutral-300'
+                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
                 }`}
                 onClick={() => setFilterStatus('mastered')}
               >
@@ -355,8 +451,14 @@ export default function VocabularyVault() {
                 type="button"
                 class={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                   filterStatus() === 2
-                    ? 'bg-emerald-800 text-white shadow-xs'
-                    : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
+                    ? theme() === 'sepia'
+                      ? 'bg-[#1E4D2B] text-white shadow-xs'
+                      : 'bg-emerald-700 text-white shadow-xs'
+                    : theme() === 'sepia'
+                    ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] text-[#4A3E35]'
+                    : theme() === 'midnight'
+                    ? 'bg-[#202229] hover:bg-[#2A2D37] text-neutral-300'
+                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
                 }`}
                 onClick={() => setFilterStatus(2)}
               >
@@ -366,8 +468,14 @@ export default function VocabularyVault() {
                 type="button"
                 class={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                   filterStatus() === 3
-                    ? 'bg-indigo-800 text-white shadow-xs'
-                    : 'bg-black/5 dark:bg-white/5 hover:bg-black/10'
+                    ? theme() === 'sepia'
+                      ? 'bg-[#2B3A67] text-white shadow-xs'
+                      : 'bg-indigo-700 text-white shadow-xs'
+                    : theme() === 'sepia'
+                    ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] text-[#4A3E35]'
+                    : theme() === 'midnight'
+                    ? 'bg-[#202229] hover:bg-[#2A2D37] text-neutral-300'
+                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
                 }`}
                 onClick={() => setFilterStatus(3)}
               >
@@ -381,7 +489,13 @@ export default function VocabularyVault() {
                 {/* Story filter dropdown if multiple stories exist */}
                 <Show when={availableStories().length > 1}>
                   <select
-                    class="px-2 py-1 rounded-md border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-[11px] font-medium cursor-pointer max-w-[130px] truncate"
+                    class={`px-2 py-1 rounded-md border text-[11px] font-medium cursor-pointer max-w-[130px] truncate ${
+                      theme() === 'sepia'
+                        ? 'bg-[#F2EAE0] border-[#D8CCBA] text-[#29221E]'
+                        : theme() === 'midnight'
+                        ? 'bg-[#202229] border-neutral-700 text-[#ECE7DE]'
+                        : 'bg-neutral-100 border-neutral-200 text-neutral-900'
+                    }`}
                     value={storyFilter()}
                     onChange={(e) => setStoryFilter(e.currentTarget.value)}
                   >
@@ -394,7 +508,13 @@ export default function VocabularyVault() {
 
                 {/* Sort Order */}
                 <select
-                  class="px-2 py-1 rounded-md border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-[11px] font-medium cursor-pointer"
+                  class={`px-2 py-1 rounded-md border text-[11px] font-medium cursor-pointer ${
+                    theme() === 'sepia'
+                      ? 'bg-[#F2EAE0] border-[#D8CCBA] text-[#29221E]'
+                      : theme() === 'midnight'
+                      ? 'bg-[#202229] border-neutral-700 text-[#ECE7DE]'
+                      : 'bg-neutral-100 border-neutral-200 text-neutral-900'
+                  }`}
                   value={sortOrder()}
                   onChange={(e) => setSortOrder(e.currentTarget.value as SortOrder)}
                 >
@@ -405,14 +525,26 @@ export default function VocabularyVault() {
               </div>
 
               {/* Density Toggle: Compact vs Detailed */}
-              <div class="inline-flex rounded-md border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 p-0.5 text-[11px] shrink-0 font-medium">
+              <div
+                class={`inline-flex rounded-md border p-0.5 text-[11px] shrink-0 font-medium ${
+                  theme() === 'sepia'
+                    ? 'bg-[#EFE6D5] border-[#D8CCBA]'
+                    : theme() === 'midnight'
+                    ? 'bg-neutral-800 border-neutral-700'
+                    : 'bg-neutral-100 border-neutral-200'
+                }`}
+              >
                 <button
                   type="button"
                   title="Detailed View"
                   class={`px-2 py-0.5 rounded transition-all cursor-pointer ${
                     densityMode() === 'detailed'
-                      ? 'bg-white dark:bg-neutral-800 font-bold shadow-xs'
-                      : 'opacity-60'
+                      ? theme() === 'sepia'
+                        ? 'bg-[#FAF6EC] text-[#29221E] font-bold shadow-xs'
+                        : theme() === 'midnight'
+                        ? 'bg-neutral-700 text-white font-bold shadow-xs'
+                        : 'bg-white text-neutral-900 font-bold shadow-xs'
+                      : 'opacity-60 hover:opacity-100'
                   }`}
                   onClick={() => setDensityMode('detailed')}
                 >
@@ -423,8 +555,12 @@ export default function VocabularyVault() {
                   title="Compact View"
                   class={`px-2 py-0.5 rounded transition-all cursor-pointer ${
                     densityMode() === 'compact'
-                      ? 'bg-white dark:bg-neutral-800 font-bold shadow-xs'
-                      : 'opacity-60'
+                      ? theme() === 'sepia'
+                        ? 'bg-[#FAF6EC] text-[#29221E] font-bold shadow-xs'
+                        : theme() === 'midnight'
+                        ? 'bg-neutral-700 text-white font-bold shadow-xs'
+                        : 'bg-white text-neutral-900 font-bold shadow-xs'
+                      : 'opacity-60 hover:opacity-100'
                   }`}
                   onClick={() => setDensityMode('compact')}
                 >
@@ -461,22 +597,45 @@ export default function VocabularyVault() {
                       when={densityMode() === 'detailed'}
                       fallback={
                         /* COMPACT ROW VIEW */
-                        <div class="p-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 flex items-center justify-between gap-3 hover:border-black/25 dark:hover:border-white/25 transition-all">
+                        <div
+                          class={`p-2.5 rounded-xl border flex items-center justify-between gap-3 transition-all ${
+                            theme() === 'sepia'
+                              ? 'bg-[#FAF5EB] border-[#D8CCBA] hover:border-[#B5A186]'
+                              : theme() === 'midnight'
+                              ? 'bg-[#1F2026] border-neutral-800 hover:border-neutral-700'
+                              : 'bg-white border-[#E6DEC9] hover:border-[#D0C5AA]'
+                          }`}
+                        >
                           <div class="flex items-center gap-2.5 min-w-0 flex-1">
                             <button
                               type="button"
                               title="Listen to pronunciation"
-                              class={`p-1.5 rounded-lg bg-black/10 dark:bg-white/10 hover:bg-black/20 text-inherit transition-all cursor-pointer shrink-0 ${
-                                playingAudioId() === item.id ? 'ring-2 ring-amber-400' : ''
-                              }`}
+                              class={`p-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
+                                theme() === 'sepia'
+                                  ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] text-[#3A2D23]'
+                                  : theme() === 'midnight'
+                                  ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
+                                  : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-800'
+                              } ${playingAudioId() === item.id ? 'ring-2 ring-amber-400' : ''}`}
                               onClick={() => handlePlayAudio(item)}
                             >
-                              <Volume2 size={14} class={playingAudioId() === item.id ? 'animate-pulse text-amber-400' : ''} />
+                              <Volume2
+                                size={14}
+                                class={playingAudioId() === item.id ? 'animate-pulse text-amber-500' : ''}
+                              />
                             </button>
                             <div dir="rtl" class="font-nastaliq text-xl leading-snug shrink-0">
                               {item.vocalizedSurface}
                             </div>
-                            <div class="text-xs text-neutral-600 dark:text-neutral-300 truncate">
+                            <div
+                              class={`text-xs truncate ${
+                                theme() === 'sepia'
+                                  ? 'text-[#5A4D42]'
+                                  : theme() === 'midnight'
+                                  ? 'text-neutral-400'
+                                  : 'text-neutral-600'
+                              }`}
+                            >
                               {item.englishGloss || item.urduExplanation || ''}
                             </div>
                           </div>
@@ -508,7 +667,15 @@ export default function VocabularyVault() {
                       }
                     >
                       {/* DETAILED PEDAGOGICAL CARD VIEW */}
-                      <div class="p-4 rounded-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 space-y-3 hover:border-black/25 dark:hover:border-white/25 transition-all shadow-xs">
+                      <div
+                        class={`p-4 rounded-2xl border space-y-3 transition-all shadow-xs ${
+                          theme() === 'sepia'
+                            ? 'bg-[#FAF5EB] border-[#D8CCBA] hover:border-[#B5A186]'
+                            : theme() === 'midnight'
+                            ? 'bg-[#1F2026] border-neutral-800 hover:border-neutral-700'
+                            : 'bg-white border-[#E6DEC9] hover:border-[#D0C5AA]'
+                        }`}
+                      >
                         {/* Card Header: Actions, Headword & Audio */}
                         <div class="flex items-start justify-between gap-3">
                           {/* Audio button + Headword */}
@@ -516,9 +683,13 @@ export default function VocabularyVault() {
                             <button
                               type="button"
                               title="Listen to word pronunciation"
-                              class={`p-2 rounded-xl bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0 ${
-                                playingAudioId() === item.id ? 'ring-2 ring-amber-400' : ''
-                              }`}
+                              class={`p-2 rounded-xl shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0 ${
+                                theme() === 'sepia'
+                                  ? 'bg-[#3A2D23] text-[#FAF6EC]'
+                                  : theme() === 'midnight'
+                                  ? 'bg-white text-neutral-900'
+                                  : 'bg-neutral-900 text-white'
+                              } ${playingAudioId() === item.id ? 'ring-2 ring-amber-400' : ''}`}
                               onClick={() => handlePlayAudio(item)}
                             >
                               <Volume2
@@ -542,8 +713,14 @@ export default function VocabularyVault() {
                               title={`Status: ${item.masteryStatus || 'learning'} (Click to toggle)`}
                               class={`px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide transition-all cursor-pointer ${
                                 item.masteryStatus === 'mastered'
-                                  ? 'bg-emerald-600 text-white shadow-xs'
-                                  : 'bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700'
+                                  ? theme() === 'sepia'
+                                    ? 'bg-[#2D5A3C] text-[#FAF6EC] shadow-xs'
+                                    : 'bg-emerald-600 text-white shadow-xs'
+                                  : theme() === 'sepia'
+                                  ? 'bg-[#F0E2CD] text-[#7C3E08] border border-[#DECCAE]'
+                                  : theme() === 'midnight'
+                                  ? 'bg-amber-950/60 text-amber-300 border border-amber-800/60'
+                                  : 'bg-amber-100 text-amber-900 border border-amber-300'
                               }`}
                               onClick={() => toggleVaultItemMastery(item.id)}
                             >
@@ -578,14 +755,38 @@ export default function VocabularyVault() {
 
                         {/* Pedagogical Bridge: Spoken Urdu Synonyms (Tap 2) */}
                         <Show when={item.spokenSynonyms && item.spokenSynonyms.length > 0}>
-                          <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60">
-                            <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 font-sans mb-1">
+                          <div
+                            class={`p-3 rounded-xl border ${
+                              theme() === 'sepia'
+                                ? 'bg-[#EAE1D1] border-[#CFC0A7]'
+                                : theme() === 'midnight'
+                                ? 'bg-[#19261E] border-emerald-900/50'
+                                : 'bg-emerald-50/80 border-emerald-200'
+                            }`}
+                          >
+                            <div
+                              class={`text-[10px] font-bold uppercase tracking-wider font-sans mb-1.5 ${
+                                theme() === 'sepia'
+                                  ? 'text-[#244E31]'
+                                  : theme() === 'midnight'
+                                  ? 'text-emerald-300'
+                                  : 'text-emerald-800'
+                              }`}
+                            >
                               Everyday Spoken Bridge (بول چال):
                             </div>
-                            <div dir="rtl" class="flex flex-wrap gap-1.5 text-right font-nastaliq text-base text-emerald-950 dark:text-emerald-100">
+                            <div dir="rtl" class="flex flex-wrap gap-1.5 text-right font-nastaliq text-base">
                               <For each={item.spokenSynonyms}>
                                 {(syn) => (
-                                  <span class="px-2 py-0.5 rounded-md bg-white dark:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-700 shadow-2xs">
+                                  <span
+                                    class={`px-2.5 py-0.5 rounded-md border shadow-2xs ${
+                                      theme() === 'sepia'
+                                        ? 'bg-[#FDFBF7] border-[#CFC0A7] text-[#1E3A25]'
+                                        : theme() === 'midnight'
+                                        ? 'bg-[#233529] border-emerald-800 text-emerald-200'
+                                        : 'bg-white border-emerald-200 text-emerald-900'
+                                    }`}
+                                  >
                                     {syn}
                                   </span>
                                 )}
@@ -596,14 +797,28 @@ export default function VocabularyVault() {
 
                         {/* Literary Sentence Context with Highlight */}
                         <Show when={item.sourceSentenceUrdu}>
-                          <div class="p-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 space-y-1.5">
-                            <div class="flex items-center justify-between text-[10px] opacity-70">
+                          <div
+                            class={`p-2.5 rounded-xl border space-y-1.5 ${
+                              theme() === 'sepia'
+                                ? 'bg-[#F4ECE0] border-[#D8CCBA]'
+                                : theme() === 'midnight'
+                                ? 'bg-[#1E2027] border-neutral-800'
+                                : 'bg-[#F9F7F3] border-[#E8DFC9]'
+                            }`}
+                          >
+                            <div class="flex items-center justify-between text-[10px] opacity-75">
                               <span class="font-bold uppercase tracking-wider">In Literary Context:</span>
                               <Show when={item.storyTitleUrdu && item.storySlug}>
                                 <button
                                   type="button"
                                   title="Jump to story in reader"
-                                  class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-bold hover:underline cursor-pointer"
+                                  class={`inline-flex items-center gap-1 font-bold hover:underline cursor-pointer ${
+                                    theme() === 'sepia'
+                                      ? 'text-[#8C430B] hover:text-[#5E2B06]'
+                                      : theme() === 'midnight'
+                                      ? 'text-amber-400 hover:text-amber-300'
+                                      : 'text-[#8C430B] hover:text-[#5E2B06]'
+                                  }`}
                                   onClick={() => handleJumpToStory(item.storySlug)}
                                 >
                                   <span>📖 {item.storyTitleUrdu}</span>
@@ -619,14 +834,31 @@ export default function VocabularyVault() {
 
                         {/* English Gloss & Meaning */}
                         <Show when={item.englishGloss}>
-                          <div class="text-xs sm:text-sm font-sans font-medium text-indigo-700 dark:text-indigo-300">
+                          <div
+                            class={`text-xs sm:text-sm font-sans font-semibold ${
+                              theme() === 'sepia'
+                                ? 'text-[#29221E]'
+                                : theme() === 'midnight'
+                                ? 'text-[#ECE7DE]'
+                                : 'text-neutral-900'
+                            }`}
+                          >
                             {item.englishGloss}
                           </div>
                         </Show>
 
                         {/* Urdu Explanation */}
                         <Show when={item.urduExplanation}>
-                          <div dir="rtl" class="text-xs font-nastaliq text-neutral-600 dark:text-neutral-400 text-right leading-relaxed">
+                          <div
+                            dir="rtl"
+                            class={`text-xs font-nastaliq text-right leading-relaxed ${
+                              theme() === 'sepia'
+                                ? 'text-[#635446]'
+                                : theme() === 'midnight'
+                                ? 'text-neutral-400'
+                                : 'text-neutral-600'
+                            }`}
+                          >
                             {item.urduExplanation}
                           </div>
                         </Show>
@@ -635,7 +867,15 @@ export default function VocabularyVault() {
                         <Show when={item.arabicRoot || (item.cousins && item.cousins.length > 0)}>
                           <div class="flex flex-wrap items-center gap-2 text-[11px] pt-1 border-t border-black/5 dark:border-white/5 opacity-80">
                             <Show when={item.arabicRoot}>
-                              <span class="font-bold text-blue-600 dark:text-blue-400">
+                              <span
+                                class={`font-bold ${
+                                  theme() === 'sepia'
+                                    ? 'text-[#1E3A5F]'
+                                    : theme() === 'midnight'
+                                    ? 'text-sky-300'
+                                    : 'text-blue-700'
+                                }`}
+                              >
                                 Root (مادہ): {item.arabicRoot}
                               </span>
                             </Show>
@@ -701,8 +941,14 @@ export default function VocabularyVault() {
                     <span
                       class={`px-2 py-0.5 rounded text-[10px] font-bold ${
                         currentFlashcard()?.masteryStatus === 'mastered'
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200'
+                          ? theme() === 'sepia'
+                            ? 'bg-[#2D5A3C] text-[#FAF6EC]'
+                            : 'bg-emerald-600 text-white'
+                          : theme() === 'sepia'
+                          ? 'bg-[#F0E2CD] text-[#7C3E08] border border-[#DECCAE]'
+                          : theme() === 'midnight'
+                          ? 'bg-amber-950/60 text-amber-300 border border-amber-800/60'
+                          : 'bg-amber-100 text-amber-900 border border-amber-300'
                       }`}
                     >
                       {currentFlashcard()?.masteryStatus === 'mastered' ? 'Mastered' : 'Learning'}
@@ -722,7 +968,15 @@ export default function VocabularyVault() {
                 </div>
 
                 {/* Progress Bar */}
-                <div class="w-full h-1.5 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
+                <div
+                  class={`w-full h-1.5 rounded-full overflow-hidden ${
+                    theme() === 'sepia'
+                      ? 'bg-[#E5D8C3]'
+                      : theme() === 'midnight'
+                      ? 'bg-neutral-800'
+                      : 'bg-neutral-200'
+                  }`}
+                >
                   <div
                     class="h-full bg-amber-500 transition-all duration-300"
                     style={{
@@ -734,7 +988,15 @@ export default function VocabularyVault() {
 
               {/* The Interactive 3-Tap Flashcard Face */}
               <div class="my-auto py-6">
-                <div class="p-6 rounded-3xl border border-black/15 dark:border-white/15 bg-black/5 dark:bg-white/5 space-y-5 text-center shadow-md">
+                <div
+                  class={`p-6 rounded-3xl border space-y-5 text-center shadow-md ${
+                    theme() === 'sepia'
+                      ? 'bg-[#FAF5EB] border-[#D8CCBA]'
+                      : theme() === 'midnight'
+                      ? 'bg-[#1F2026] border-neutral-700'
+                      : 'bg-white border-[#E0D7C8]'
+                  }`}
+                >
                   {/* Headword Display */}
                   <div class="space-y-2">
                     <div
@@ -750,7 +1012,13 @@ export default function VocabularyVault() {
                       <button
                         type="button"
                         title="Listen to word pronunciation"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 text-xs font-bold shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                        class={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer ${
+                          theme() === 'sepia'
+                            ? 'bg-[#3A2D23] text-[#FAF6EC]'
+                            : theme() === 'midnight'
+                            ? 'bg-white text-neutral-900'
+                            : 'bg-neutral-900 text-white'
+                        }`}
                         onClick={() => currentFlashcard() && handlePlayAudio(currentFlashcard()!)}
                       >
                         <Volume2 size={14} />
@@ -766,8 +1034,16 @@ export default function VocabularyVault() {
                       type="button"
                       class={`w-full py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                         cardRevealStep() >= 1
-                          ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-transparent shadow-xs'
-                          : 'bg-black/5 dark:bg-white/5 hover:bg-black/10 border-black/10 dark:border-white/10'
+                          ? theme() === 'sepia'
+                            ? 'bg-[#3A2D23] text-[#FAF6EC] border-transparent shadow-xs'
+                            : theme() === 'midnight'
+                            ? 'bg-white text-neutral-900 border-transparent shadow-xs'
+                            : 'bg-neutral-900 text-white border-transparent shadow-xs'
+                          : theme() === 'sepia'
+                          ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] border-[#D8CCBA] text-[#3A2D23]'
+                          : theme() === 'midnight'
+                          ? 'bg-[#252830] hover:bg-[#2D303A] border-neutral-700 text-neutral-200'
+                          : 'bg-neutral-100 hover:bg-neutral-200 border-neutral-300 text-neutral-800'
                       }`}
                       onClick={() => setCardRevealStep(Math.max(1, cardRevealStep()))}
                     >
@@ -782,8 +1058,14 @@ export default function VocabularyVault() {
                         type="button"
                         class={`w-full py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           cardRevealStep() >= 2
-                            ? 'bg-emerald-700 text-white border-transparent shadow-xs'
-                            : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100'
+                            ? theme() === 'sepia'
+                              ? 'bg-[#1E4D2B] text-white border-transparent shadow-xs'
+                              : 'bg-emerald-700 text-white border-transparent shadow-xs'
+                            : theme() === 'sepia'
+                            ? 'bg-[#DDE9DF] hover:bg-[#CFE2D2] border-[#B7D2BD] text-[#1E4D2B]'
+                            : theme() === 'midnight'
+                            ? 'bg-[#1E3326] hover:bg-[#254030] border-emerald-800 text-emerald-300'
+                            : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-900'
                         }`}
                         onClick={() => setCardRevealStep(Math.max(2, cardRevealStep()))}
                       >
@@ -793,11 +1075,36 @@ export default function VocabularyVault() {
                       </button>
 
                       <Show when={cardRevealStep() >= 2 && currentFlashcard()?.spokenSynonyms?.length}>
-                        <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-950 dark:text-emerald-100">
-                          <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 mb-1">
+                        <div
+                          class={`p-3 rounded-xl border ${
+                            theme() === 'sepia'
+                              ? 'bg-[#EAE1D1] border-[#CFC0A7]'
+                              : theme() === 'midnight'
+                              ? 'bg-[#19261E] border-emerald-900/50'
+                              : 'bg-emerald-50/80 border-emerald-200'
+                          }`}
+                        >
+                          <div
+                            class={`text-[10px] font-bold uppercase tracking-wider mb-1 ${
+                              theme() === 'sepia'
+                                ? 'text-[#244E31]'
+                                : theme() === 'midnight'
+                                ? 'text-emerald-300'
+                                : 'text-emerald-800'
+                            }`}
+                          >
                             Colloquial Urdu:
                           </div>
-                          <div dir="rtl" class="font-nastaliq text-xl">
+                          <div
+                            dir="rtl"
+                            class={`font-nastaliq text-xl ${
+                              theme() === 'sepia'
+                                ? 'text-[#1E3A25]'
+                                : theme() === 'midnight'
+                                ? 'text-emerald-100'
+                                : 'text-emerald-950'
+                            }`}
+                          >
                             {currentFlashcard()?.spokenSynonyms?.join('، ')}
                           </div>
                         </div>
@@ -810,8 +1117,14 @@ export default function VocabularyVault() {
                         type="button"
                         class={`w-full py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           cardRevealStep() >= 3
-                            ? 'bg-indigo-700 text-white border-transparent shadow-xs'
-                            : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200 border-indigo-300 dark:border-indigo-700 hover:bg-indigo-100'
+                            ? theme() === 'sepia'
+                              ? 'bg-[#2B3A67] text-white border-transparent shadow-xs'
+                              : 'bg-indigo-700 text-white border-transparent shadow-xs'
+                            : theme() === 'sepia'
+                            ? 'bg-[#E3E8F0] hover:bg-[#D5DEEA] border-[#C2D0E4] text-[#1E2E4A]'
+                            : theme() === 'midnight'
+                            ? 'bg-[#202738] hover:bg-[#283248] border-indigo-800 text-indigo-300'
+                            : 'bg-indigo-50 hover:bg-indigo-100 border-indigo-300 text-indigo-900'
                         }`}
                         onClick={() => setCardRevealStep(3)}
                       >
@@ -821,12 +1134,36 @@ export default function VocabularyVault() {
                       </button>
 
                       <Show when={cardRevealStep() >= 3}>
-                        <div class="p-3.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-300 dark:border-indigo-700 space-y-1">
-                          <div class="text-sm font-sans font-bold text-indigo-950 dark:text-indigo-100">
+                        <div
+                          class={`p-3.5 rounded-xl border space-y-1 ${
+                            theme() === 'sepia'
+                              ? 'bg-[#E8EEF5] border-[#BDCDE2]'
+                              : theme() === 'midnight'
+                              ? 'bg-[#181E2E] border-indigo-900/60'
+                              : 'bg-indigo-50 border-indigo-200'
+                          }`}
+                        >
+                          <div
+                            class={`text-sm font-sans font-bold ${
+                              theme() === 'sepia'
+                                ? 'text-[#1E2E4A]'
+                                : theme() === 'midnight'
+                                ? 'text-indigo-100'
+                                : 'text-indigo-950'
+                            }`}
+                          >
                             {currentFlashcard()?.englishGloss || 'No English gloss'}
                           </div>
                           <Show when={currentFlashcard()?.arabicRoot}>
-                            <div class="text-xs text-indigo-800 dark:text-indigo-300 font-bold">
+                            <div
+                              class={`text-xs font-bold ${
+                                theme() === 'sepia'
+                                  ? 'text-[#1E3A5F]'
+                                  : theme() === 'midnight'
+                                  ? 'text-indigo-300'
+                                  : 'text-indigo-800'
+                              }`}
+                            >
                               Root: {currentFlashcard()?.arabicRoot}
                             </div>
                           </Show>
@@ -841,14 +1178,24 @@ export default function VocabularyVault() {
               <div class="grid grid-cols-2 gap-3 pt-3">
                 <button
                   type="button"
-                  class="w-full py-3 px-4 rounded-xl font-bold text-xs bg-black/5 dark:bg-white/5 hover:bg-black/10 border border-black/10 dark:border-white/10 transition-all cursor-pointer active:scale-98"
+                  class={`w-full py-3 px-4 rounded-xl font-bold text-xs border transition-all cursor-pointer active:scale-98 ${
+                    theme() === 'sepia'
+                      ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] border-[#D8CCBA] text-[#3A2D23]'
+                      : theme() === 'midnight'
+                      ? 'bg-[#252830] hover:bg-[#2D303A] border-neutral-700 text-neutral-200'
+                      : 'bg-neutral-100 hover:bg-neutral-200 border-neutral-300 text-neutral-800'
+                  }`}
                   onClick={() => handleCardMastery(false)}
                 >
                   Still Learning
                 </button>
                 <button
                   type="button"
-                  class="w-full py-3 px-4 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-all cursor-pointer active:scale-98 flex items-center justify-center gap-1.5"
+                  class={`w-full py-3 px-4 rounded-xl font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-98 flex items-center justify-center gap-1.5 ${
+                    theme() === 'sepia'
+                      ? 'bg-[#1E4D2B] hover:bg-[#163820] text-[#FAF6EC]'
+                      : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                  }`}
                   onClick={() => handleCardMastery(true)}
                 >
                   <Check size={16} />
@@ -861,7 +1208,15 @@ export default function VocabularyVault() {
 
         {/* Floating Undo Toast (Appears right after deletion) */}
         <Show when={lastDeletedItem()}>
-          <div class="p-3 mx-4 mb-2 rounded-xl bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-xl flex items-center justify-between gap-3 text-xs animate-slideUp">
+          <div
+            class={`p-3 mx-4 mb-2 rounded-xl shadow-xl flex items-center justify-between gap-3 text-xs animate-slideUp ${
+              theme() === 'sepia'
+                ? 'bg-[#3A2D23] text-[#FAF6EC]'
+                : theme() === 'midnight'
+                ? 'bg-white text-neutral-900'
+                : 'bg-neutral-900 text-white'
+            }`}
+          >
             <span class="truncate">
               Removed <strong>"{lastDeletedItem()?.vocalizedSurface}"</strong> from Vault
             </span>
@@ -877,11 +1232,25 @@ export default function VocabularyVault() {
         </Show>
 
         {/* Footer: Export to Anki & Clean-Up Tools */}
-        <div class="p-3.5 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+        <div
+          class={`p-3.5 border-t flex items-center justify-between text-xs ${
+            theme() === 'sepia'
+              ? 'border-[#E2D6C0]'
+              : theme() === 'midnight'
+              ? 'border-neutral-800'
+              : 'border-[#E8DFC9]'
+          }`}
+        >
           <a
             href="/api/telemetry/export"
             download="abjad-vocabulary-vault.csv"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 font-bold transition-colors cursor-pointer"
+            class={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold transition-colors cursor-pointer ${
+              theme() === 'sepia'
+                ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] border-[#D8CCBA] text-[#3A2D23]'
+                : theme() === 'midnight'
+                ? 'bg-neutral-800 hover:bg-neutral-700 border-neutral-700 text-neutral-200'
+                : 'bg-neutral-100 hover:bg-neutral-200 border-neutral-200 text-neutral-800'
+            }`}
           >
             <Download size={13} />
             <span>Export to Anki (.CSV)</span>
@@ -913,7 +1282,13 @@ export default function VocabularyVault() {
                 </button>
                 <button
                   type="button"
-                  class="px-2 py-1 rounded bg-black/10 dark:bg-white/10 text-[10px] font-bold cursor-pointer"
+                  class={`px-2 py-1 rounded text-[10px] font-bold cursor-pointer ${
+                    theme() === 'sepia'
+                      ? 'bg-[#EFE6D5] text-[#3A2D23]'
+                      : theme() === 'midnight'
+                      ? 'bg-neutral-800 text-neutral-200'
+                      : 'bg-neutral-100 text-neutral-800'
+                  }`}
                   onClick={() => setShowClearConfirm(false)}
                 >
                   Cancel

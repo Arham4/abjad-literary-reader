@@ -219,8 +219,16 @@ export default function TokenLensPopover() {
                 title={isTokenInVault(activeTokenId()!) ? 'Remove from Vocabulary Vault' : 'Save to Vocabulary Vault'}
                 class={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   isTokenInVault(activeTokenId()!)
-                    ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700 shadow-xs'
-                    : 'hover:bg-black/5 dark:hover:bg-white/10 opacity-70 hover:opacity-100 border border-black/10 dark:border-white/10'
+                    ? theme() === 'sepia'
+                      ? 'bg-[#F0E2CD] text-[#7C3E08] border border-[#DECCAE] shadow-xs'
+                      : theme() === 'midnight'
+                      ? 'bg-amber-950/60 text-amber-300 border border-amber-800/60 shadow-xs'
+                      : 'bg-amber-100 text-amber-900 border border-amber-300 shadow-xs'
+                    : theme() === 'sepia'
+                    ? 'hover:bg-[#EAE0CF] text-[#4A3E35] border border-[#D4C5AD]'
+                    : theme() === 'midnight'
+                    ? 'hover:bg-white/10 text-neutral-300 border border-neutral-700'
+                    : 'hover:bg-neutral-100 text-neutral-700 border border-neutral-300'
                 }`}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -229,7 +237,11 @@ export default function TokenLensPopover() {
               >
                 <Bookmark
                   size={12}
-                  class={isTokenInVault(activeTokenId()!) ? 'fill-current text-amber-600 dark:text-amber-400' : ''}
+                  class={
+                    isTokenInVault(activeTokenId()!)
+                      ? 'fill-current text-amber-600'
+                      : ''
+                  }
                 />
                 <span>{isTokenInVault(activeTokenId()!) ? 'Saved' : 'Save'}</span>
               </button>

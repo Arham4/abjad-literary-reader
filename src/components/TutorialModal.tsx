@@ -246,7 +246,15 @@ export default function TutorialModal() {
                       </span>
                     </div>
 
-                    <p class="text-xs sm:text-sm leading-relaxed text-neutral-800 dark:text-neutral-200">
+                    <p
+                      class={`text-xs sm:text-sm leading-relaxed ${
+                        theme() === 'sepia'
+                          ? 'text-[#362B22]'
+                          : theme() === 'midnight'
+                          ? 'text-neutral-200'
+                          : 'text-neutral-800'
+                      }`}
+                    >
                       Hear the isolated word spoken aloud, see full vowel markings (<em>Pesh ُ, Zer ِ, Zabar َ</em>), and see each cursive letter separated into individual alphabet blocks so your eyes break the cursive connection.
                     </p>
 
@@ -311,7 +319,15 @@ export default function TutorialModal() {
                       </span>
                     </div>
 
-                    <p class="text-xs sm:text-sm leading-relaxed text-neutral-800 dark:text-neutral-200">
+                    <p
+                      class={`text-xs sm:text-sm leading-relaxed ${
+                        theme() === 'sepia'
+                          ? 'text-[#362B22]'
+                          : theme() === 'midnight'
+                          ? 'text-neutral-200'
+                          : 'text-neutral-800'
+                      }`}
+                    >
                       Still stuck? Tap again to see the simple, everyday spoken equivalent you already say at home (<em>Rozmarra</em>), a plain conversational Urdu explanation, and related root-family words.
                     </p>
 
@@ -376,7 +392,15 @@ export default function TutorialModal() {
                       </span>
                     </div>
 
-                    <p class="text-xs sm:text-sm leading-relaxed text-neutral-800 dark:text-neutral-200">
+                    <p
+                      class={`text-xs sm:text-sm leading-relaxed ${
+                        theme() === 'sepia'
+                          ? 'text-[#362B22]'
+                          : theme() === 'midnight'
+                          ? 'text-neutral-200'
+                          : 'text-neutral-800'
+                      }`}
+                    >
                       If the spoken clues weren't enough, the third tap reveals the complete contextual English translation, historical background, and cultural nuance notes from Urdu literature.
                     </p>
 
@@ -548,17 +572,42 @@ export default function TutorialModal() {
                         theme() === 'sepia'
                           ? 'bg-[#EBF3EC] border-[#A2CCA6]'
                           : theme() === 'midnight'
-                          ? 'bg-emerald-950/40 border-emerald-800'
+                          ? 'bg-[#19261E] border-emerald-900/60'
                           : 'bg-emerald-50 border-emerald-200'
                       }`}
                     >
-                      <div class="text-xs font-bold text-[#194324] dark:text-emerald-200 font-sans">
+                      <div
+                        class={`text-xs font-bold font-sans ${
+                          theme() === 'sepia'
+                            ? 'text-[#194324]'
+                            : theme() === 'midnight'
+                            ? 'text-emerald-300'
+                            : 'text-emerald-800'
+                        }`}
+                      >
                         Everyday Spoken Urdu Bridge:
                       </div>
-                      <p class="text-base font-bold font-nastaliq text-[#194324] dark:text-emerald-100" dir="rtl">
+                      <p
+                        class={`text-base font-bold font-nastaliq ${
+                          theme() === 'sepia'
+                            ? 'text-[#194324]'
+                            : theme() === 'midnight'
+                            ? 'text-emerald-100'
+                            : 'text-emerald-950'
+                        }`}
+                        dir="rtl"
+                      >
                         کھڑکی (کمرے کی کھڑکی)
                       </p>
-                      <p class="text-xs sm:text-sm text-[#194324] dark:text-emerald-100 opacity-90">
+                      <p
+                        class={`text-xs sm:text-sm ${
+                          theme() === 'sepia'
+                            ? 'text-[#1E4D2B]'
+                            : theme() === 'midnight'
+                            ? 'text-emerald-200'
+                            : 'text-emerald-900'
+                        }`}
+                      >
                         The window in your room—the exact word you say at home every day!
                       </p>
                     </div>
@@ -571,17 +620,41 @@ export default function TutorialModal() {
                         theme() === 'sepia'
                           ? 'bg-[#EEF1F6] border-[#B9C6DA]'
                           : theme() === 'midnight'
-                          ? 'bg-indigo-950/40 border-indigo-800'
+                          ? 'bg-[#181E2E] border-indigo-900/60'
                           : 'bg-indigo-50 border-indigo-200'
                       }`}
                     >
-                      <div class="text-xs font-bold text-[#1E2E4A] dark:text-indigo-200 uppercase tracking-wider font-sans">
+                      <div
+                        class={`text-xs font-bold uppercase tracking-wider font-sans ${
+                          theme() === 'sepia'
+                            ? 'text-[#1E2E4A]'
+                            : theme() === 'midnight'
+                            ? 'text-indigo-300'
+                            : 'text-indigo-800'
+                        }`}
+                      >
                         English Contextual Meaning:
                       </div>
-                      <p class="text-base font-bold font-serif text-[#1E2E4A] dark:text-white">
+                      <p
+                        class={`text-base font-bold font-serif ${
+                          theme() === 'sepia'
+                            ? 'text-[#1E2E4A]'
+                            : theme() === 'midnight'
+                            ? 'text-[#ECE7DE]'
+                            : 'text-neutral-900'
+                        }`}
+                      >
                         Window (opening in a wall for light and air)
                       </p>
-                      <p class="text-xs sm:text-sm text-[#1E2E4A] dark:text-indigo-100 opacity-85">
+                      <p
+                        class={`text-xs sm:text-sm ${
+                          theme() === 'sepia'
+                            ? 'text-[#203250]'
+                            : theme() === 'midnight'
+                            ? 'text-indigo-200'
+                            : 'text-indigo-900'
+                        }`}
+                      >
                         In Manto's story <em>Khol Do</em>, the doctor commands: <strong>"Khirki khol do"</strong> (Open the window).
                       </p>
                     </div>
@@ -653,10 +726,18 @@ export default function TutorialModal() {
                     </span>
                     <div class="space-y-1">
                       <span class="font-bold text-sm sm:text-base font-serif">
-                        Start with Level 1: Khol Do (کھول دو)
+                        Choose Your Progression Level
                       </span>
-                      <p class="text-xs sm:text-sm leading-relaxed opacity-85">
-                        Manto’s masterpiece uses simple conversational words you already say at home (<em>darwaza, khirki, kapra, pani</em>). Perfect for training your eyes!
+                      <p
+                        class={`text-xs sm:text-sm leading-relaxed ${
+                          theme() === 'sepia'
+                            ? 'text-[#3A2D23]'
+                            : theme() === 'midnight'
+                            ? 'text-neutral-300'
+                            : 'text-neutral-700'
+                        }`}
+                      >
+                        Start gently at <strong>Level 0.1 (Sheikh Chilli)</strong> for 98% everyday spoken vocabulary, ramp up through Premchand's classics, or jump straight into Manto's <strong>Level 1.0 (Khol Do)</strong>.
                       </p>
                     </div>
                   </div>
@@ -677,7 +758,15 @@ export default function TutorialModal() {
                       <span class="font-bold text-sm sm:text-base font-serif">
                         Use the Audio Narration Bar
                       </span>
-                      <p class="text-xs sm:text-sm leading-relaxed opacity-85">
+                      <p
+                        class={`text-xs sm:text-sm leading-relaxed ${
+                          theme() === 'sepia'
+                            ? 'text-[#3A2D23]'
+                            : theme() === 'midnight'
+                            ? 'text-neutral-300'
+                            : 'text-neutral-700'
+                        }`}
+                      >
                         At the bottom of the screen, tap "Play Narration" to hear the sentence spoken aloud in native Urdu while watching the golden karaoke highlight.
                       </p>
                     </div>
@@ -699,7 +788,15 @@ export default function TutorialModal() {
                       <span class="font-bold text-sm sm:text-base font-serif">
                         Keyboard & Tap Shortcuts
                       </span>
-                      <p class="text-xs sm:text-sm leading-relaxed opacity-85">
+                      <p
+                        class={`text-xs sm:text-sm leading-relaxed ${
+                          theme() === 'sepia'
+                            ? 'text-[#3A2D23]'
+                            : theme() === 'midnight'
+                            ? 'text-neutral-300'
+                            : 'text-neutral-700'
+                        }`}
+                      >
                         Tap any word to decode. Press <kbd class="px-2 py-0.5 rounded border border-black/20 dark:border-white/20 font-mono font-bold text-xs">Space</kbd> to reveal the next clue, and <kbd class="px-2 py-0.5 rounded border border-black/20 dark:border-white/20 font-mono font-bold text-xs">Esc</kbd> to close any card.
                       </p>
                     </div>

@@ -9,6 +9,7 @@ import VoiceSettingsModal from './components/VoiceSettingsModal';
 import TextSelectionToolbar from './components/TextSelectionToolbar';
 import {
   theme,
+  applyThemeToDom,
   activeStory,
   isLoading,
   loadStories,
@@ -133,10 +134,9 @@ export default function App() {
     onCleanup(() => window.removeEventListener('keydown', handleGlobalKeyDown));
   });
 
-  // Keep body theme class updated
+  // Keep body theme and dark mode class synchronized
   createEffect(() => {
-    const t = theme();
-    document.body.className = `theme-${t}`;
+    applyThemeToDom(theme());
   });
 
   const getLevelLabel = (lvl: number) => {
