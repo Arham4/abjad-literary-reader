@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { UrduLanguagePack } from '../src/lib/abjad/packs/urdu';
 import { cleanUrduForTTS } from '../src/server/api';
+import { vocalizeUrduWord, makePhoneticBreakdown } from '../src/lib/abjad/packs/urduVocalizer';
 
 describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
   test('Aspirated digraph grouping: پڑھنا -> ["پڑھ", "ن", "ا"]', () => {
@@ -126,5 +127,42 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     // Sentence with preserved Madda (آ) and consonants
     const sentence = 'امرتسر سے اسپیشل ٹرین دوپہر دو بجے کو چلی اور آٹھ گھنٹوں کے بعد مغل پورہ پہنچی۔';
     expect(cleanUrduForTTS(sentence)).toBe(sentence);
+  });
+
+  test('vocalizeUrduWord and makePhoneticBreakdown accurately vocalize words like پیسوں', () => {
+    // 1. پیسوں resolves to full diacritics
+    const vocalizedPaison = vocalizeUrduWord('پیسوں');
+    expect(vocalizedPaison).toBe('پَیْسُوں');
+
+    // 2. Breakdown creates structured pills with accurate vowel names
+    const pills = makePhoneticBreakdown(vocalizedPaison);
+    expect(pills.length).toBe(5);
+    expect(pills[0].letters).toBe('پَ');
+    expect(pills[0].vowelNameUrdu).toBe('زبر');
+    expect(pills[1].letters).toBe('یْ');
+    expect(pills[1].vowelNameUrdu).toBe('جزم');
+    expect(pills[2].letters).toBe('سُ');
+    expect(pills[2].vowelNameUrdu).toBe('پیش');
+    expect(pills[3].letters).toBe('و');
+    expect(pills[3].vowelNameUrdu).toBe('واؤ');
+    expect(pills[4].letters).toBe('ں');
+    expect(pills[4].vowelNameUrdu).toBe('نون غنہ');
+
+    // 3. Aspirated digraphs (گھَر) kept together with diacritic
+    const gharPills = makePhoneticBreakdown('گھَرْ');
+    expect(gharPills[0].letters).toBe('گھَ');
+    expect(gharPills[0].vowelNameUrdu).toBe('زبر');
+    expect(gharPills[1].letters).toBe('رْ');
+    expect(gharPills[1].vowelNameUrdu).toBe('جزم');
+
+    // 4. Combined tashdid and vowel (مِٹِّی) without orphaned pills
+    const mittiPills = makePhoneticBreakdown('مِٹِّی');
+    expect(mittiPills.length).toBe(3);
+    expect(mittiPills[0].letters).toBe('مِ');
+    expect(mittiPills[0].vowelNameUrdu).toBe('زیر');
+    expect(mittiPills[1].letters).toBe('ٹِّ');
+    expect(mittiPills[1].vowelNameUrdu).toBe('تشدید و زیر');
+    expect(mittiPills[2].letters).toBe('ی');
+    expect(mittiPills[2].vowelNameUrdu).toBe('چھوٹی یے');
   });
 });

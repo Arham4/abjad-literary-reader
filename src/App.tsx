@@ -19,6 +19,7 @@ import {
   activeTokenId,
   paragraphs,
   tokensMap,
+  analysesMap,
   isPopoverOpen,
   closeVault,
   isVaultOpen,
@@ -223,7 +224,9 @@ export default function App() {
                             onClick={(e) => handleTitleWordClick(token.id, e)}
                             title={`Tap to decode "${token.surfaceForm}"`}
                           >
-                            {token.surfaceForm}
+                            {activeTokenId() === token.id && analysesMap()[token.id]?.vocalizedForm
+                              ? analysesMap()[token.id]!.vocalizedForm
+                              : token.surfaceForm}
                           </span>
                         );
                       }}

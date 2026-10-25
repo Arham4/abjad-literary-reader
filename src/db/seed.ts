@@ -2,46 +2,7 @@ import { db, sqlite } from './index';
 import * as schema from './schema';
 import { UrduLanguagePack } from '../lib/abjad/packs/urdu';
 import { PhoneticSyllablePill } from '../lib/abjad/types';
-
-// Helper to create phonetic breakdown pills
-function makePhoneticPills(vocalized: string): PhoneticSyllablePill[] {
-  const pills: PhoneticSyllablePill[] = [];
-  const chars = Array.from(vocalized);
-  let currentLetter = '';
-
-  for (let i = 0; i < chars.length; i++) {
-    const ch = chars[i];
-    const isDiacritic = /[\u064B-\u0652\u0670]/.test(ch);
-
-    if (isDiacritic) {
-      let vName = 'اعراب';
-      if (ch === '\u064E') vName = 'زبر';
-      else if (ch === '\u0650') vName = 'زیر';
-      else if (ch === '\u064F') vName = 'پیش';
-      else if (ch === '\u0652') vName = 'جزم';
-      else if (ch === '\u0651') vName = 'تشدید';
-      else if (ch === '\u064B') vName = 'دو زبر';
-      else if (ch === '\u0670') vName = 'کھڑی زبر';
-
-      pills.push({
-        letters: currentLetter + ch,
-        vowelNameUrdu: vName,
-      });
-      currentLetter = '';
-    } else {
-      if (currentLetter) {
-        pills.push({ letters: currentLetter });
-      }
-      currentLetter = ch;
-    }
-  }
-
-  if (currentLetter) {
-    pills.push({ letters: currentLetter });
-  }
-
-  return pills;
-}
+import { vocalizeUrduWord, makePhoneticBreakdown } from '../lib/abjad/packs/urduVocalizer';
 
 interface LexemeAnalysisData {
   vocalizedForm: string;
@@ -6482,21 +6443,25 @@ async function seed() {
           FUNCTION_WORDS_DICT[baseKey] ||
           FUNCTION_WORDS_DICT[normKey] ||
           FUNCTION_WORDS_DICT[cleanKey] || {
-            vocalizedForm: span.surface,
+            vocalizedForm: vocalizeUrduWord(cleanKey || normKey || span.surface),
             spokenUrduSynonymsJson: [span.normalized],
             urduSimpleExplanation: `${span.surface} - کتاب کا عنوان`,
             tokenTier: 'literary_vocab',
             englishContextualGloss: span.surface,
           };
 
+        const resolvedVocalized = /[\u064B-\u0652\u0670\u0653]/.test(lexData.vocalizedForm)
+          ? lexData.vocalizedForm
+          : vocalizeUrduWord(cleanKey || normKey || span.surface);
+
         const graphemes = UrduLanguagePack.decomposeWordToGraphemes(span.surface);
-        const phoneticBreakdown = makePhoneticPills(lexData.vocalizedForm);
+        const phoneticBreakdown = makePhoneticBreakdown(resolvedVocalized);
 
         db.insert(schema.tokenAnalyses)
           .values({
             id: `ana_${tokenId}`,
             tokenId,
-            vocalizedForm: lexData.vocalizedForm,
+            vocalizedForm: resolvedVocalized,
             phoneticBreakdownJson: phoneticBreakdown,
             graphemesJson: graphemes,
             spokenUrduSynonymsJson: lexData.spokenUrduSynonymsJson,
@@ -6576,7 +6541,7 @@ async function seed() {
             FUNCTION_WORDS_DICT[baseKey] ||
             FUNCTION_WORDS_DICT[normKey] ||
             FUNCTION_WORDS_DICT[cleanKey] || {
-              vocalizedForm: span.surface,
+              vocalizedForm: vocalizeUrduWord(cleanKey || normKey || span.surface),
               spokenUrduSynonymsJson: [span.normalized],
               urduSimpleExplanation: `${span.surface} کا لفظی مطلب`,
               tokenTier: 'common_vocab',
@@ -6584,17 +6549,21 @@ async function seed() {
               literaryNuanceNote: 'Contextual Urdu literary vocabulary item.',
             };
 
+          const resolvedVocalized = /[\u064B-\u0652\u0670\u0653]/.test(lexData.vocalizedForm)
+            ? lexData.vocalizedForm
+            : vocalizeUrduWord(cleanKey || normKey || span.surface);
+
           // Graphemes are ALWAYS computed deterministically via UrduLanguagePack
           const graphemes = UrduLanguagePack.decomposeWordToGraphemes(span.surface);
 
           // Phonetic breakdown computed from vocalized form
-          const phoneticBreakdown = makePhoneticPills(lexData.vocalizedForm);
+          const phoneticBreakdown = makePhoneticBreakdown(resolvedVocalized);
 
           db.insert(schema.tokenAnalyses)
             .values({
               id: `ana_${tokenId}`,
               tokenId,
-              vocalizedForm: lexData.vocalizedForm,
+              vocalizedForm: resolvedVocalized,
               phoneticBreakdownJson: phoneticBreakdown,
               graphemesJson: graphemes,
               spokenUrduSynonymsJson: lexData.spokenUrduSynonymsJson,

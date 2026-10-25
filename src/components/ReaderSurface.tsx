@@ -2,6 +2,7 @@ import { For, Show } from 'solid-js';
 import {
   paragraphs,
   tokensMap,
+  analysesMap,
   activeTokenId,
   openTokenLens,
   advanceTapLevel,
@@ -111,7 +112,9 @@ export default function ReaderSurface() {
                         data-token-id={token.id}
                         data-active={activeTokenId() === token.id ? 'true' : undefined}
                       >
-                        {token.surfaceForm}
+                        {activeTokenId() === token.id && analysesMap()[token.id]?.vocalizedForm
+                          ? analysesMap()[token.id]!.vocalizedForm
+                          : token.surfaceForm}
                       </span>
                     </span>
                   );
