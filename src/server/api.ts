@@ -227,10 +227,22 @@ function splitTextForTTS(text: string, maxLen = 160): string[] {
 // -------------------------------------------------------------
 export function cleanUrduForTTS(text: string): string {
   if (!text) return '';
+  // Normalize Unicode to NFC so decomposed \u0627\u0653 becomes precomposed \u0622 (Alif with Madda)
+  const normalized = text.normalize('NFC').trim();
+
+  // Neural TTS phonetic correction for isolated 'آنوں' / 'آنُوں' (annas):
+  // When spoken in isolation, neural models often slur 'آنوں' into 'ایِنو' (eeno),
+  // dropping the crucial Alif Madda. Segmenting to 'آ نوں' guarantees that the neural voice
+  // pronounces the open long vowel /aː/ (Alif with Madda) followed by 'noñ' (/aːnõː/).
+  if (/^آن[ُ]?[و]?[ں]?$/u.test(normalized)) {
+    return 'آ نوں';
+  }
+
   // Strip combining diacritics / harakat / jazm (U+064B - U+0652, U+0656 - U+065F, U+06DF - U+06E8)
   // Standalone diacritics (especially jazm/sukūn \u0652) on isolated words cause neural Urdu TTS models
   // to spell out individual letter phonemes rather than reading the natural word vocabulary.
-  return text.replace(/[\u064B-\u0652\u0656-\u065F\u06DF-\u06E8]/g, '').trim();
+  // Note: Alif with Madda (\u0622) and Combining Madda (\u0653) are strictly preserved.
+  return normalized.replace(/[\u064B-\u0652\u0656-\u065F\u06DF-\u06E8]/g, '').trim();
 }
 
 const handleTTS = async (

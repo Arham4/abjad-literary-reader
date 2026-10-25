@@ -92,10 +92,16 @@ export default function TokenLensPopover() {
   const [isWordAudioPlaying, setIsWordAudioPlaying] = createSignal(false);
 
   const wordToSpeak = () => {
+    const a = analysis();
     const t = token();
-    if (t?.surfaceForm) return t.surfaceForm;
-    if (t?.normalizedForm) return t.normalizedForm;
-    return analysis()?.vocalizedForm || '';
+    const voc = a?.vocalizedForm || '';
+    const surf = t?.surfaceForm || t?.normalizedForm || '';
+
+    // If vocalized form has Madda (آ or \u0653) but surface lacks it, prefer vocalizedForm so Madd is guaranteed
+    if (voc && (voc.includes('آ') || voc.includes('\u0653')) && (!surf || (!surf.includes('آ') && !surf.includes('\u0653')))) {
+      return voc;
+    }
+    return surf || voc;
   };
 
   const handleListenWord = async (e: MouseEvent) => {

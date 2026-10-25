@@ -172,7 +172,12 @@ export default function VocabularyVault() {
                         type="button"
                         title="Listen to pronunciation"
                         class="p-2 rounded-lg bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white transition-colors cursor-pointer shrink-0 mt-1"
-                        onClick={() => playWordAudio(item.normalizedSurface || item.vocalizedSurface)}
+                        onClick={() => {
+                          const voc = item.vocalizedSurface || '';
+                          const norm = item.normalizedSurface || '';
+                          const toPlay = (voc && (voc.includes('آ') || voc.includes('\u0653'))) ? voc : (norm || voc);
+                          playWordAudio(toPlay);
+                        }}
                       >
                         <Volume2 size={16} />
                       </button>

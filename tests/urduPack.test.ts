@@ -124,6 +124,11 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     // Mughalpura with pesh and zabar
     expect(cleanUrduForTTS('مُغَل پُورَہ')).toBe('مغل پورہ');
 
+    // Annas with Madda: guarantees Madda on Alif is preserved and segmented for neural speech
+    expect(cleanUrduForTTS('آنوں')).toBe('آ نوں');
+    expect(cleanUrduForTTS('آنُوں')).toBe('آ نوں');
+    expect(cleanUrduForTTS('\u0627\u0653نوں')).toBe('آ نوں');
+
     // Sentence with preserved Madda (آ) and consonants
     const sentence = 'امرتسر سے اسپیشل ٹرین دوپہر دو بجے کو چلی اور آٹھ گھنٹوں کے بعد مغل پورہ پہنچی۔';
     expect(cleanUrduForTTS(sentence)).toBe(sentence);
