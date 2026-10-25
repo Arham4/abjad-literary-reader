@@ -12,8 +12,10 @@ import {
   playWordAudio,
   scriptTradition,
   theme,
+  isTokenInVault,
+  toggleTokenInVault,
 } from '../store/readerStore';
-import { Volume2, X } from 'lucide-solid';
+import { Volume2, X, Bookmark } from 'lucide-solid';
 
 export default function TokenLensPopover() {
   let popoverRef: HTMLDivElement | undefined;
@@ -210,17 +212,41 @@ export default function TokenLensPopover() {
             </span>
           </div>
 
-          <button
-            type="button"
-            title="Close (Esc)"
-            class="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 opacity-70 hover:opacity-100 transition-colors cursor-pointer shrink-0"
-            onClick={(e) => {
-              e.stopPropagation();
-              closeTokenLens();
-            }}
-          >
-            <X size={18} />
-          </button>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <Show when={activeTokenId()}>
+              <button
+                type="button"
+                title={isTokenInVault(activeTokenId()!) ? 'Remove from Vocabulary Vault' : 'Save to Vocabulary Vault'}
+                class={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  isTokenInVault(activeTokenId()!)
+                    ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700 shadow-xs'
+                    : 'hover:bg-black/5 dark:hover:bg-white/10 opacity-70 hover:opacity-100 border border-black/10 dark:border-white/10'
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleTokenInVault(activeTokenId()!);
+                }}
+              >
+                <Bookmark
+                  size={12}
+                  class={isTokenInVault(activeTokenId()!) ? 'fill-current text-amber-600 dark:text-amber-400' : ''}
+                />
+                <span>{isTokenInVault(activeTokenId()!) ? 'Saved' : 'Save'}</span>
+              </button>
+            </Show>
+
+            <button
+              type="button"
+              title="Close"
+              class="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 opacity-70 hover:opacity-100 transition-colors cursor-pointer shrink-0"
+              onClick={(e) => {
+                e.stopPropagation();
+                closeTokenLens();
+              }}
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* TAP 1: The Optical & Phonetic Unblocker */}

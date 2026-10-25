@@ -65,11 +65,19 @@ export interface TelemetryItem {
   maxTapLevel: number;
   lastTapLevel: number;
   lastSeenAt: string;
+  storyId?: string | null;
+  storySlug?: string | null;
+  storyTitleUrdu?: string | null;
+  sourceSentenceUrdu?: string | null;
+  masteryStatus?: 'learning' | 'mastered';
+  isStarred?: boolean;
+  lastReviewedAt?: string | null;
   englishGloss?: string | null;
   urduExplanation?: string | null;
   spokenSynonyms?: string[];
   arabicRoot?: string | null;
   cousins?: string[];
+  literaryNuanceNote?: string | null;
 }
 
 // -------------------------------------------------------------
@@ -196,12 +204,64 @@ export function closeTutorial() {
 }
 
 // -------------------------------------------------------------
-// Telemetry Flush
+// Telemetry Flush & Real-Time Vault Sync
 // -------------------------------------------------------------
 export async function flushTelemetry(tokenId: string, levelReached: number) {
   const token = tokensMap()[tokenId];
   const analysis = analysesMap()[tokenId];
   if (!token || !analysis || !token.isWord) return;
+
+  // Resolve sentence context and story metadata
+  const p = paragraphs().find((para) => para.id === token.paragraphId);
+  let sentenceText = '';
+  if (p && Array.isArray(p.sentencesJson)) {
+    const sObj = p.sentencesJson.find((s: any) => s.index === token.sentenceIndex);
+    if (sObj?.text) sentenceText = sObj.text;
+  }
+  const story = activeStory();
+
+  // Optimistically update local vaultItems signal for zero-latency UI updates
+  const currentItems = vaultItems();
+  const existingIdx = currentItems.findIndex(
+    (it) => it.normalizedSurface === token.normalizedForm && it.vocalizedSurface === analysis.vocalizedForm
+  );
+
+  if (existingIdx !== -1) {
+    const updated = [...currentItems];
+    updated[existingIdx] = {
+      ...updated[existingIdx],
+      lookupCount: updated[existingIdx].lookupCount + 1,
+      lastTapLevel: levelReached,
+      maxTapLevel: Math.max(updated[existingIdx].maxTapLevel, levelReached),
+      lastSeenAt: new Date().toISOString(),
+      sourceSentenceUrdu: sentenceText || updated[existingIdx].sourceSentenceUrdu,
+      storyTitleUrdu: story?.titleUrdu || updated[existingIdx].storyTitleUrdu,
+    };
+    setVaultItems(updated);
+  } else {
+    const newItem: TelemetryItem = {
+      id: `tel_local_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      normalizedSurface: token.normalizedForm,
+      vocalizedSurface: analysis.vocalizedForm,
+      lookupCount: 1,
+      maxTapLevel: levelReached,
+      lastTapLevel: levelReached,
+      lastSeenAt: new Date().toISOString(),
+      storyId: story?.id || null,
+      storySlug: story?.slug || null,
+      storyTitleUrdu: story?.titleUrdu || null,
+      sourceSentenceUrdu: sentenceText || null,
+      masteryStatus: 'learning',
+      isStarred: false,
+      englishGloss: analysis.englishContextualGloss,
+      urduExplanation: analysis.urduSimpleExplanation,
+      spokenSynonyms: analysis.spokenUrduSynonymsJson,
+      arabicRoot: analysis.arabicRoot,
+      cousins: analysis.familiarCousinsJson || [],
+      literaryNuanceNote: analysis.literaryNuanceNote,
+    };
+    setVaultItems([newItem, ...currentItems]);
+  }
 
   try {
     await fetch('/api/telemetry', {
@@ -211,6 +271,10 @@ export async function flushTelemetry(tokenId: string, levelReached: number) {
         normalizedSurface: token.normalizedForm,
         vocalizedSurface: analysis.vocalizedForm,
         tapLevel: levelReached,
+        storyId: story?.id || null,
+        storySlug: story?.slug || null,
+        storyTitleUrdu: story?.titleUrdu || null,
+        sourceSentenceUrdu: sentenceText || null,
       }),
     });
   } catch (err) {
@@ -860,8 +924,11 @@ export async function selectStory(slug: string) {
 }
 
 // -------------------------------------------------------------
-// Vault Actions
+// Vault Actions & Ergonomic Management
 // -------------------------------------------------------------
+export const [lastDeletedItem, setLastDeletedItem] = createSignal<TelemetryItem | null>(null);
+let undoTimer: any = null;
+
 export async function loadVault() {
   try {
     const res = await fetch('/api/telemetry');
@@ -881,4 +948,137 @@ export function openVault() {
 
 export function closeVault() {
   setIsVaultOpen(false);
+}
+
+export async function deleteVaultItem(id: string) {
+  const itemToDelete = vaultItems().find((i) => i.id === id);
+  if (!itemToDelete) return;
+
+  // Optimistic removal
+  setVaultItems(vaultItems().filter((i) => i.id !== id));
+  setLastDeletedItem(itemToDelete);
+
+  if (undoTimer) clearTimeout(undoTimer);
+  undoTimer = setTimeout(() => {
+    setLastDeletedItem(null);
+  }, 6000);
+
+  try {
+    await fetch(`/api/telemetry/${id}`, { method: 'DELETE' });
+  } catch (err) {
+    console.error('Failed to delete vault item:', err);
+  }
+}
+
+export async function undoDeleteVaultItem() {
+  const item = lastDeletedItem();
+  if (!item) return;
+
+  setVaultItems([item, ...vaultItems()]);
+  setLastDeletedItem(null);
+  showToast(`Restored "${item.vocalizedSurface}" to Vault`);
+
+  try {
+    await fetch('/api/telemetry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        normalizedSurface: item.normalizedSurface,
+        vocalizedSurface: item.vocalizedSurface,
+        tapLevel: item.maxTapLevel,
+        storyId: item.storyId,
+        storySlug: item.storySlug,
+        storyTitleUrdu: item.storyTitleUrdu,
+        sourceSentenceUrdu: item.sourceSentenceUrdu,
+      }),
+    });
+  } catch (err) {
+    console.error('Failed to restore vault item:', err);
+  }
+}
+
+export async function toggleVaultItemStar(id: string) {
+  const item = vaultItems().find((i) => i.id === id);
+  if (!item) return;
+  const newStarred = !item.isStarred;
+
+  setVaultItems(
+    vaultItems().map((i) => (i.id === id ? { ...i, isStarred: newStarred } : i))
+  );
+
+  try {
+    await fetch(`/api/telemetry/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isStarred: newStarred }),
+    });
+  } catch (err) {
+    console.error('Failed to toggle star:', err);
+  }
+}
+
+export async function toggleVaultItemMastery(id: string) {
+  const item = vaultItems().find((i) => i.id === id);
+  if (!item) return;
+  const newMastery: 'learning' | 'mastered' =
+    item.masteryStatus === 'mastered' ? 'learning' : 'mastered';
+
+  setVaultItems(
+    vaultItems().map((i) => (i.id === id ? { ...i, masteryStatus: newMastery } : i))
+  );
+
+  try {
+    await fetch(`/api/telemetry/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ masteryStatus: newMastery }),
+    });
+  } catch (err) {
+    console.error('Failed to toggle mastery:', err);
+  }
+}
+
+export async function clearVault(mode: 'all' | 'mastered') {
+  if (mode === 'all') {
+    setVaultItems([]);
+  } else {
+    setVaultItems(vaultItems().filter((i) => i.masteryStatus !== 'mastered'));
+  }
+  try {
+    await fetch(`/api/telemetry/${mode}?${mode}=true`, { method: 'DELETE' });
+    showToast(mode === 'all' ? 'Vault cleared' : 'Cleared mastered words');
+  } catch (err) {
+    console.error('Failed to clear vault:', err);
+  }
+}
+
+export function isTokenInVault(tokenId: string): boolean {
+  const token = tokensMap()[tokenId];
+  const analysis = analysesMap()[tokenId];
+  if (!token) return false;
+  return vaultItems().some(
+    (item) =>
+      item.normalizedSurface === token.normalizedForm ||
+      (analysis && item.vocalizedSurface === analysis.vocalizedForm)
+  );
+}
+
+export async function toggleTokenInVault(tokenId: string) {
+  const token = tokensMap()[tokenId];
+  const analysis = analysesMap()[tokenId];
+  if (!token || !analysis) return;
+
+  const existing = vaultItems().find(
+    (item) =>
+      item.normalizedSurface === token.normalizedForm ||
+      item.vocalizedSurface === analysis.vocalizedForm
+  );
+
+  if (existing) {
+    await deleteVaultItem(existing.id);
+    showToast(`Removed "${token.surfaceForm}" from Vault`);
+  } else {
+    await flushTelemetry(tokenId, 1);
+    showToast(`Saved "${analysis.vocalizedForm}" to Vault ★`);
+  }
 }

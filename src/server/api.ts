@@ -114,6 +114,10 @@ const TelemetrySchema = z.object({
   normalizedSurface: z.string(),
   vocalizedSurface: z.string(),
   tapLevel: z.number().int().min(1).max(3),
+  storyId: z.string().optional().nullable(),
+  storySlug: z.string().optional().nullable(),
+  storyTitleUrdu: z.string().optional().nullable(),
+  sourceSentenceUrdu: z.string().optional().nullable(),
 });
 
 api.post('/telemetry', async (c) => {
@@ -125,7 +129,15 @@ api.post('/telemetry', async (c) => {
       return c.json({ success: false, error: parsed.error.format() }, 400);
     }
 
-    const { normalizedSurface, vocalizedSurface, tapLevel } = parsed.data;
+    const {
+      normalizedSurface,
+      vocalizedSurface,
+      tapLevel,
+      storyId,
+      storySlug,
+      storyTitleUrdu,
+      sourceSentenceUrdu,
+    } = parsed.data;
 
     // Check existing telemetry record
     const existing = db
@@ -145,6 +157,7 @@ api.post('/telemetry', async (c) => {
           lastTapLevel: tapLevel,
           maxTapLevel: Math.max(existing.maxTapLevel, tapLevel),
           lastSeenAt: now,
+          ...(storyId ? { storyId, storySlug, storyTitleUrdu, sourceSentenceUrdu } : {}),
         })
         .where(eq(schema.userTelemetry.id, existing.id))
         .run();
@@ -157,6 +170,12 @@ api.post('/telemetry', async (c) => {
           lookupCount: 1,
           maxTapLevel: tapLevel,
           lastTapLevel: tapLevel,
+          storyId: storyId || null,
+          storySlug: storySlug || null,
+          storyTitleUrdu: storyTitleUrdu || null,
+          sourceSentenceUrdu: sourceSentenceUrdu || null,
+          masteryStatus: 'learning',
+          isStarred: false,
           lastSeenAt: now,
         })
         .run();
@@ -179,13 +198,31 @@ api.get('/telemetry', async (c) => {
       .orderBy(desc(schema.userTelemetry.lastSeenAt))
       .all();
 
-    // Enrich with analysis data
+    // Enrich with analysis data with bulletproof fallback
     const enriched = items.map((item) => {
-      const analysis = db
+      // 1. Direct match on vocalizedForm
+      let analysis = db
         .select()
         .from(schema.tokenAnalyses)
         .where(eq(schema.tokenAnalyses.vocalizedForm, item.vocalizedSurface))
         .get();
+
+      // 2. Fallback match via tokens table on normalizedForm
+      if (!analysis) {
+        const matchingTok = db
+          .select()
+          .from(schema.tokens)
+          .where(eq(schema.tokens.normalizedForm, item.normalizedSurface))
+          .limit(1)
+          .get();
+        if (matchingTok) {
+          analysis = db
+            .select()
+            .from(schema.tokenAnalyses)
+            .where(eq(schema.tokenAnalyses.tokenId, matchingTok.id))
+            .get();
+        }
+      }
 
       return {
         ...item,
@@ -194,10 +231,134 @@ api.get('/telemetry', async (c) => {
         spokenSynonyms: analysis?.spokenUrduSynonymsJson || [],
         arabicRoot: analysis?.arabicRoot || null,
         cousins: analysis?.familiarCousinsJson || [],
+        literaryNuanceNote: analysis?.literaryNuanceNote || null,
       };
     });
 
     return c.json({ success: true, data: enriched });
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500);
+  }
+});
+
+// -------------------------------------------------------------
+// 4a. DELETE /api/telemetry/:id - Delete word(s) from vault
+// -------------------------------------------------------------
+api.delete('/telemetry/:id', async (c) => {
+  try {
+    const id = c.req.param('id');
+    const isMasteredOnly = c.req.query('mastered') === 'true';
+    const isAll = c.req.query('all') === 'true' || id === 'all';
+
+    if (isAll) {
+      db.delete(schema.userTelemetry).run();
+      return c.json({ success: true, count: 'all' });
+    }
+
+    if (isMasteredOnly) {
+      db.delete(schema.userTelemetry).where(eq(schema.userTelemetry.masteryStatus, 'mastered')).run();
+      return c.json({ success: true, count: 'mastered' });
+    }
+
+    db.delete(schema.userTelemetry).where(eq(schema.userTelemetry.id, id)).run();
+    return c.json({ success: true, id });
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500);
+  }
+});
+
+// -------------------------------------------------------------
+// 4b. PATCH /api/telemetry/:id - Update star status or mastery
+// -------------------------------------------------------------
+const PatchTelemetrySchema = z.object({
+  isStarred: z.boolean().optional(),
+  masteryStatus: z.enum(['learning', 'mastered']).optional(),
+});
+
+api.patch('/telemetry/:id', async (c) => {
+  try {
+    const id = c.req.param('id');
+    const body = await c.req.json();
+    const parsed = PatchTelemetrySchema.safeParse(body);
+
+    if (!parsed.success) {
+      return c.json({ success: false, error: parsed.error.format() }, 400);
+    }
+
+    const updates: Record<string, any> = {};
+    if (parsed.data.isStarred !== undefined) updates.isStarred = parsed.data.isStarred;
+    if (parsed.data.masteryStatus !== undefined) {
+      updates.masteryStatus = parsed.data.masteryStatus;
+      updates.lastReviewedAt = new Date();
+    }
+
+    db.update(schema.userTelemetry)
+      .set(updates)
+      .where(eq(schema.userTelemetry.id, id))
+      .run();
+
+    return c.json({ success: true, id, updates });
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500);
+  }
+});
+
+// -------------------------------------------------------------
+// 4c. GET /api/telemetry/export - Export vocabulary to Anki CSV
+// -------------------------------------------------------------
+api.get('/telemetry/export', async (c) => {
+  try {
+    const items = db
+      .select()
+      .from(schema.userTelemetry)
+      .orderBy(desc(schema.userTelemetry.lastSeenAt))
+      .all();
+
+    let csv = '\uFEFF"Urdu Headword","Vocalized (Harakat)","English Definition","Spoken Urdu Synonyms","Context Sentence","Source Story","Mastery Status"\n';
+
+    for (const item of items) {
+      let analysis = db
+        .select()
+        .from(schema.tokenAnalyses)
+        .where(eq(schema.tokenAnalyses.vocalizedForm, item.vocalizedSurface))
+        .get();
+
+      if (!analysis) {
+        const matchingTok = db
+          .select()
+          .from(schema.tokens)
+          .where(eq(schema.tokens.normalizedForm, item.normalizedSurface))
+          .limit(1)
+          .get();
+        if (matchingTok) {
+          analysis = db
+            .select()
+            .from(schema.tokenAnalyses)
+            .where(eq(schema.tokenAnalyses.tokenId, matchingTok.id))
+            .get();
+        }
+      }
+
+      const clean = (str: string | null | undefined) => `"${(str || '').replace(/"/g, '""')}"`;
+      const spoken = (analysis?.spokenUrduSynonymsJson || []).join('، ');
+
+      csv += [
+        clean(item.normalizedSurface),
+        clean(item.vocalizedSurface),
+        clean(analysis?.englishContextualGloss || ''),
+        clean(spoken),
+        clean(item.sourceSentenceUrdu || ''),
+        clean(item.storyTitleUrdu || 'Literary Urdu'),
+        clean(item.masteryStatus || 'learning'),
+      ].join(',') + '\n';
+    }
+
+    return new Response(csv, {
+      headers: {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': 'attachment; filename="abjad-vocabulary-vault.csv"',
+      },
+    });
   } catch (error: any) {
     return c.json({ success: false, error: error.message }, 500);
   }

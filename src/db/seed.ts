@@ -6593,6 +6593,12 @@ async function seed() {
         lookupCount: 4,
         maxTapLevel: 3, // Full Gloss
         lastTapLevel: 3,
+        storyId: 'story_shehr-e-afsos',
+        storySlug: 'shehr-e-afsos',
+        storyTitleUrdu: 'شہرِ افسوس',
+        sourceSentenceUrdu: 'یہ شہرِ افسوس کی داستان ہے۔',
+        masteryStatus: 'learning',
+        isStarred: true,
         lastSeenAt: new Date(Date.now() - 1000 * 60 * 30),
       },
       {
@@ -6602,6 +6608,12 @@ async function seed() {
         lookupCount: 2,
         maxTapLevel: 2, // Urdu Bridge
         lastTapLevel: 2,
+        storyId: 'story_toba-tek-singh',
+        storySlug: 'toba-tek-singh',
+        storyTitleUrdu: 'ٹوبہ ٹیک سنگھ',
+        sourceSentenceUrdu: 'پاگلوں کے باہمی تبادلہ کے سلسلے میں کچھ بول نہیں سکتے تھے۔',
+        masteryStatus: 'learning',
+        isStarred: false,
         lastSeenAt: new Date(Date.now() - 1000 * 60 * 120),
       },
       {
@@ -6611,6 +6623,12 @@ async function seed() {
         lookupCount: 1,
         maxTapLevel: 1, // Sounded Out
         lastTapLevel: 1,
+        storyId: 'story_gadaria',
+        storySlug: 'gadaria',
+        storyTitleUrdu: 'گڈریا',
+        sourceSentenceUrdu: 'وہ رات کو کتاب پڑھنا چاہتے تھے۔',
+        masteryStatus: 'mastered',
+        isStarred: false,
         lastSeenAt: new Date(Date.now() - 1000 * 60 * 240),
       },
     ])

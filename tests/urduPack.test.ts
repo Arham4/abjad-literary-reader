@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { UrduLanguagePack } from '../src/lib/abjad/packs/urdu';
-import { cleanUrduForTTS } from '../src/server/api';
+import { cleanUrduForTTS, api } from '../src/server/api';
 import { vocalizeUrduWord, makePhoneticBreakdown } from '../src/lib/abjad/packs/urduVocalizer';
 
 describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
@@ -169,5 +169,63 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     expect(mittiPills[1].vowelNameUrdu).toBe('تشدید و زیر');
     expect(mittiPills[2].letters).toBe('ی');
     expect(mittiPills[2].vowelNameUrdu).toBe('چھوٹی یے');
+  });
+
+  test('Vocabulary Vault API: Contextual Ingestion, Enrichment, Patching & Anki Export', async () => {
+    // 1. Ingest contextual telemetry for an item
+    const postRes = await api.fetch(
+      new Request('http://localhost/telemetry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          normalizedSurface: 'چمٹا',
+          vocalizedSurface: 'چِمْٹَا',
+          tapLevel: 2,
+          storyId: 'story_idgah',
+          storySlug: 'idgah',
+          storyTitleUrdu: 'عید گاہ',
+          sourceSentenceUrdu: 'حامد نے تین پیسوں میں چمٹا خریدا۔',
+        }),
+      })
+    );
+    expect(postRes.status).toBe(200);
+
+    // 2. Fetch enriched items
+    const getRes = await api.fetch(new Request('http://localhost/telemetry'));
+    expect(getRes.status).toBe(200);
+    const getData: any = await getRes.json();
+    expect(getData.success).toBe(true);
+
+    const chimta = getData.data.find((it: any) => it.normalizedSurface === 'چمٹا');
+    expect(chimta).toBeDefined();
+    expect(chimta.storyTitleUrdu).toBe('عید گاہ');
+    expect(chimta.sourceSentenceUrdu).toBe('حامد نے تین پیسوں میں چمٹا خریدا۔');
+
+    // 3. Patch star status
+    const patchRes = await api.fetch(
+      new Request(`http://localhost/telemetry/${chimta.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isStarred: true, masteryStatus: 'mastered' }),
+      })
+    );
+    expect(patchRes.status).toBe(200);
+
+    // 4. Verify Anki CSV Export
+    const exportRes = await api.fetch(new Request('http://localhost/telemetry/export'));
+    expect(exportRes.status).toBe(200);
+    expect(exportRes.headers.get('Content-Type')).toContain('text/csv');
+    const csvText = await exportRes.text();
+    expect(csvText).toContain('Urdu Headword');
+    expect(csvText).toContain('چمٹا');
+    expect(csvText).toContain('عید گاہ');
+
+    // 5. Delete word from vault
+    const deleteRes = await api.fetch(
+      new Request(`http://localhost/telemetry/${chimta.id}`, {
+        method: 'DELETE',
+      })
+    );
+    expect(deleteRes.status).toBe(200);
   });
 });

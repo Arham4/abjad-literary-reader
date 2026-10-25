@@ -68,7 +68,14 @@ sqlite.exec(`
     lookup_count INTEGER NOT NULL DEFAULT 1,
     max_tap_level INTEGER NOT NULL DEFAULT 1,
     last_tap_level INTEGER NOT NULL DEFAULT 1,
-    last_seen_at INTEGER NOT NULL
+    story_id TEXT,
+    story_slug TEXT,
+    story_title_urdu TEXT,
+    source_sentence_urdu TEXT,
+    mastery_status TEXT NOT NULL DEFAULT 'learning',
+    is_starred INTEGER NOT NULL DEFAULT 0,
+    last_seen_at INTEGER NOT NULL,
+    last_reviewed_at INTEGER
   );
   CREATE UNIQUE INDEX IF NOT EXISTS idx_telemetry_lexeme ON user_telemetry(normalized_surface, vocalized_surface);
 `);
@@ -79,6 +86,27 @@ try {
 } catch (_) {}
 try {
   sqlite.exec('ALTER TABLE stories ADD COLUMN scene_vocab_preview_json TEXT;');
+} catch (_) {}
+try {
+  sqlite.exec('ALTER TABLE user_telemetry ADD COLUMN story_id TEXT;');
+} catch (_) {}
+try {
+  sqlite.exec('ALTER TABLE user_telemetry ADD COLUMN story_slug TEXT;');
+} catch (_) {}
+try {
+  sqlite.exec('ALTER TABLE user_telemetry ADD COLUMN story_title_urdu TEXT;');
+} catch (_) {}
+try {
+  sqlite.exec('ALTER TABLE user_telemetry ADD COLUMN source_sentence_urdu TEXT;');
+} catch (_) {}
+try {
+  sqlite.exec("ALTER TABLE user_telemetry ADD COLUMN mastery_status TEXT NOT NULL DEFAULT 'learning';");
+} catch (_) {}
+try {
+  sqlite.exec('ALTER TABLE user_telemetry ADD COLUMN is_starred INTEGER NOT NULL DEFAULT 0;');
+} catch (_) {}
+try {
+  sqlite.exec('ALTER TABLE user_telemetry ADD COLUMN last_reviewed_at INTEGER;');
 } catch (_) {}
 
 export const db = drizzle(sqlite, { schema });

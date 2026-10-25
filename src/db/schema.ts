@@ -69,7 +69,14 @@ export const userTelemetry = sqliteTable('user_telemetry', {
   lookupCount: integer('lookup_count').notNull().default(1),
   maxTapLevel: integer('max_tap_level').notNull().default(1),
   lastTapLevel: integer('last_tap_level').notNull().default(1),
+  storyId: text('story_id'),
+  storySlug: text('story_slug'),
+  storyTitleUrdu: text('story_title_urdu'),
+  sourceSentenceUrdu: text('source_sentence_urdu'),
+  masteryStatus: text('mastery_status').notNull().default('learning'),
+  isStarred: integer('is_starred', { mode: 'boolean' }).notNull().default(false),
   lastSeenAt: integer('last_seen_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  lastReviewedAt: integer('last_reviewed_at', { mode: 'timestamp' }),
 }, (table) => [
   uniqueIndex('idx_telemetry_lexeme').on(table.normalizedSurface, table.vocalizedSurface),
 ]);
