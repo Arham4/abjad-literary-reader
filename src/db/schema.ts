@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, real, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 import { GraphemeUnit, PhoneticSyllablePill } from '../lib/abjad/types';
 
 export interface SentenceTiming {
@@ -15,7 +15,7 @@ export const stories = sqliteTable('stories', {
   authorEnglish: text('author_english').notNull(),
   titleUrdu: text('title_urdu').notNull(),
   titleEnglish: text('title_english').notNull(),
-  level: integer('level').notNull(), // 1 (Novice), 2 (Literary), 3 (High Classical)
+  level: real('level').notNull(), // 0.1 to 3.0 progression
   descriptionEnglish: text('description_english'),
   sceneVocabPreviewJson: text('scene_vocab_preview_json', { mode: 'json' }).$type<string[]>(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),

@@ -816,7 +816,12 @@ export async function loadStories() {
     if (data.success && data.data) {
       setStories(data.data);
       if (data.data.length > 0) {
-        await selectStory(data.data[0].slug);
+        const urlParams = new URLSearchParams(window.location.search);
+        const storyParam = urlParams.get('story');
+        const initialSlug = (storyParam && data.data.some((s: any) => s.slug === storyParam))
+          ? storyParam
+          : data.data[0].slug;
+        await selectStory(initialSlug);
       }
     }
   } catch (err) {

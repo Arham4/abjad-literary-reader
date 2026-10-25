@@ -71,7 +71,7 @@ export default function ReaderNavbar() {
               <For each={stories()}>
                 {(s) => (
                   <option value={s.slug}>
-                    Level {s.level} · {s.titleEnglish}
+                    Level {s.level === 1 ? '1.0' : s.level} · {s.titleEnglish}
                   </option>
                 )}
               </For>

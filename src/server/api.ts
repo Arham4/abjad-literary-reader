@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { eq, sql, desc } from 'drizzle-orm';
+import { eq, sql, desc, asc } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db';
 import * as schema from '../db/schema';
@@ -24,10 +24,15 @@ if (!existsSync(AUDIO_CACHE_DIR)) {
 // -------------------------------------------------------------
 api.get('/stories', async (c) => {
   try {
-    const allStories = db.select().from(schema.stories).all().map((s) => ({
-      ...s,
-      sceneVocabPreview: s.sceneVocabPreviewJson,
-    }));
+    const allStories = db
+      .select()
+      .from(schema.stories)
+      .orderBy(asc(schema.stories.level))
+      .all()
+      .map((s) => ({
+        ...s,
+        sceneVocabPreview: s.sceneVocabPreviewJson,
+      }));
     return c.json({ success: true, data: allStories });
   } catch (error: any) {
     return c.json({ success: false, error: error.message }, 500);

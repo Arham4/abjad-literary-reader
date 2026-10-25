@@ -140,13 +140,23 @@ export default function App() {
 
   const getLevelLabel = (lvl: number) => {
     switch (lvl) {
+      case 0.1:
+        return 'Level 0.1 · Spoken Vocab & Eye-Speed';
+      case 0.3:
+        return 'Level 0.3 · Classic Household Story';
+      case 0.5:
+        return 'Level 0.5 · Domestic Emotional Narrative';
+      case 0.8:
+        return 'Level 0.8 · Urban Literary Classic';
       case 1:
-        return 'Level 1 · Novice';
+        return 'Level 1.0 · Foundational Masterpiece';
       case 2:
-        return 'Level 2 · Literary';
+        return 'Level 2.0 · Complex Multi-Perspective';
+      case 2.5:
+        return 'Level 2.5 · Classical Portrait';
       case 3:
       default:
-        return 'Level 3 · Classical Masterpiece';
+        return `Level ${lvl} · High Classical Masterpiece`;
     }
   };
 
