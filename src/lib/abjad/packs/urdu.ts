@@ -389,7 +389,7 @@ export const UrduLanguagePack: AbjadLanguagePack = {
             rawWords[0].length >= 2;
 
           if (isKnownCompound || isReduplicativeHeIn || isBaReduplication || isWawAtfCompound || isEchoPair) {
-            const cid = `compound_${compoundCounter++}`;
+            const cid = `compound_${tokens[sliceIndices[0]].tokenIndex}_${compoundCounter++}`;
             const canonicalPhrase = joinedPhrase;
             for (const idx of sliceIndices) {
               tokens[idx].compoundGroupId = cid;

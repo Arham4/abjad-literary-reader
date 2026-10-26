@@ -269,6 +269,14 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
       expect(w.compoundGroupId).toBe(lamhaCid);
       expect(w.compoundPhrase).toBe('لمحہ بہ لمحہ');
     }
+
+    // 4. Distinct compound occurrences must have unique compoundGroupIds
+    const tokensMultiple = UrduLanguagePack.tokenizeParagraph('طرح طرح کی باتیں اور پیارے پیارے بچے۔');
+    const tarah1 = tokensMultiple.find((t) => t.surface === 'طرح');
+    const pyare1 = tokensMultiple.find((t) => t.surface === 'پیارے');
+    expect(tarah1!.compoundGroupId).toBeDefined();
+    expect(pyare1!.compoundGroupId).toBeDefined();
+    expect(tarah1!.compoundGroupId).not.toBe(pyare1!.compoundGroupId);
   });
 
   test('Phrase Decoding Engine: POST /api/phrase/decode', async () => {

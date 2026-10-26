@@ -6495,8 +6495,8 @@ async function seed() {
           normalizedForm: span.normalized,
           isWord: span.isWord,
           sentenceIndex: span.sentenceIndex,
-          izafatGroupId: span.izafatGroupId || null,
-          compoundGroupId: span.compoundGroupId || null,
+          izafatGroupId: span.izafatGroupId ? `${titlePId}_${span.izafatGroupId}` : null,
+          compoundGroupId: span.compoundGroupId ? `${titlePId}_${span.compoundGroupId}` : null,
         })
         .run();
 
@@ -6594,8 +6594,8 @@ async function seed() {
             normalizedForm: span.normalized,
             isWord: span.isWord,
             sentenceIndex: span.sentenceIndex,
-            izafatGroupId: span.izafatGroupId || null,
-            compoundGroupId: span.compoundGroupId || null,
+            izafatGroupId: span.izafatGroupId ? `${paragraphId}_${span.izafatGroupId}` : null,
+            compoundGroupId: span.compoundGroupId ? `${paragraphId}_${span.compoundGroupId}` : null,
           })
           .run();
 

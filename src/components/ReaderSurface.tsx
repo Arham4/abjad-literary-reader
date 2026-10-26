@@ -103,7 +103,12 @@ export default function ReaderSurface() {
                     const activeId = activeTokenId();
                     if (!activeId) return false;
                     const activeTok = tokensMap()[activeId];
-                    return Boolean(activeTok?.compoundGroupId && activeTok.compoundGroupId === token.compoundGroupId);
+                    return Boolean(
+                      activeTok &&
+                      activeTok.paragraphId === token.paragraphId &&
+                      activeTok.compoundGroupId &&
+                      activeTok.compoundGroupId === token.compoundGroupId
+                    );
                   };
 
                   return (
@@ -120,7 +125,7 @@ export default function ReaderSurface() {
                         tabIndex={0}
                         class="abjad-word-token"
                         data-token-id={token.id}
-                        data-active={activeTokenId() === token.id || isCompoundActive() ? 'true' : undefined}
+                        data-active={activeTokenId() === token.id ? 'true' : undefined}
                       >
                         {activeTokenId() === token.id &&
                         analysesMap()[token.id]?.vocalizedForm &&
