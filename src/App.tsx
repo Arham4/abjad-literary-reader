@@ -216,17 +216,61 @@ export default function App() {
                         if (!token.isWord) {
                           return <span>{token.surfaceForm}</span>;
                         }
+
+                        const isTitleCompoundActive = () => {
+                          if (!token.compoundGroupId) return false;
+                          const activeId = activeTokenId();
+                          if (!activeId) return false;
+                          const activeTok = tokensMap()[activeId];
+                          return Boolean(
+                            activeTok &&
+                            activeTok.paragraphId === token.paragraphId &&
+                            activeTok.compoundGroupId &&
+                            activeTok.compoundGroupId === token.compoundGroupId
+                          );
+                        };
+
+                        const titleTokenDisplay = () => {
+                          const activeId = activeTokenId();
+                          if (!activeId) return token.surfaceForm;
+                          const activeTok = tokensMap()[activeId];
+                          const activeAna = analysesMap()[activeId];
+
+                          // 1. Part of active compound: resolve only this token's constituent word
+                          if (
+                            token.compoundGroupId &&
+                            activeTok?.compoundGroupId === token.compoundGroupId &&
+                            activeTok?.paragraphId === token.paragraphId &&
+                            activeAna?.vocalizedForm
+                          ) {
+                            const cTokens = titleTokens().filter(
+                              (t) => t.isWord && t.compoundGroupId && t.compoundGroupId === token.compoundGroupId
+                            );
+                            const parts = activeAna.vocalizedForm.trim().split(/\s+/);
+                            const idx = cTokens.findIndex((t) => t.id === token.id);
+                            if (idx >= 0 && idx < parts.length) {
+                              return parts[idx];
+                            }
+                          }
+
+                          // 2. Single word token (non-compound)
+                          if (activeId === token.id && analysesMap()[token.id]?.vocalizedForm) {
+                            const voc = analysesMap()[token.id]!.vocalizedForm;
+                            if (!voc.includes(' ')) return voc;
+                          }
+
+                          return token.surfaceForm;
+                        };
+
                         return (
                           <span
                             class="abjad-word-token inline-block mx-1.5 cursor-pointer"
                             data-token-id={token.id}
-                            data-active={activeTokenId() === token.id ? 'true' : 'false'}
+                            data-active={activeTokenId() === token.id ? 'true' : isTitleCompoundActive() ? 'true' : 'false'}
                             onClick={(e) => handleTitleWordClick(token.id, e)}
                             title={`Tap to decode "${token.surfaceForm}"`}
                           >
-                            {activeTokenId() === token.id && analysesMap()[token.id]?.vocalizedForm
-                              ? analysesMap()[token.id]!.vocalizedForm
-                              : token.surfaceForm}
+                            {titleTokenDisplay()}
                           </span>
                         );
                       }}

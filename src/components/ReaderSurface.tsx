@@ -112,6 +112,38 @@ export default function ReaderSurface() {
                     );
                   };
 
+                  const tokenWordDisplay = () => {
+                    const activeId = activeTokenId();
+                    if (!activeId) return token.surfaceForm;
+                    const activeTok = tokensMap()[activeId];
+                    const activeAna = analysesMap()[activeId];
+
+                    // 1. Part of active compound: resolve only this token's constituent word
+                    if (
+                      token.compoundGroupId &&
+                      activeTok?.compoundGroupId === token.compoundGroupId &&
+                      activeTok?.paragraphId === token.paragraphId &&
+                      activeAna?.vocalizedForm
+                    ) {
+                      const cTokens = pTokens.filter(
+                        (t) => t.isWord && t.compoundGroupId && t.compoundGroupId === token.compoundGroupId
+                      );
+                      const parts = activeAna.vocalizedForm.trim().split(/\s+/);
+                      const idx = cTokens.findIndex((t) => t.id === token.id);
+                      if (idx >= 0 && idx < parts.length) {
+                        return parts[idx];
+                      }
+                    }
+
+                    // 2. Single word token (non-compound)
+                    if (activeId === token.id && analysesMap()[token.id]?.vocalizedForm) {
+                      const voc = analysesMap()[token.id]!.vocalizedForm;
+                      if (!voc.includes(' ')) return voc;
+                    }
+
+                    return token.surfaceForm;
+                  };
+
                   return (
                     <span
                       class={`${isIzafat() ? 'izafat-group' : ''} ${
@@ -128,11 +160,7 @@ export default function ReaderSurface() {
                         data-token-id={token.id}
                         data-active={activeTokenId() === token.id ? 'true' : undefined}
                       >
-                        {activeTokenId() === token.id &&
-                        analysesMap()[token.id]?.vocalizedForm &&
-                        !analysesMap()[token.id]!.vocalizedForm.includes(' ')
-                          ? analysesMap()[token.id]!.vocalizedForm
-                          : token.surfaceForm}
+                        {tokenWordDisplay()}
                       </span>
                     </span>
                   );
