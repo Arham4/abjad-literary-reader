@@ -404,7 +404,13 @@ function splitTextForTTS(text: string, maxLen = 160): string[] {
 export function cleanUrduForTTS(text: string): string {
   if (!text) return '';
   // Normalize Unicode to NFC so decomposed \u0627\u0653 becomes precomposed \u0622 (Alif with Madda)
-  const normalized = text.normalize('NFC').trim();
+  let normalized = text.normalize('NFC').trim();
+
+  // Strip combining diacritics / harakat / jazm (U+064B - U+0652, U+0656 - U+065F, U+06DF - U+06E8)
+  // Standalone diacritics (especially jazm/sukūn \u0652) on isolated words cause neural Urdu TTS models
+  // to spell out individual letter phonemes rather than reading the natural word vocabulary.
+  // Note: Alif with Madda (\u0622) and Combining Madda (\u0653) are strictly preserved.
+  normalized = normalized.replace(/[\u064B-\u0652\u0656-\u065F\u06DF-\u06E8]/g, '').trim();
 
   // Neural TTS phonetic correction for isolated 'آنوں' / 'آنُوں' (annas):
   // When spoken in isolation, neural models often slur 'آنوں' into 'ایِنو' (eeno),
@@ -414,11 +420,17 @@ export function cleanUrduForTTS(text: string): string {
     return 'آ نوں';
   }
 
-  // Strip combining diacritics / harakat / jazm (U+064B - U+0652, U+0656 - U+065F, U+06DF - U+06E8)
-  // Standalone diacritics (especially jazm/sukūn \u0652) on isolated words cause neural Urdu TTS models
-  // to spell out individual letter phonemes rather than reading the natural word vocabulary.
-  // Note: Alif with Madda (\u0622) and Combining Madda (\u0653) are strictly preserved.
-  return normalized.replace(/[\u064B-\u0652\u0656-\u065F\u06DF-\u06E8]/g, '').trim();
+  // Neural TTS phonetic corrections for Persian-origin clitics ending in silent Heh (ہ):
+  // Words like تاکہ (taakeh / so that), بلکہ (balkeh / rather), and چونکہ (choonkeh / since)
+  // end in an /e/ or /eh/ vowel (majhool heh). Microsoft's neural G2P models (Asad, Uzma, Salman)
+  // misclassify final Heh as an open /a/ or /ah/, pronouncing 'تاکہ' as 'taakah'.
+  // Mapping the final Heh to Bari Yeh (ے) guarantees the authentic /e/ (eh) pronunciation across all neural voices.
+  normalized = normalized.replace(/(^|\s)تاکہ(?=[\s،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!]|$)/gu, '$1تاکے');
+  normalized = normalized.replace(/(^|\s)تا\s+کہ(?=[\s،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!]|$)/gu, '$1تاکے');
+  normalized = normalized.replace(/(^|\s)بلکہ(?=[\s،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!]|$)/gu, '$1بلکے');
+  normalized = normalized.replace(/(^|\s)چونکہ(?=[\s،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!]|$)/gu, '$1چونکے');
+
+  return normalized.trim();
 }
 
 const handleTTS = async (

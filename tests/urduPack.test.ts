@@ -129,6 +129,14 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     expect(cleanUrduForTTS('آنُوں')).toBe('آ نوں');
     expect(cleanUrduForTTS('\u0627\u0653نوں')).toBe('آ نوں');
 
+    // Persian-origin clitics: تاکہ (taakeh), بلکہ (balkeh), چونکہ (choonkeh)
+    expect(cleanUrduForTTS('تاکہ')).toBe('تاکے');
+    expect(cleanUrduForTTS('تاکِہ')).toBe('تاکے');
+    expect(cleanUrduForTTS('تا کہ')).toBe('تاکے');
+    expect(cleanUrduForTTS('محنت کرو تاکہ کامیاب ہو سکو۔')).toBe('محنت کرو تاکے کامیاب ہو سکو۔');
+    expect(cleanUrduForTTS('بلکہ')).toBe('بلکے');
+    expect(cleanUrduForTTS('چونکہ')).toBe('چونکے');
+
     // Sentence with preserved Madda (آ) and consonants
     const sentence = 'امرتسر سے اسپیشل ٹرین دوپہر دو بجے کو چلی اور آٹھ گھنٹوں کے بعد مغل پورہ پہنچی۔';
     expect(cleanUrduForTTS(sentence)).toBe(sentence);
