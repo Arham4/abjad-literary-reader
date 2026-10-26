@@ -20,6 +20,7 @@ export interface TokenSpan {
   sentenceIndex: number;
   izafatGroupId?: string;
   compoundGroupId?: string;
+  compoundPhrase?: string;
 }
 
 export interface AbjadLanguagePack {

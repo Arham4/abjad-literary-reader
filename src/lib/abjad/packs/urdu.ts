@@ -87,6 +87,70 @@ const DIGIT_MAP: Record<string, string> = {
   '\u0669': '\u06F9', // ٩ -> ۹
 };
 
+// Curated Literary Expressions, Fixed Binomials & Idioms
+export const URDU_COMMON_IDIOMS_AND_COMPOUNDS = new Set([
+  'چکنا چور',
+  'دل ہی دل میں',
+  'دیکھتے ہی دیکھتے',
+  'لمحہ بہ لمحہ',
+  'قدم بہ قدم',
+  'روز بہ روز',
+  'رو بہ رو',
+  'جا بہ جا',
+  'دم بہ دم',
+  'طرح طرح',
+  'پیارے پیارے',
+  'سر پیٹنا',
+  'سر پیٹ لیا',
+  'مٹی میں مل گیا',
+  'مٹی میں مل چکا',
+  'مٹی میں مل جانا',
+  'برباد ہو گئی',
+  'برباد ہو گیا',
+  'برباد ہو جانا',
+  'شیخ چلی',
+  'ہٹ جاؤ',
+  'رگ و ریشے',
+  'بھاگم بھاگ',
+  'ازار بند',
+  'عید گاہ',
+  'حجِ اکبر',
+  'مکہ معظمہ',
+  'پائی پائی',
+  'عزتِ نفس',
+  'نم دیدہ',
+  'بسترِ مرگ',
+  'اوور کوٹ',
+  'مال روڈ',
+  'خوش پوش',
+  'فلیٹ ہیٹ',
+  'تار تار',
+  'لت پت',
+  'بے ہوش',
+  'کر دیا جائے',
+  'کھول دو',
+  'باتوں ہی باتوں میں',
+  'آنکھوں ہی آنکھوں میں',
+  'ہوش اڑ جانا',
+  'ہوش اڑ گئے',
+  'بال بال بچنا',
+  'دم بخود',
+  'آناً فاناً',
+  'آنا فاناً',
+  'خون کے آنسو',
+  'کلیجہ منہ کو آنا',
+  'دل بیٹھ جانا',
+  'دنگ رہ جانا',
+  'سود و زیاں',
+  'حیران و پریشان',
+  'ادھر ادھر',
+  'ٹوٹ پھوٹ',
+  'دیکھ بھال',
+  'الٹ پلٹ',
+  'جاں بلب',
+  'دست بردار',
+]);
+
 export const UrduLanguagePack: AbjadLanguagePack = {
   code: 'ur',
   name: 'Urdu',
@@ -274,6 +338,65 @@ export const UrduLanguagePack: AbjadLanguagePack = {
           if (tokens[j].isWord) {
             tokens[j].izafatGroupId = gid;
             i = j; // Advance past the modifier so we don't cascade down the whole sentence
+            break;
+          }
+        }
+      }
+    }
+
+    // Pass 2.5: Multi-Word Idioms, Reduplications & Compound Expressions Detection Pass
+    // Identifies fixed binomials (e.g. 'چکنا چور'), reduplications ('دل ہی دل میں', 'طرح طرح'), and idioms
+    let compoundCounter = 1;
+    const wordIndices: number[] = [];
+    for (let idx = 0; idx < tokens.length; idx++) {
+      if (tokens[idx].isWord) wordIndices.push(idx);
+    }
+
+    for (let wIdx = 0; wIdx < wordIndices.length; wIdx++) {
+      let matched = false;
+      // Evaluate sliding windows of length 4, 3, 2 words
+      for (const winSize of [4, 3, 2]) {
+        if (wIdx + winSize <= wordIndices.length) {
+          const sliceIndices = wordIndices.slice(wIdx, wIdx + winSize);
+          const rawWords = sliceIndices.map((idx) =>
+            tokens[idx].normalized
+              .replace(/^[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!-]+|[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!-]+$/gu, '')
+              .trim()
+          );
+          const joinedPhrase = rawWords.join(' ');
+
+          const isKnownCompound = URDU_COMMON_IDIOMS_AND_COMPOUNDS.has(joinedPhrase);
+          // Reduplicative emphatic [word] ہی [word] میں (e.g. دل ہی دل میں, باتوں ہی باتوں میں)
+          const isReduplicativeHeIn =
+            winSize === 4 &&
+            rawWords[1] === 'ہی' &&
+            rawWords[3] === 'میں' &&
+            rawWords[0] === rawWords[2];
+          // Persian prepositional reduplication: [Noun] بہ [Noun] (e.g. لمحہ بہ لمحہ, قدم بہ قدم, روز بہ روز, جا بہ جا, رو بہ رو)
+          const isBaReduplication =
+            winSize === 3 &&
+            rawWords[1] === 'بہ' &&
+            rawWords[0] === rawWords[2];
+          // Waw-e-Atf compound pair: [Noun] و [Noun] (e.g. رگ و ریشے, سود و زیاں, حیران و پریشان)
+          const isWawAtfCompound =
+            winSize === 3 &&
+            rawWords[1] === 'و' &&
+            URDU_COMMON_IDIOMS_AND_COMPOUNDS.has(joinedPhrase);
+          // Echo pair / identical words (e.g. پیارے پیارے, طرح طرح, تار تار, پائی پائی)
+          const isEchoPair =
+            winSize === 2 &&
+            rawWords[0] === rawWords[1] &&
+            rawWords[0].length >= 2;
+
+          if (isKnownCompound || isReduplicativeHeIn || isBaReduplication || isWawAtfCompound || isEchoPair) {
+            const cid = `compound_${compoundCounter++}`;
+            const canonicalPhrase = joinedPhrase;
+            for (const idx of sliceIndices) {
+              tokens[idx].compoundGroupId = cid;
+              tokens[idx].compoundPhrase = canonicalPhrase;
+            }
+            wIdx += winSize - 1; // Advance past window
+            matched = true;
             break;
           }
         }

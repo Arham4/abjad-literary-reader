@@ -228,4 +228,82 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     );
     expect(deleteRes.status).toBe(200);
   });
+
+  test('Multi-word compound & idiom grouping: چکنا چور, دل ہی دل میں, لمحہ بہ لمحہ', () => {
+    // 1. Binomial compound: چکنا چور
+    const tokensChakna = UrduLanguagePack.tokenizeParagraph('گھڑا گر پڑا اور چکنا چور ہو گیا۔');
+    const chakna = tokensChakna.find((t) => t.surface === 'چکنا');
+    const choor = tokensChakna.find((t) => t.surface === 'چور');
+    expect(chakna).toBeDefined();
+    expect(choor).toBeDefined();
+    expect(chakna!.compoundGroupId).toBeDefined();
+    expect(choor!.compoundGroupId).toBe(chakna!.compoundGroupId);
+    expect(chakna!.compoundPhrase).toBe('چکنا چور');
+
+    // 2. Reduplicative emphatic: دل ہی دل میں
+    const tokensDil = UrduLanguagePack.tokenizeParagraph('وہ دل ہی دل میں مسکرانے لگے۔');
+    const dilWords = tokensDil.filter((t) => t.isWord && ['دل', 'ہی', 'میں'].includes(t.surface));
+    expect(dilWords.length).toBe(4);
+    const firstCid = dilWords[0].compoundGroupId;
+    expect(firstCid).toBeDefined();
+    for (const w of dilWords) {
+      expect(w.compoundGroupId).toBe(firstCid);
+      expect(w.compoundPhrase).toBe('دل ہی دل میں');
+    }
+
+    // 3. Persian prepositional reduplication: لمحہ بہ لمحہ
+    const tokensLamha = UrduLanguagePack.tokenizeParagraph('خوشی لمحہ بہ لمحہ بڑھتی گئی۔');
+    const lamhaWords = tokensLamha.filter((t) => t.isWord && ['لمحہ', 'بہ'].includes(t.surface));
+    expect(lamhaWords.length).toBe(3);
+    const lamhaCid = lamhaWords[0].compoundGroupId;
+    expect(lamhaCid).toBeDefined();
+    for (const w of lamhaWords) {
+      expect(w.compoundGroupId).toBe(lamhaCid);
+      expect(w.compoundPhrase).toBe('لمحہ بہ لمحہ');
+    }
+  });
+
+  test('Phrase Decoding Engine: POST /api/phrase/decode', async () => {
+    // 1. Direct compound: چکنا چور
+    const resChakna = await api.fetch(
+      new Request('http://localhost/phrase/decode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phrase: 'چکنا چور' }),
+      })
+    );
+    expect(resChakna.status).toBe(200);
+    const dataChakna: any = await resChakna.json();
+    expect(dataChakna.success).toBe(true);
+    expect(dataChakna.data.vocalizedForm).toBe('چَکْنا چُور');
+    expect(dataChakna.data.englishContextualGloss).toContain('shattered');
+    expect(dataChakna.data.spokenUrduSynonymsJson).toContain('ٹکڑے ٹکڑے');
+
+    // 2. Synthesized verb phrase: دل ہی دل میں مسکرانے لگے
+    const resDil = await api.fetch(
+      new Request('http://localhost/phrase/decode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phrase: 'دل ہی دل میں مسکرانے لگے' }),
+      })
+    );
+    expect(resDil.status).toBe(200);
+    const dataDil: any = await resDil.json();
+    expect(dataDil.success).toBe(true);
+    expect(dataDil.data.englishContextualGloss).toContain('smile');
+    expect(dataDil.data.spokenUrduSynonymsJson).toContain('چپکے سے مسکرا دیے');
+
+    // 3. Prepositional reduplication: لمحہ بہ لمحہ
+    const resLamha = await api.fetch(
+      new Request('http://localhost/phrase/decode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phrase: 'لمحہ بہ لمحہ' }),
+      })
+    );
+    expect(resLamha.status).toBe(200);
+    const dataLamha: any = await resLamha.json();
+    expect(dataLamha.success).toBe(true);
+    expect(dataLamha.data.englishContextualGloss).toContain('moment by moment');
+  });
 });

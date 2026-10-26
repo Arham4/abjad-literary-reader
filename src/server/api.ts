@@ -5,6 +5,8 @@ import { z } from 'zod';
 import { db } from '../db';
 import * as schema from '../db/schema';
 import { UrduLanguagePack } from '../lib/abjad/packs/urdu';
+import { CONTEXTUAL_VOCAB } from '../db/seed';
+import { vocalizeUrduWord, makePhoneticBreakdown } from '../lib/abjad/packs/urduVocalizer';
 import { existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -224,14 +226,21 @@ api.get('/telemetry', async (c) => {
         }
       }
 
+      // 3. Fallback match in CONTEXTUAL_VOCAB (for phrases, idioms, and compounds)
+      const vocabEntry =
+        !analysis &&
+        (CONTEXTUAL_VOCAB[item.vocalizedSurface] ||
+          CONTEXTUAL_VOCAB[item.normalizedSurface] ||
+          CONTEXTUAL_VOCAB[UrduLanguagePack.stripHarakatPreserveOrthography(item.normalizedSurface)]);
+
       return {
         ...item,
-        englishGloss: analysis?.englishContextualGloss || null,
-        urduExplanation: analysis?.urduSimpleExplanation || null,
-        spokenSynonyms: analysis?.spokenUrduSynonymsJson || [],
-        arabicRoot: analysis?.arabicRoot || null,
-        cousins: analysis?.familiarCousinsJson || [],
-        literaryNuanceNote: analysis?.literaryNuanceNote || null,
+        englishGloss: analysis?.englishContextualGloss || (vocabEntry ? vocabEntry.englishContextualGloss : null),
+        urduExplanation: analysis?.urduSimpleExplanation || (vocabEntry ? vocabEntry.urduSimpleExplanation : null),
+        spokenSynonyms: analysis?.spokenUrduSynonymsJson || (vocabEntry ? vocabEntry.spokenUrduSynonymsJson : []),
+        arabicRoot: analysis?.arabicRoot || (vocabEntry ? vocabEntry.arabicRoot : null),
+        cousins: analysis?.familiarCousinsJson || (vocabEntry ? vocabEntry.familiarCousinsJson : []),
+        literaryNuanceNote: analysis?.literaryNuanceNote || (vocabEntry ? vocabEntry.literaryNuanceNote : null),
       };
     });
 
@@ -339,13 +348,19 @@ api.get('/telemetry/export', async (c) => {
         }
       }
 
+      const vocabEntry =
+        !analysis &&
+        (CONTEXTUAL_VOCAB[item.vocalizedSurface] ||
+          CONTEXTUAL_VOCAB[item.normalizedSurface] ||
+          CONTEXTUAL_VOCAB[UrduLanguagePack.stripHarakatPreserveOrthography(item.normalizedSurface)]);
+
       const clean = (str: string | null | undefined) => `"${(str || '').replace(/"/g, '""')}"`;
-      const spoken = (analysis?.spokenUrduSynonymsJson || []).join('، ');
+      const spoken = (analysis?.spokenUrduSynonymsJson || (vocabEntry ? vocabEntry.spokenUrduSynonymsJson : []) || []).join('، ');
 
       csv += [
         clean(item.normalizedSurface),
         clean(item.vocalizedSurface),
-        clean(analysis?.englishContextualGloss || ''),
+        clean(analysis?.englishContextualGloss || (vocabEntry ? vocabEntry.englishContextualGloss : '')),
         clean(spoken),
         clean(item.sourceSentenceUrdu || ''),
         clean(item.storyTitleUrdu || 'Literary Urdu'),
@@ -615,7 +630,201 @@ api.post('/tts', async (c) => {
 });
 
 // -------------------------------------------------------------
-// 6. POST /api/stories/ingest - Ingest new story with paragraphs
+// 4d. POST /api/phrase/decode - Decode multi-word phrases and idioms
+// -------------------------------------------------------------
+const PhraseDecodeSchema = z.object({
+  phrase: z.string().min(1),
+  storyId: z.string().optional(),
+  sentenceContext: z.string().optional(),
+});
+
+api.post('/phrase/decode', async (c) => {
+  try {
+    const body = await c.req.json();
+    const parsed = PhraseDecodeSchema.safeParse(body);
+    if (!parsed.success) {
+      return c.json({ success: false, error: parsed.error.format() }, 400);
+    }
+
+    const rawPhrase = parsed.data.phrase.trim();
+    const cleanPhrase = rawPhrase.replace(/^[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!-]+|[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!-]+$/gu, '').trim();
+    const normPhrase = UrduLanguagePack.stripHarakatPreserveOrthography(cleanPhrase).trim();
+
+    // 1. Direct match in CONTEXTUAL_VOCAB
+    const directMatch =
+      CONTEXTUAL_VOCAB[rawPhrase] ||
+      CONTEXTUAL_VOCAB[cleanPhrase] ||
+      CONTEXTUAL_VOCAB[normPhrase];
+
+    if (directMatch) {
+      const vocalized = directMatch.vocalizedForm || cleanPhrase;
+      return c.json({
+        success: true,
+        data: {
+          phraseText: rawPhrase,
+          vocalizedForm: vocalized,
+          phoneticBreakdownJson: makePhoneticBreakdown(vocalized),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          spokenUrduSynonymsJson: directMatch.spokenUrduSynonymsJson || [],
+          urduSimpleExplanation: directMatch.urduSimpleExplanation || '',
+          englishContextualGloss: directMatch.englishContextualGloss || '',
+          literaryNuanceNote: directMatch.literaryNuanceNote || null,
+          tokenTier: 'idiom_phrase',
+          isPhrase: true,
+        },
+      });
+    }
+
+    // 2. Pattern A: Reduplicative Emphatic [Noun] ہی [Noun] میں (e.g. دل ہی دل میں, باتوں ہی باتوں میں, آنکھوں ہی آنکھوں میں)
+    const heInMatch = normPhrase.match(/^(\S+)\s+ہی\s+\1\s+میں$/u);
+    if (heInMatch) {
+      const base = heInMatch[1];
+      const vocBase = vocalizeUrduWord(base);
+      const vocPhrase = `${vocBase} ہی ${vocBase} میں`;
+      return c.json({
+        success: true,
+        data: {
+          phraseText: rawPhrase,
+          vocalizedForm: vocPhrase,
+          phoneticBreakdownJson: makePhoneticBreakdown(vocPhrase),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          spokenUrduSynonymsJson: ['اپنے اندر ہی اندر', 'چپکے سے', 'خود میں'],
+          urduSimpleExplanation: `${base} کے اندر بغیر کسی پر ظاہر کیے، خاموشی سے اپنے آپ میں`,
+          englishContextualGloss: "in one's heart of hearts / secretly to oneself / inwardly",
+          literaryNuanceNote: "اردو روزمرہ کی خاص ترکیب: لفظ کا اعادہ اور 'ہی' کا استعمال (X ہی X میں) یہ ظاہر کرتا ہے کہ کیفیت مکمل طور پر اندرونی ہے اور باہر بالکل ظاہر نہیں ہوئی۔",
+          tokenTier: 'idiom_phrase',
+          isPhrase: true,
+        },
+      });
+    }
+
+    // 3. Pattern B: Phrases containing 'دل ہی دل میں' + verbs (e.g. دل ہی دل میں مسکرانے لگے)
+    if (normPhrase.includes('دل ہی دل میں')) {
+      const isSmiling = normPhrase.includes('مسکرا') || normPhrase.includes('ہنس');
+      const isThinking = normPhrase.includes('سوچ') || normPhrase.includes('کہا');
+      const vocPhrase = normPhrase
+        .replace('دل ہی دل میں', 'دِل ہی دِل میں')
+        .replace('مسکرانے لگے', 'مُسکرانے لگے')
+        .replace('مسکرانے لگا', 'مُسکرانے لگا');
+      return c.json({
+        success: true,
+        data: {
+          phraseText: rawPhrase,
+          vocalizedForm: vocPhrase,
+          phoneticBreakdownJson: makePhoneticBreakdown(vocPhrase),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          spokenUrduSynonymsJson: isSmiling
+            ? ['چپکے سے مسکرا دیے', 'اپنے آپ میں ہنسے']
+            : isThinking
+            ? ['اندر ہی اندر سوچا', 'اپنے آپ سے کہا']
+            : ['اپنے اندر ہی اندر', 'چپکے سے'],
+          urduSimpleExplanation: isSmiling
+            ? 'خاموشی سے اور بغیر بتائے اپنے اندر ہی مسکرا دیے'
+            : 'اپنے دل میں خاموشی سے کچھ سوچنا یا محسوس کرنا',
+          englishContextualGloss: isSmiling
+            ? 'began to smile secretly to himself / suppressed a quiet inner smile'
+            : isThinking
+            ? 'thought silently to oneself / pondered in one’s own heart'
+            : "inwardly to oneself / in one's heart of hearts",
+          literaryNuanceNote: "مرکب محاورہ: باطنی کیفیت 'دل ہی دل میں' کے ساتھ فعل کا امتزاج، جو اس کیفیت کے باطن میں شروع ہونے کو ظاہر کرتا ہے۔",
+          tokenTier: 'idiom_phrase',
+          isPhrase: true,
+        },
+      });
+    }
+
+    // 4. Pattern C: Prepositional Reduplication [Noun] بہ [Noun] (e.g. لمحہ بہ لمحہ, قدم بہ قدم, روز بہ روز, جا بہ جا, رو بہ رو)
+    const baMatch = normPhrase.match(/^(\S+)\s+بہ\s+\1$/u);
+    if (baMatch) {
+      const base = baMatch[1];
+      const vocBase = vocalizeUrduWord(base);
+      const vocPhrase = `${vocBase} بَہ ${vocBase}`;
+      const gloss =
+        base === 'لمحہ'
+          ? 'moment by moment / second by second / with each passing instant'
+          : base === 'قدم'
+          ? 'step by step / pace by pace / alongside'
+          : base === 'روز'
+          ? 'day by day / with each passing day'
+          : base === 'رو'
+          ? 'face to face / in direct confrontation'
+          : `progressively / ${base} by ${base}`;
+      return c.json({
+        success: true,
+        data: {
+          phraseText: rawPhrase,
+          vocalizedForm: vocPhrase,
+          phoneticBreakdownJson: makePhoneticBreakdown(vocPhrase),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          spokenUrduSynonymsJson: ['مسلسل', 'ساتھ ساتھ', 'ہر پل'],
+          urduSimpleExplanation: `ہر ایک ${base} کے ساتھ، بتدریج اور مسلسل`,
+          englishContextualGloss: gloss,
+          literaryNuanceNote: "فارسی طرز کی ترکیب: حرفِ ربط 'بہ' کے ذریعے اسم کا تکرار مسلسل تسلسل اور تدریج کا مفہوم پیدا کرتا ہے۔",
+          tokenTier: 'idiom_phrase',
+          isPhrase: true,
+        },
+      });
+    }
+
+    // 5. Pattern D: Echo Pair / Exact Reduplication [Word] [Word] (e.g. پیارے پیارے, طرح طرح, تار تار, پائی پائی)
+    const echoMatch = normPhrase.match(/^(\S+)\s+\1$/u);
+    if (echoMatch) {
+      const base = echoMatch[1];
+      const vocBase = vocalizeUrduWord(base);
+      const vocPhrase = `${vocBase} ${vocBase}`;
+      return c.json({
+        success: true,
+        data: {
+          phraseText: rawPhrase,
+          vocalizedForm: vocPhrase,
+          phoneticBreakdownJson: makePhoneticBreakdown(vocPhrase),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          spokenUrduSynonymsJson: ['بہت سارے', 'مختلف قسم کے', 'بار بار'],
+          urduSimpleExplanation: 'تکرارِ لفظی جو کثرت، شدت یا تنوع کو ظاہر کرتی ہے',
+          englishContextualGloss: `all kinds of / various / intensified plural repetition of ${base}`,
+          literaryNuanceNote: 'اردو میں تکرارِ لفظی معنی میں کثرت، شدت، یا تنوع پیدا کرنے کا خوبصورت اسلوب ہے۔',
+          tokenTier: 'idiom_phrase',
+          isPhrase: true,
+        },
+      });
+    }
+
+    // 6. General Multi-word Synthesis (lookup components from DB/vocab)
+    const words = cleanPhrase.split(/\s+/);
+    const vocalizedWords: string[] = [];
+    const glosses: string[] = [];
+
+    for (const w of words) {
+      const entry = CONTEXTUAL_VOCAB[w];
+      if (entry) {
+        vocalizedWords.push(entry.vocalizedForm || w);
+        if (entry.englishContextualGloss) glosses.push(entry.englishContextualGloss);
+      } else {
+        vocalizedWords.push(vocalizeUrduWord(w));
+      }
+    }
+
+    const synthesizedVoc = vocalizedWords.join(' ');
+    return c.json({
+      success: true,
+      data: {
+        phraseText: rawPhrase,
+        vocalizedForm: synthesizedVoc,
+        phoneticBreakdownJson: makePhoneticBreakdown(synthesizedVoc),
+        graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+        spokenUrduSynonymsJson: [cleanPhrase],
+        urduSimpleExplanation: `${cleanPhrase} کا مجموعی ادبی مفہوم`,
+        englishContextualGloss: glosses.length > 0 ? glosses.join(' ') : cleanPhrase,
+        literaryNuanceNote: 'ادبی عبارت یا کلام کا کثیر لفظی حصہ۔',
+        tokenTier: 'idiom_phrase',
+        isPhrase: true,
+      },
+    });
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message }, 500);
+  }
+});
+
 // -------------------------------------------------------------
 const StoryIngestSchema = z.object({
   slug: z.string(),

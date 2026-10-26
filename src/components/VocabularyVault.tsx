@@ -33,7 +33,7 @@ import {
 
 type ViewMode = 'list' | 'flashcards';
 type DensityMode = 'detailed' | 'compact';
-type FilterStatus = 'all' | 'starred' | 'learning' | 'mastered' | 1 | 2 | 3;
+type FilterStatus = 'all' | 'starred' | 'learning' | 'mastered' | 'phrases' | 1 | 2 | 3;
 type SortOrder = 'newest' | 'difficulty' | 'alphabetical';
 
 export default function VocabularyVault() {
@@ -61,6 +61,13 @@ export default function VocabularyVault() {
     return Array.from(map.entries()).map(([slug, title]) => ({ slug, title }));
   });
 
+  // Helper to check if vault entry is a multi-word phrase or compound idiom
+  const isPhraseItem = (item: TelemetryItem) => {
+    const norm = item.normalizedSurface?.trim() || '';
+    const voc = item.vocalizedSurface?.trim() || '';
+    return norm.includes(' ') || voc.includes(' ');
+  };
+
   // Filtered and Sorted items
   const filteredItems = createMemo(() => {
     const q = searchQuery().trim().toLowerCase();
@@ -75,6 +82,7 @@ export default function VocabularyVault() {
       if (filter === 'starred' && !item.isStarred) return false;
       if (filter === 'learning' && item.masteryStatus === 'mastered') return false;
       if (filter === 'mastered' && item.masteryStatus !== 'mastered') return false;
+      if (filter === 'phrases' && !isPhraseItem(item)) return false;
       if (typeof filter === 'number' && item.maxTapLevel !== filter) return false;
 
       // Dual-language search (Urdu + English)
@@ -449,6 +457,26 @@ export default function VocabularyVault() {
               </button>
               <button
                 type="button"
+                class={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1 ${
+                  filterStatus() === 'phrases'
+                    ? theme() === 'sepia'
+                      ? 'bg-[#5B3E7A] text-white shadow-xs'
+                      : 'bg-purple-700 text-white shadow-xs'
+                    : theme() === 'sepia'
+                    ? 'bg-[#EFE6D5] hover:bg-[#E5DBC7] text-[#4A3E35]'
+                    : theme() === 'midnight'
+                    ? 'bg-[#202229] hover:bg-[#2A2D37] text-neutral-300'
+                    : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
+                }`}
+                onClick={() => setFilterStatus('phrases')}
+              >
+                <span>Phrases / محاورات</span>
+                <span class="text-[10px] opacity-75 font-mono">
+                  ({vaultItems().filter(isPhraseItem).length})
+                </span>
+              </button>
+              <button
+                type="button"
                 class={`px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer ${
                   filterStatus() === 2
                     ? theme() === 'sepia'
@@ -624,8 +652,13 @@ export default function VocabularyVault() {
                                 class={playingAudioId() === item.id ? 'animate-pulse text-amber-500' : ''}
                               />
                             </button>
-                            <div dir="rtl" class="font-nastaliq text-xl leading-snug shrink-0">
-                              {item.vocalizedSurface}
+                            <div dir="rtl" class="font-nastaliq text-xl leading-snug shrink-0 flex items-center gap-2">
+                              <span>{item.vocalizedSurface}</span>
+                              <Show when={isPhraseItem(item)}>
+                                <span class="text-[9px] font-sans font-bold px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30">
+                                  محاورہ
+                                </span>
+                              </Show>
                             </div>
                             <div
                               class={`text-xs truncate ${
@@ -702,6 +735,13 @@ export default function VocabularyVault() {
                               <div class="font-nastaliq text-3xl sm:text-4xl leading-relaxed py-0.5">
                                 {item.vocalizedSurface}
                               </div>
+                              <Show when={isPhraseItem(item)}>
+                                <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-sans font-bold bg-purple-500/15 text-purple-800 dark:text-purple-300 border border-purple-500/30 mt-0.5">
+                                  <span>محاورہ / مرکب</span>
+                                  <span class="opacity-60">•</span>
+                                  <span>Phrase / Idiom</span>
+                                </div>
+                              </Show>
                             </div>
                           </div>
 

@@ -97,12 +97,22 @@ export default function ReaderSurface() {
                   }
 
                   const isIzafat = () => showIzafatHighlights() && Boolean(token.izafatGroupId);
+                  const isCompound = () => Boolean(token.compoundGroupId);
+                  const isCompoundActive = () => {
+                    if (!token.compoundGroupId) return false;
+                    const activeId = activeTokenId();
+                    if (!activeId) return false;
+                    const activeTok = tokensMap()[activeId];
+                    return Boolean(activeTok?.compoundGroupId && activeTok.compoundGroupId === token.compoundGroupId);
+                  };
 
                   return (
                     <span
                       class={`${isIzafat() ? 'izafat-group' : ''} ${
-                        isCurrentSentence() ? 'sentence-token-active' : ''
-                      }`}
+                        isCompound() ? 'compound-group' : ''
+                      } ${isCurrentSentence() ? 'sentence-token-active' : ''}`}
+                      data-compound-group={token.compoundGroupId || undefined}
+                      data-compound-active={isCompoundActive() ? 'true' : undefined}
                       data-active-sentence={isCurrentSentence() ? 'true' : undefined}
                     >
                       <span
@@ -110,9 +120,11 @@ export default function ReaderSurface() {
                         tabIndex={0}
                         class="abjad-word-token"
                         data-token-id={token.id}
-                        data-active={activeTokenId() === token.id ? 'true' : undefined}
+                        data-active={activeTokenId() === token.id || isCompoundActive() ? 'true' : undefined}
                       >
-                        {activeTokenId() === token.id && analysesMap()[token.id]?.vocalizedForm
+                        {activeTokenId() === token.id &&
+                        analysesMap()[token.id]?.vocalizedForm &&
+                        !analysesMap()[token.id]!.vocalizedForm.includes(' ')
                           ? analysesMap()[token.id]!.vocalizedForm
                           : token.surfaceForm}
                       </span>

@@ -219,6 +219,45 @@ body.theme-midnight .izafat-group {
   border-bottom: 1.5px dashed rgba(245, 158, 11, 0.55);
 }
 
+/* Multi-Word Expressions, Fixed Binomials & Compound Idioms */
+.compound-group {
+  display: inline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  border-bottom: 2px dotted rgba(180, 83, 9, 0.5);
+  border-radius: 3px;
+  transition: all 150ms ease;
+}
+
+.compound-group:hover,
+.compound-group[data-compound-active="true"] {
+  background-color: rgba(180, 83, 9, 0.12);
+  border-bottom-style: solid;
+  border-bottom-color: rgba(180, 83, 9, 0.85);
+}
+
+body.theme-sepia .compound-group {
+  border-bottom: 2px dotted rgba(154, 76, 7, 0.55);
+}
+
+body.theme-sepia .compound-group:hover,
+body.theme-sepia .compound-group[data-compound-active="true"] {
+  background-color: rgba(154, 76, 7, 0.14);
+  border-bottom-style: solid;
+  border-bottom-color: rgba(154, 76, 7, 0.9);
+}
+
+body.theme-midnight .compound-group {
+  border-bottom: 2px dotted rgba(245, 158, 11, 0.5);
+}
+
+body.theme-midnight .compound-group:hover,
+body.theme-midnight .compound-group[data-compound-active="true"] {
+  background-color: rgba(245, 158, 11, 0.18);
+  border-bottom-style: solid;
+  border-bottom-color: rgba(245, 158, 11, 0.95);
+}
+
 /* Active sentence audio karaoke highlight */
 .sentence-token-active,
 .sentence-highlight-active {

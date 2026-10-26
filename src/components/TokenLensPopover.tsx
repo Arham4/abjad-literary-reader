@@ -3,6 +3,7 @@ import { computePosition, autoUpdate, offset, flip, shift } from '@floating-ui/d
 import {
   activeTokenId,
   activeTargetEl,
+  activePhrase,
   tapLevel,
   advanceTapLevel,
   closeTokenLens,
@@ -14,6 +15,8 @@ import {
   theme,
   isTokenInVault,
   toggleTokenInVault,
+  togglePhraseInVault,
+  vaultItems,
 } from '../store/readerStore';
 import { Volume2, X, Bookmark } from 'lucide-solid';
 
@@ -34,8 +37,48 @@ export default function TokenLensPopover() {
     onCleanup(() => mediaQuery.removeEventListener('change', updateMatches));
   });
 
-  const token = () => (activeTokenId() ? tokensMap()[activeTokenId()!] : null);
-  const analysis = () => (activeTokenId() ? analysesMap()[activeTokenId()!] : null);
+  const token = () => {
+    if (activeTokenId()) return tokensMap()[activeTokenId()!];
+    if (activePhrase()) {
+      const p = activePhrase()!;
+      return {
+        id: 'phrase_active',
+        paragraphId: '',
+        tokenIndex: -1,
+        surfaceForm: p.phraseText,
+        normalizedForm: p.phraseText,
+        sentenceIndex: 0,
+        isWord: true,
+        compoundGroupId: 'compound_phrase',
+      };
+    }
+    return null;
+  };
+
+  const analysis = () => {
+    if (activeTokenId()) return analysesMap()[activeTokenId()!];
+    if (activePhrase()) return activePhrase();
+    return null;
+  };
+
+  const isSavedToVault = () => {
+    if (activeTokenId()) return isTokenInVault(activeTokenId()!);
+    if (activePhrase()) {
+      const p = activePhrase()!;
+      return vaultItems().some(
+        (item) => item.normalizedSurface === p.phraseText || item.vocalizedSurface === p.vocalizedForm
+      );
+    }
+    return false;
+  };
+
+  const handleToggleVault = () => {
+    if (activeTokenId()) {
+      toggleTokenInVault(activeTokenId()!);
+    } else if (activePhrase()) {
+      togglePhraseInVault(activePhrase()!);
+    }
+  };
 
   // Clean up autoUpdate instance
   const teardownAutoUpdate = () => {
@@ -48,7 +91,21 @@ export default function TokenLensPopover() {
   // Update floating positioning on desktop
   const updatePosition = () => {
     const target = activeTargetEl();
-    if (!target || !popoverRef || isMobile()) return;
+    if (isMobile() || !popoverRef) return;
+
+    if (!target) {
+      // Center popover for multi-word phrase decoding from text selection
+      Object.assign(popoverRef.style, {
+        left: '50%',
+        top: '18%',
+        transform: 'translateX(-50%)',
+        position: 'fixed',
+      });
+      return;
+    }
+
+    // Reset inline transform from phrase mode if any
+    popoverRef.style.transform = '';
 
     computePosition(target, popoverRef, {
       strategy: 'fixed',
@@ -79,7 +136,7 @@ export default function TokenLensPopover() {
   // Auto-scroll and recompute position when tap level advances
   createEffect(() => {
     const level = tapLevel();
-    if (popoverRef && activeTokenId()) {
+    if (popoverRef && (activeTokenId() || activePhrase())) {
       updatePosition();
       if (level > 1) {
         setTimeout(() => {
@@ -119,12 +176,15 @@ export default function TokenLensPopover() {
     }
   };
 
-  // Re-anchor when activeTargetEl changes
+  // Re-anchor when activeTargetEl changes or when activePhrase changes
   createEffect(() => {
     const target = activeTargetEl();
+    const phrase = activePhrase();
     teardownAutoUpdate();
 
-    if (target && popoverRef && !isMobile()) {
+    if (phrase && popoverRef && !isMobile()) {
+      updatePosition();
+    } else if (target && popoverRef && !isMobile()) {
       cleanupAutoUpdate = autoUpdate(target, popoverRef, updatePosition);
     }
   });
@@ -141,7 +201,7 @@ export default function TokenLensPopover() {
   };
 
   return (
-    <Show when={activeTokenId() && token() && analysis()}>
+    <Show when={(activeTokenId() || activePhrase()) && token() && analysis()}>
       {/* Mobile backdrop */}
       <Show when={isMobile()}>
         <div
@@ -206,19 +266,24 @@ export default function TokenLensPopover() {
               Clue {tapLevel()} of 3
             </span>
             <span class="text-xs font-bold opacity-90 truncate font-sans">
-              {tapLevel() === 1 && '1: Sound It Out (Zero Spoilers)'}
+              {tapLevel() === 1 && (activePhrase() || token()?.compoundGroupId ? '1: Sound Out Compound' : '1: Sound It Out (Zero Spoilers)')}
               {tapLevel() === 2 && '2: Everyday Spoken Urdu Bridge'}
               {tapLevel() === 3 && '3: English Meaning & Nuance'}
             </span>
+            <Show when={token()?.compoundGroupId || activePhrase()}>
+              <span class="text-[9px] font-bold px-1.5 py-0.5 rounded font-sans uppercase tracking-wider bg-amber-500/20 text-amber-600 shrink-0">
+                محاورہ / مرکب
+              </span>
+            </Show>
           </div>
 
           <div class="flex items-center gap-1.5 shrink-0">
-            <Show when={activeTokenId()}>
+            <Show when={activeTokenId() || activePhrase()}>
               <button
                 type="button"
-                title={isTokenInVault(activeTokenId()!) ? 'Remove from Vocabulary Vault' : 'Save to Vocabulary Vault'}
+                title={isSavedToVault() ? 'Remove from Vocabulary Vault' : 'Save to Vocabulary Vault'}
                 class={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  isTokenInVault(activeTokenId()!)
+                  isSavedToVault()
                     ? theme() === 'sepia'
                       ? 'bg-[#F0E2CD] text-[#7C3E08] border border-[#DECCAE] shadow-xs'
                       : theme() === 'midnight'
@@ -232,18 +297,14 @@ export default function TokenLensPopover() {
                 }`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  toggleTokenInVault(activeTokenId()!);
+                  handleToggleVault();
                 }}
               >
                 <Bookmark
                   size={12}
-                  class={
-                    isTokenInVault(activeTokenId()!)
-                      ? 'fill-current text-amber-600'
-                      : ''
-                  }
+                  class={isSavedToVault() ? 'fill-current text-amber-600' : ''}
                 />
-                <span>{isTokenInVault(activeTokenId()!) ? 'Saved' : 'Save'}</span>
+                <span>{isSavedToVault() ? 'Saved' : 'Save'}</span>
               </button>
             </Show>
 
@@ -521,7 +582,7 @@ export default function TokenLensPopover() {
             when={tapLevel() < 3}
             fallback={
               <div class="w-full text-center text-xs font-bold opacity-60 py-1 font-sans">
-                ✓ All 3 clues revealed • Tap another word to decode
+                ✓ All 3 clues revealed • Tap another word or phrase to decode
               </div>
             }
           >

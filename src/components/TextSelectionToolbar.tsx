@@ -5,9 +5,10 @@ import {
   isSelectionPlaying,
   playSelectedText,
   stopSelectionAudio,
+  decodeAndOpenPhraseLens,
   theme,
 } from '../store/readerStore';
-import { Volume2, Pause, X, Play } from 'lucide-solid';
+import { Volume2, Pause, X, Play, BookOpen } from 'lucide-solid';
 
 interface PillCoordinates {
   top: number;
@@ -87,6 +88,14 @@ export default function TextSelectionToolbar() {
     }
   };
 
+  const handleDecodePhrase = async (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const text = selectedText().trim();
+    if (!text) return;
+    await decodeAndOpenPhraseLens(text, coords());
+  };
+
   const handleDismiss = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -101,7 +110,7 @@ export default function TextSelectionToolbar() {
   return (
     <Show when={coords() && selectedText()}>
       <div
-        class={`fixed z-40 flex items-center gap-2 px-3 py-1.5 rounded-full shadow-2xl border backdrop-blur-md transition-all duration-150 select-none ${
+        class={`fixed z-40 flex items-center gap-2 px-3.5 py-2 rounded-full shadow-2xl border backdrop-blur-md transition-all duration-150 select-none ${
           theme() === 'sepia'
             ? 'bg-[#3A2D23]/95 border-[#554233] text-[#FAF6EC]'
             : theme() === 'midnight'
@@ -130,7 +139,7 @@ export default function TextSelectionToolbar() {
                 <span class="font-nastaliq text-xs font-bold leading-none inline" dir="rtl">
                   سُنو
                 </span>
-                <span class="text-[11px] font-sans">Play Selection</span>
+                <span class="text-[11px] font-sans">Play</span>
               </>
             }
           >
@@ -140,6 +149,22 @@ export default function TextSelectionToolbar() {
             </span>
             <span class="text-[11px] font-sans">Pause</span>
           </Show>
+        </button>
+
+        <div class="h-3.5 w-px bg-white/20 mx-0.5" />
+
+        {/* Decode Phrase (3-Tap Clue Engine) */}
+        <button
+          type="button"
+          title="Decode Phrase (3-Tap Meaning & Nuance)"
+          class="flex items-center gap-1.5 text-xs font-bold cursor-pointer transition-transform active:scale-95 text-amber-300 hover:text-amber-200"
+          onClick={handleDecodePhrase}
+        >
+          <BookOpen size={14} class="shrink-0" />
+          <span class="font-nastaliq text-xs font-bold leading-none inline" dir="rtl">
+            معنی
+          </span>
+          <span class="text-[11px] font-sans font-bold">Decode Phrase</span>
         </button>
 
         <div class="h-3.5 w-px bg-white/20 mx-0.5" />

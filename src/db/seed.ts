@@ -189,7 +189,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
 };
 
 // Rich contextual vocabulary dictionary for all 3 canonical stories
-const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
+export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
   // --- Exhaustive Vocabulary for Khol Do (کھول دو) & Canonical Literary Text ---
   'آ': {
     vocalizedForm: 'آ',
@@ -4062,11 +4062,80 @@ const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     englishContextualGloss: 'noise / clamor / racket',
   },
   'چکنا چور': {
-    vocalizedForm: 'چَکنا چُور',
-    spokenUrduSynonymsJson: ['ٹکڑے ٹکڑے'],
-    urduSimpleExplanation: 'ٹوٹ کر ریزہ ریزہ ہو جانا',
+    vocalizedForm: 'چَکْنا چُور',
+    spokenUrduSynonymsJson: ['ٹکڑے ٹکڑے', 'بالکل ٹوٹا ہوا', 'پاش پاش'],
+    urduSimpleExplanation: 'کسی چیز کا بری طرح ٹوٹ کر بکھر جانا، جیسے شیشہ یا دل چکنا چور ہو جائے',
     tokenTier: 'common_vocab',
-    englishContextualGloss: 'smashed to smithereens / shattered',
+    englishContextualGloss: 'smashed to smithereens / shattered completely',
+    literaryNuanceNote: "مرکب محاورہ: 'چکنا' (باریک ریزہ) اور 'چور' (چورا چورا) مل کر غایت درجے کی شکستگی کو ظاہر کرتے ہیں۔",
+  },
+  'دل ہی دل میں': {
+    vocalizedForm: 'دِل ہی دِل میں',
+    spokenUrduSynonymsJson: ['اپنے اندر ہی اندر', 'چپکے سے', 'خود میں'],
+    urduSimpleExplanation: 'اپنے دل کے اندر بغیر کسی پر ظاہر کیے، خاموشی سے اپنے آپ میں',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'in one’s heart of hearts / secretly to oneself / inwardly',
+    literaryNuanceNote: "اردو روزمرہ کی خاص ترکیب: لفظ کا اعادہ اور 'ہی' کا استعمال (X ہی X میں) یہ ظاہر کرتا ہے کہ کیفیت مکمل طور پر اندرونی ہے اور باہر بالکل ظاہر نہیں ہوئی۔",
+  },
+  'دیکھتے ہی دیکھتے': {
+    vocalizedForm: 'دیکھتے ہی دیکھتے',
+    spokenUrduSynonymsJson: ['فوراً', 'پلک جھپکتے میں', 'بہت جلد'],
+    urduSimpleExplanation: 'آنکھ جھپکنے کی دیر میں، بہت تیزی سے',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'in no time at all / right before one’s eyes / in a flash',
+    literaryNuanceNote: 'اردو کا معروف محاورہ جو وقت کی تیزی اور کسی کام کے اچانک وقوع پذیر ہونے کے لیے بولا جاتا ہے۔',
+  },
+  'سر پیٹ لیا': {
+    vocalizedForm: 'سَر پیٹ لیا',
+    spokenUrduSynonymsJson: ['ماتم کیا', 'افسوس کیا'],
+    urduSimpleExplanation: 'غم اور پچھتاوے کی شدت سے سر پر ہاتھ مارنا، سخت رنج کا اظہار کرنا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'beat one’s head in grief / wept in deep despair',
+    literaryNuanceNote: 'محاورہ: صدمے یا ناگہانی نقصان پر مایوسی اور بے بسی کی علامت۔',
+  },
+  'مٹی میں مل گیا': {
+    vocalizedForm: 'مِٹّی میں مِل گیا',
+    spokenUrduSynonymsJson: ['برباد ہو گیا', 'ضائع ہو گیا'],
+    urduSimpleExplanation: 'سب کچھ برباد اور ختم ہو جانا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'turned to dust / ruined completely / came to naught',
+  },
+  'طرح طرح': {
+    vocalizedForm: 'طَرَح طَرَح',
+    spokenUrduSynonymsJson: ['مختلف قسم کے', 'رنگ برنگے'],
+    urduSimpleExplanation: 'مختلف اقسام اور نوعیت کی چیزیں یا خیالات',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'various / all kinds of / diverse sorts',
+  },
+  'لمحہ بہ لمحہ': {
+    vocalizedForm: 'لَمْحَہ بَہ لَمْحَہ',
+    spokenUrduSynonymsJson: ['ہر پل', 'پل پل', 'گھڑی گھڑی'],
+    urduSimpleExplanation: 'ہر گزرتے لمحے کے ساتھ، پل پل، مسلسل بدلتی یا بڑھتی ہوئی کیفیت',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'moment by moment / second by second / with each passing instant',
+    literaryNuanceNote: "فارسی الاصل مرکب: 'بہ' (حرفِ ربط بمعنی ساتھ یا میں) کے ذریعے اسم کا اعادہ مسلسل تسلسل اور وقت کے بہاؤ کو ظاہر کرتا ہے۔",
+  },
+  'قدم بہ قدم': {
+    vocalizedForm: 'قَدَم بَہ قَدَم',
+    spokenUrduSynonymsJson: ['ساتھ ساتھ', 'آہستہ آہستہ'],
+    urduSimpleExplanation: 'ایک ایک قدم کر کے، مسلسل اور ساتھ ساتھ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'step by step / pace by pace / alongside',
+    literaryNuanceNote: "فارسی طرز کا سابقہ 'بہ' جو بتدریج آگے بڑھنے یا مستقل رفاقت کا مفہوم ادا کرتا ہے۔",
+  },
+  'روز بہ روز': {
+    vocalizedForm: 'روز بَہ روز',
+    spokenUrduSynonymsJson: ['دن بدن', 'روزانہ'],
+    urduSimpleExplanation: 'ہر گزرتے دن کے ساتھ، دن بدن',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'day by day / with each passing day / progressively',
+  },
+  'پیارے پیارے': {
+    vocalizedForm: 'پیارے پیارے',
+    spokenUrduSynonymsJson: ['بہت خوبصورت', 'دلکش'],
+    urduSimpleExplanation: 'انتہائی دلکش اور پسندیدہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'lovely / adorable / charming little',
   },
   'نقصان': {
     vocalizedForm: 'نُقصان',
@@ -6435,8 +6504,10 @@ async function seed() {
         const baseKey = span.surface.trim();
         const normKey = span.normalized.trim();
         const cleanKey = normKey.replace(/^[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!-]+|[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!-]+$/gu, '').trim();
+        const compoundKey = span.compoundPhrase ? span.compoundPhrase.trim() : '';
 
         const lexData: LexemeAnalysisData =
+          (compoundKey && CONTEXTUAL_VOCAB[compoundKey]) ||
           CONTEXTUAL_VOCAB[baseKey] ||
           CONTEXTUAL_VOCAB[normKey] ||
           CONTEXTUAL_VOCAB[cleanKey] ||
@@ -6533,8 +6604,10 @@ async function seed() {
           const baseKey = span.surface.trim();
           const normKey = span.normalized.trim();
           const cleanKey = normKey.replace(/^[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!-]+|[،۔؛:؟!«»"'“”‘’()[\]{}—–.,?!-]+$/gu, '').trim();
+          const compoundKey = span.compoundPhrase ? span.compoundPhrase.trim() : '';
 
           const lexData: LexemeAnalysisData =
+            (compoundKey && CONTEXTUAL_VOCAB[compoundKey]) ||
             CONTEXTUAL_VOCAB[baseKey] ||
             CONTEXTUAL_VOCAB[normKey] ||
             CONTEXTUAL_VOCAB[cleanKey] ||

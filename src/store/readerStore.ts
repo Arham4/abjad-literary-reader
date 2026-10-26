@@ -169,6 +169,21 @@ export const [tapLevel, setTapLevel] = createSignal<1 | 2 | 3>(1);
 export const [maxTapLevelReached, setMaxTapLevelReached] = createSignal<1 | 2 | 3>(1);
 export const [isPopoverOpen, setIsPopoverOpen] = createSignal<boolean>(false);
 
+export interface PhraseLensData {
+  phraseText: string;
+  vocalizedForm: string;
+  phoneticBreakdownJson: PhoneticSyllablePill[];
+  graphemesJson: GraphemeUnit[];
+  spokenUrduSynonymsJson: string[];
+  urduSimpleExplanation: string;
+  englishContextualGloss: string;
+  literaryNuanceNote: string | null;
+  tokenTier: string;
+  isPhrase?: boolean;
+}
+
+export const [activePhrase, setActivePhrase] = createSignal<PhraseLensData | null>(null);
+
 // Sentence Audio Player
 export const [currentSentence, setCurrentSentence] = createSignal<ActiveSentenceInfo | null>(null);
 export const currentSentenceIndex = () => currentSentence()?.globalIndex ?? null;
@@ -314,11 +329,42 @@ export function openTokenLens(newTokenId: string, newTarget: HTMLElement) {
   // Update target element directly with zero DOM traversal
   newTarget.setAttribute('data-active', 'true');
 
+  setActivePhrase(null);
   setActiveTokenId(newTokenId);
   setActiveTargetEl(newTarget);
   setTapLevel(1);
   setMaxTapLevelReached(1);
   setIsPopoverOpen(true);
+}
+
+export async function decodeAndOpenPhraseLens(phraseText: string, coords?: { top: number; left: number } | null) {
+  try {
+    const prevTokenId = activeTokenId();
+    const prevTarget = activeTargetEl();
+    if (prevTokenId && prevTarget) {
+      prevTarget.removeAttribute('data-active');
+    }
+
+    const res = await fetch('/api/phrase/decode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phrase: phraseText,
+        storyId: activeStory()?.id || null,
+      }),
+    });
+    const result = await res.json();
+    if (result.success && result.data) {
+      setActivePhrase(result.data);
+      setActiveTokenId(null);
+      setActiveTargetEl(null);
+      setTapLevel(1);
+      setMaxTapLevelReached(1);
+      setIsPopoverOpen(true);
+    }
+  } catch (err) {
+    console.error('Failed to decode phrase:', err);
+  }
 }
 
 export function advanceTapLevel() {
@@ -344,6 +390,63 @@ export function closeTokenLens() {
   setIsPopoverOpen(false);
   setActiveTokenId(null);
   setActiveTargetEl(null);
+  setActivePhrase(null);
+}
+
+export async function togglePhraseInVault(data: PhraseLensData) {
+  const story = activeStory();
+  const existing = vaultItems().find(
+    (item) =>
+      item.normalizedSurface === data.phraseText ||
+      item.vocalizedSurface === data.vocalizedForm
+  );
+
+  if (existing) {
+    await deleteVaultItem(existing.id);
+    showToast(`Removed "${data.phraseText}" from Vault`);
+  } else {
+    try {
+      await fetch('/api/telemetry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          normalizedSurface: data.phraseText,
+          vocalizedSurface: data.vocalizedForm,
+          tapLevel: tapLevel(),
+          storyId: story?.id || null,
+          storySlug: story?.slug || null,
+          storyTitleUrdu: story?.titleUrdu || null,
+          sourceSentenceUrdu: selectedText() || null,
+        }),
+      });
+
+      const newItem: TelemetryItem = {
+        id: `tel_local_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        normalizedSurface: data.phraseText,
+        vocalizedSurface: data.vocalizedForm,
+        lookupCount: 1,
+        maxTapLevel: tapLevel(),
+        lastTapLevel: tapLevel(),
+        lastSeenAt: new Date().toISOString(),
+        storyId: story?.id || null,
+        storySlug: story?.slug || null,
+        storyTitleUrdu: story?.titleUrdu || null,
+        sourceSentenceUrdu: selectedText() || null,
+        masteryStatus: 'learning',
+        isStarred: false,
+        englishGloss: data.englishContextualGloss,
+        urduExplanation: data.urduSimpleExplanation,
+        spokenSynonyms: data.spokenUrduSynonymsJson,
+        arabicRoot: null,
+        cousins: [],
+        literaryNuanceNote: data.literaryNuanceNote,
+      };
+      setVaultItems([newItem, ...vaultItems()]);
+      showToast(`Saved "${data.vocalizedForm}" to Vault ★`);
+    } catch (err) {
+      console.error('Failed to save phrase to vault:', err);
+    }
+  }
 }
 
 // -------------------------------------------------------------
