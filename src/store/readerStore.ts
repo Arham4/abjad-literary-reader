@@ -335,6 +335,19 @@ export function openTokenLens(newTokenId: string, newTarget: HTMLElement) {
   setTapLevel(1);
   setMaxTapLevelReached(1);
   setIsPopoverOpen(true);
+
+  // If narration is not currently playing, align the narration audio section to the sentence containing this word
+  if (!isPlaying()) {
+    const token = tokensMap()[newTokenId];
+    if (token) {
+      const match = allStorySentences().find(
+        (s) => s.paragraphId === token.paragraphId && s.sentenceIndex === token.sentenceIndex
+      );
+      if (match) {
+        setCurrentSentence(match);
+      }
+    }
+  }
 }
 
 export async function decodeAndOpenPhraseLens(phraseText: string, coords?: { top: number; left: number } | null) {
@@ -361,6 +374,15 @@ export async function decodeAndOpenPhraseLens(phraseText: string, coords?: { top
       setTapLevel(1);
       setMaxTapLevelReached(1);
       setIsPopoverOpen(true);
+
+      // If narration is not currently playing, align the narration audio section to the sentence containing this phrase
+      if (!isPlaying()) {
+        const cleanText = phraseText.trim();
+        const match = allStorySentences().find((s) => s.text.includes(cleanText));
+        if (match) {
+          setCurrentSentence(match);
+        }
+      }
     }
   } catch (err) {
     console.error('Failed to decode phrase:', err);
@@ -1032,6 +1054,14 @@ export async function selectStory(slug: string) {
       }
       setTokensMap(tMap);
       setAnalysesMap(data.data.analyses || {});
+
+      // Initialize narration section to the first sentence of the story
+      const sentences = allStorySentences();
+      if (sentences.length > 0) {
+        setCurrentSentence(sentences[0]);
+      } else {
+        setCurrentSentence(null);
+      }
     }
   } catch (err) {
     console.error(`Failed to select story ${slug}:`, err);

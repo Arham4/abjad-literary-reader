@@ -10,6 +10,7 @@ import {
   fontSizePx,
   showIzafatHighlights,
   currentSentence,
+  isPlaying,
 } from '../store/readerStore';
 
 export default function ReaderSurface() {
@@ -80,7 +81,7 @@ export default function ReaderSurface() {
                 {(token) => {
                   const isCurrentSentence = () => {
                     const activeS = currentSentence();
-                    if (!activeS) return false;
+                    if (!activeS || !isPlaying()) return false;
                     return activeS.paragraphId === paragraph.id && token.sentenceIndex === activeS.sentenceIndex;
                   };
 
