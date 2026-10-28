@@ -5895,6 +5895,358 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     tokenTier: 'common_vocab',
     englishContextualGloss: 'reality / actual fact / truth',
   },
+
+  // --- Multi-paragraph literary vocabulary for Toba Tek Singh, Gadaria, and Shehr-e-Afsos ---
+  'بشن': {
+    vocalizedForm: 'بِشَن',
+    spokenUrduSynonymsJson: ['بشن سنگھ'],
+    urduSimpleExplanation: 'کہانی کے مرکزی سکھ کردار کا نام',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'Bishan (proper name)',
+  },
+  'سنگھ': {
+    vocalizedForm: 'سِنْگھ',
+    spokenUrduSynonymsJson: ['شیر'],
+    urduSimpleExplanation: 'سکھ ناموں کے ساتھ مستعمل لقب جس کے معنی شیر کے ہیں',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'Singh (lion / title)',
+  },
+  'متورم': {
+    vocalizedForm: 'مُتَوَرِّم',
+    spokenUrduSynonymsJson: ['سوجا ہوا'],
+    urduSimpleExplanation: 'سوجا ہوا، جس پر ورم آ گیا ہو',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'swollen / inflamed / tumid',
+  },
+  'سوجی': {
+    vocalizedForm: 'سُوجِی',
+    spokenUrduSynonymsJson: ['پھولی ہوئی'],
+    urduSimpleExplanation: 'ورم زدہ، جس پر سوزش ہو',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'swollen',
+  },
+  'ٹانگیں': {
+    vocalizedForm: 'ٹانْگیں',
+    spokenUrduSynonymsJson: ['پیر'],
+    urduSimpleExplanation: 'جسم کے نچلے اعضا جن پر انسان کھڑا ہوتا ہے',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'legs',
+  },
+  'پراسرار': {
+    vocalizedForm: 'پُر اَسْرَار',
+    spokenUrduSynonymsJson: ['پوشیدہ رازوں والا'],
+    urduSimpleExplanation: 'رازوں سے بھرا ہوا، جس کی حقیقت سمجھ نہ آئے',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'mysterious / enigmatic',
+  },
+  'معقول': {
+    vocalizedForm: 'مَعْقُول',
+    spokenUrduSynonymsJson: ['مناسب', 'درست'],
+    urduSimpleExplanation: 'عقل کے مطابق، مناسب اور درست',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'reasonable / sensible / rational',
+  },
+  'دانشوروں': {
+    vocalizedForm: 'دانِشْ وَروں',
+    spokenUrduSynonymsJson: ['عقل مندوں'],
+    urduSimpleExplanation: 'صاحبِ عقل و فہم لوگ، مفکرین',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'intellectuals / wise thinkers',
+  },
+  'کانفرنسیں': {
+    vocalizedForm: 'کانْفْرَنْسیں',
+    spokenUrduSynonymsJson: ['مذاکرات'],
+    urduSimpleExplanation: 'بڑے اجلاس جہاں اہم معاملات پر بات چیت ہو',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'conferences / summits',
+  },
+  'اضطراب': {
+    vocalizedForm: 'اِضْطِرَاب',
+    spokenUrduSynonymsJson: ['بے چینی', 'تڑپ'],
+    urduSimpleExplanation: 'بے چینی، بے قراری اور دلی تڑپ',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'agitation / anxiety / restlessness',
+  },
+  'اقارب': {
+    vocalizedForm: 'اَقَارِب',
+    spokenUrduSynonymsJson: ['رشتہ دار'],
+    urduSimpleExplanation: 'قریب کے رشتہ دار، قریبی لوگ',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'kinsfolk / near relatives',
+  },
+  'قیامت': {
+    vocalizedForm: 'قِیَامَت',
+    spokenUrduSynonymsJson: ['حشر', 'ہولناک منظر'],
+    urduSimpleExplanation: 'روزِ حساب، سخت ترین اور ہولناک منظر',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'doomsday / catastrophic spectacle',
+  },
+  'مجسٹریٹ': {
+    vocalizedForm: 'مَجِسْٹریٹ',
+    spokenUrduSynonymsJson: ['جج', 'عدالتی افسر'],
+    urduSimpleExplanation: 'انتظامی یا عدالتی اختیارات رکھنے والا سرکاری افسر',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'magistrate / district officer',
+  },
+  'سنگینیں': {
+    vocalizedForm: 'سَنْگِینیں',
+    spokenUrduSynonymsJson: ['بندوق کی نوکیں'],
+    urduSimpleExplanation: 'بندوق کے آگے لگی ہوئی تیز دھار چھریاں',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'bayonets',
+  },
+  'خاردار': {
+    vocalizedForm: 'خارْ دار',
+    spokenUrduSynonymsJson: ['کانٹے دار'],
+    urduSimpleExplanation: 'کانٹوں والا، خاردار تاروں کی باڑ',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'barbed / thorny',
+  },
+  'تاروں': {
+    vocalizedForm: 'تاروں',
+    spokenUrduSynonymsJson: ['لوہے کے باریک تار'],
+    urduSimpleExplanation: 'دھاتی تار، سرحد پر لگی خاردار تاریں',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'wires (barbed wire fences)',
+  },
+  'اوندھے': {
+    vocalizedForm: 'اَونْدھے',
+    spokenUrduSynonymsJson: ['الٹے منہ'],
+    urduSimpleExplanation: 'منہ کے بل، الٹے رخ زمین پر گرا ہوا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'flat on face / prone / headlong',
+  },
+  'فلک شگاف': {
+    vocalizedForm: 'فَلَک شَگاف',
+    spokenUrduSynonymsJson: ['آسمان چیر دینے والی'],
+    urduSimpleExplanation: 'ایسی تیز چیخ یا آواز جو آسمان تک پہنچے',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'sky-rending / piercing',
+  },
+  'گلستان': {
+    vocalizedForm: 'گُلِسْتان',
+    spokenUrduSynonymsJson: ['باغ'],
+    urduSimpleExplanation: 'پھولوں کا باغ، شیخ سعدی کی مشہور کتاب',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'Gulistan (The Rose Garden of Saadi)',
+  },
+  'بوستان': {
+    vocalizedForm: 'بوسْتان',
+    spokenUrduSynonymsJson: ['خوشبو دار باغ'],
+    urduSimpleExplanation: 'باغ، شیخ سعدی کی منظوم اخلاقی شاہکار کتاب',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'Bostan (The Orchard of Saadi)',
+  },
+  'معاوضہ': {
+    vocalizedForm: 'مُعَاوَضَہ',
+    spokenUrduSynonymsJson: ['اجرت', 'فیس'],
+    urduSimpleExplanation: 'کام کے بدلے ملنے والی رقم یا اجرت',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'fee / compensation / wage',
+  },
+  'تسکین': {
+    vocalizedForm: 'تَسْکِین',
+    spokenUrduSynonymsJson: ['سکون', 'اطمینان'],
+    urduSimpleExplanation: 'دل اور روح کو ملنے والا سکون و راحت',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'peace / solace / tranquility',
+  },
+  'گڈریوں': {
+    vocalizedForm: 'گَڈَرِیوں',
+    spokenUrduSynonymsJson: ['چوپانوں', 'بکریاں چرانے والوں'],
+    urduSimpleExplanation: 'بھیڑ بکریاں چرانے والے پیشے کے لوگ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'shepherds / graziers',
+  },
+  'عاجزی': {
+    vocalizedForm: 'عاجِزِی',
+    spokenUrduSynonymsJson: ['انکساری'],
+    urduSimpleExplanation: 'غرور سے پاک انکسار اور سادگی',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'humility / meekness',
+  },
+  'فہم': {
+    vocalizedForm: 'فَہْم',
+    spokenUrduSynonymsJson: ['سمجھ بوجھ'],
+    urduSimpleExplanation: 'گہری سمجھ بوجھ اور دانائی',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'comprehension / intellect / discernment',
+  },
+  'خونخوار': {
+    vocalizedForm: 'خُونْ خوار',
+    spokenUrduSynonymsJson: ['ظالم', 'درندہ صفت'],
+    urduSimpleExplanation: 'خون پینے والا، ظالم اور بے رحم',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'bloodthirsty / ferocious',
+  },
+  'جتھے': {
+    vocalizedForm: 'جَتّھے',
+    spokenUrduSynonymsJson: ['ٹولیاں', 'گروہ'],
+    urduSimpleExplanation: 'مسلح فسادیوں کے ہجوم اور گروہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'armed mobs / factions / bands',
+  },
+  'سرگرداں': {
+    vocalizedForm: 'سَر گَرْداں',
+    spokenUrduSynonymsJson: ['بھٹکتے ہوئے', 'حیران'],
+    urduSimpleExplanation: 'پریشانی میں مارے مارے پھرنے والے',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'wandering in distress / roaming anxious',
+  },
+  'نسخے': {
+    vocalizedForm: 'نُسْخے',
+    spokenUrduSynonymsJson: ['کتابیں', 'تحریریں'],
+    urduSimpleExplanation: 'ہاتھ سے لکھی ہوئی قدیم کتابیں اور بیاضیں',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'manuscripts / codices',
+  },
+  'اوراق': {
+    vocalizedForm: 'اَوْراق',
+    spokenUrduSynonymsJson: ['صفحات'],
+    urduSimpleExplanation: 'ورق کی جمع، کتابوں کے پتے اور صفحات',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'leaves / folios / book pages',
+  },
+  'تذلیل': {
+    vocalizedForm: 'تَذْلِیل',
+    spokenUrduSynonymsJson: ['رسوائی', 'بے عزتی'],
+    urduSimpleExplanation: 'کسی کی عزت خاک میں ملانا، ذلیل کرنا',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'humiliation / disgrace / abasement',
+  },
+  'مونڈ': {
+    vocalizedForm: 'مُونْڈ',
+    spokenUrduSynonymsJson: ['تراش دیا', 'مونڈنا'],
+    urduSimpleExplanation: 'سر کے بال استرے سے کاٹ دینا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'shaved / shorn bald',
+  },
+  'جوتیوں': {
+    vocalizedForm: 'جُوتِیوں',
+    spokenUrduSynonymsJson: ['جوتوں'],
+    urduSimpleExplanation: 'جوتی کی جمع، پاؤں کے جوتے',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'shoes',
+  },
+  'نرغے': {
+    vocalizedForm: 'نَرغے',
+    spokenUrduSynonymsJson: ['گھیرے'],
+    urduSimpleExplanation: 'دشمنوں کے چاروں طرف کے محاصرے میں',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'siege / hostile encirclement',
+  },
+  'سنگدل': {
+    vocalizedForm: 'سَنْگ دِل',
+    spokenUrduSynonymsJson: ['بے رحم'],
+    urduSimpleExplanation: 'پتھر جیسے سخت دل والا، بے حس انسان',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'stone-hearted / merciless',
+  },
+  'زمین بوس': {
+    vocalizedForm: 'زَمِین بَوس',
+    spokenUrduSynonymsJson: ['مٹی میں ملا ہوا'],
+    urduSimpleExplanation: 'زمین پر گر کر مٹی میں مل جانا',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'grounded / dashed to the earth',
+  },
+  'بالمشافہ': {
+    vocalizedForm: 'بِالْمُشافَہَہ',
+    spokenUrduSynonymsJson: ['روبرو', 'آمنے سامنے'],
+    urduSimpleExplanation: 'آمنے سامنے، روبرو ہو کر دیکھنا',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'face-to-face / in direct presence',
+  },
+  'بوجھل': {
+    vocalizedForm: 'بوجھَل',
+    spokenUrduSynonymsJson: ['بھاری', 'وزنی'],
+    urduSimpleExplanation: 'غم یا نیند سے بھاری اور وزنی',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'heavy / oppressive / ponderous',
+  },
+  'سیسے': {
+    vocalizedForm: 'سِیسے',
+    spokenUrduSynonymsJson: ['پگھلی ہوئی دھات'],
+    urduSimpleExplanation: 'سیسہ، ایک وزنی سرمئی دھات',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'lead (metal)',
+  },
+  'ضمیر': {
+    vocalizedForm: 'ضَمِیر',
+    spokenUrduSynonymsJson: ['باطن', 'دل کی آواز'],
+    urduSimpleExplanation: 'انسان کی اندرونی اخلاقی حس اور باطن کی آواز',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'conscience / inner moral voice',
+  },
+  'اعتراف': {
+    vocalizedForm: 'اِعْتِرَاف',
+    spokenUrduSynonymsJson: ['اقرار', 'مان لینا'],
+    urduSimpleExplanation: 'اپنے کسی گناہ، غلطی یا سچائی کا کھل کر اقرار کرنا',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'confession / admission / acknowledgment',
+  },
+  'ماتم': {
+    vocalizedForm: 'ماتَم',
+    spokenUrduSynonymsJson: ['سوگ', 'نوحہ'],
+    urduSimpleExplanation: 'غم کا اظہار، سوگ منانا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'mourning / lamentation',
+  },
+  'سمجھوتے': {
+    vocalizedForm: 'سَمْجھَوتے',
+    spokenUrduSynonymsJson: ['مصلحت'],
+    urduSimpleExplanation: 'سمجھوتہ کی جمع، اصولوں پر مصلحت پسندی',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'compromises / Faustian bargains',
+  },
+  'گھناؤنے': {
+    vocalizedForm: 'گھِناؤنے',
+    spokenUrduSynonymsJson: ['نفرت انگیز'],
+    urduSimpleExplanation: 'جس سے گھن یا سخت نفرت آئے',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'heinous / abominable / repulsive',
+  },
+  'کمین گاہوں': {
+    vocalizedForm: 'کَمِین گاہوں',
+    spokenUrduSynonymsJson: ['چھپنے کے ٹھکانوں'],
+    urduSimpleExplanation: 'چھپنے کی خفیہ جگہیں اور پناہ گاہیں',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'hiding places / ambushes',
+  },
+  'خیانت': {
+    vocalizedForm: 'خِیانَت',
+    spokenUrduSynonymsJson: ['بے وفائی', 'دغا بازی'],
+    urduSimpleExplanation: 'امانت میں بددیانتی، وعدہ خلافی اور غداری',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'treachery / betrayal / breach of trust',
+  },
+  'رنجیدہ': {
+    vocalizedForm: 'رَنْجِیدَہ',
+    spokenUrduSynonymsJson: ['غمگین', 'اداس'],
+    urduSimpleExplanation: 'غم زدہ، دکھی اور ملول',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'grieved / sorrowful',
+  },
+  'ملامت': {
+    vocalizedForm: 'مَلامَت',
+    spokenUrduSynonymsJson: ['سرزنش', 'شرمندگی'],
+    urduSimpleExplanation: 'اپنے آپ کو یا دوسروں کو برائی پر ٹوکنا اور شرمسار کرنا',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'reproach / self-blame / censure',
+  },
+  'پچھتاوے': {
+    vocalizedForm: 'پَچھْتاوے',
+    spokenUrduSynonymsJson: ['ندامت'],
+    urduSimpleExplanation: 'گناہ یا غلطی کے بعد ہونے والی دلی ندامت',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'remorse / regret / repentance',
+  },
+  'کھنڈرات': {
+    vocalizedForm: 'کَھنْڈَرات',
+    spokenUrduSynonymsJson: ['ویرانے', 'ملبہ'],
+    urduSimpleExplanation: 'تباہ شدہ عمارتوں اور بستیوں کے آثار',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'ruins / desolate wreckage',
+  },
 };
 
 // Canonical Stories Specifications
@@ -6373,15 +6725,51 @@ const STORIES_DATA = [
     titleEnglish: 'Toba Tek Singh',
     level: 2.0,
     descriptionEnglish: 'Saadat Hasan Manto’s masterwork on the absurdities of partition, sanity, and human belonging.',
-    sceneVocabPreview: ['تبادلہ', 'پاگل خانہ', 'بٹوارے', 'حکومتوں'],
-    paragraphText:
-      'بٹوارے کے دو تین سال بعد پاکستان اور ہندوستان کی حکومتوں کو خیال آیا کہ جس طرح عام قیدیوں کا تبادلہ ہوا ہے اسی طرح پاگلوں کا بھی تبادلہ ہونا چاہیے یعنی جو مسلمان پاگل ہندوستان کے پاگل خانوں میں ہیں انہیں پاکستان پہنچا دیا جائے اور جو ہندو اور سکھ پاکستان کے پاگل خانوں میں ہیں انہیں ہندوستان کے حوالے کر دیا جائے۔',
-    sentences: [
+    sceneVocabPreview: ['تبادلہ', 'پاگل خانہ', 'بشن سنگھ', 'بٹوارے', 'سرحد', 'لاوارث'],
+    paragraphsList: [
       {
-        index: 0,
-        text: 'بٹوارے کے دو تین سال بعد پاکستان اور ہندوستان کی حکومتوں کو خیال آیا کہ جس طرح عام قیدیوں کا تبادلہ ہوا ہے اسی طرح پاگلوں کا بھی تبادلہ ہونا چاہیے یعنی جو مسلمان پاگل ہندوستان کے پاگل خانوں میں ہیں انہیں پاکستان پہنچا دیا جائے اور جو ہندو اور سکھ پاکستان کے پاگل خانوں میں ہیں انہیں ہندوستان کے حوالے کر دیا جائے۔',
-        startTimeMs: 0,
-        endTimeMs: 14500,
+        paragraphText:
+          'بٹوارے کے دو تین سال بعد پاکستان اور ہندوستان کی حکومتوں کو خیال آیا کہ جس طرح عام قیدیوں کا تبادلہ ہوا ہے اسی طرح پاگلوں کا بھی تبادلہ ہونا چاہیے یعنی جو مسلمان پاگل ہندوستان کے پاگل خانوں میں ہیں انہیں پاکستان پہنچا دیا جائے اور جو ہندو اور سکھ پاکستان کے پاگل خانوں میں ہیں انہیں ہندوستان کے حوالے کر دیا جائے۔ یہ معلوم نہیں کہ یہ بات معقول تھی یا غیر معقول، بہرحال دانشوروں کے فیصلے کے مطابق دونوں طرف اونچی سطح کی کانفرنسیں ہوئیں اور بالآخر تبادلے کا دن مقرر ہو گیا۔',
+      },
+      {
+        paragraphText:
+          'لاہور کے پاگل خانے میں جب اس تبادلے کی خبر پہنچی تو عجیب و غریب ہلچل مچ گئی۔ کسی کو معلوم نہ تھا کہ پاکستان کیا بلا ہے اور ہندوستان کہاں واقع ہے۔ پاگل الجھن میں مبتلا تھے کہ وہ اس وقت کہاں ہیں؟ ایک مسلمان پاگل جو پچھلے بارہ برس سے باقاعدگی کے ساتھ زمیندار اخبار پڑھتا تھا، اس سے جب پوچھا گیا کہ پاکستان کہاں ہے تو اس نے بہت سنجیدگی سے جواب دیا کہ وہ ہندوستان میں ایک ایسی جگہ ہے جہاں قینچیاں بنتی ہیں۔ ایک اور سکھ پاگل نے ایک درخت پر چڑھ کر اعلان کیا کہ میں نہ ہندوستان میں رہنا چاہتا ہوں اور نہ پاکستان میں، بلکہ میرا ٹھکانہ یہی درخت ہے۔',
+      },
+      {
+        paragraphText:
+          'اس پاگل خانے میں ایک سکھ مریض تھا جس کا نام بشن سنگھ تھا، مگر سب اسے ٹوبہ ٹیک سنگھ کہتے تھے۔ وہ ضلع جھنگ کا ایک کھاتے پیتے زمیندار تھا اور پندرہ برس سے پاگل خانے میں مقیم تھا۔ ان پندرہ برسوں میں وہ نہ کبھی سویا تھا اور نہ کبھی زمین پر لیٹا تھا۔ اس کی ٹانگیں سوجی ہوئی تھیں اور پاؤں متورم ہو چکے تھے، مگر وہ ہر وقت اپنے قدموں پر کھڑا رہتا تھا۔ جب کبھی اس سے بات کی جاتی تو وہ ایک پراسرار اور بے معنی جملہ دہرایا کرتا: ”اوپڑ دی گڑ گڑ دی اینکس دی بے دھیانا دی منگ دی دال آف دی پاکستان اینڈ گورنمنٹ!“',
+      },
+      {
+        paragraphText:
+          'جب سے تبادلے کی چرچا شروع ہوئی تھی، بشن سنگھ نے پاگل خانے کے ہر آدمی سے پوچھنا شروع کر دیا تھا کہ ٹوبہ ٹیک سنگھ کہاں ہے؟ پاکستان میں یا ہندوستان میں؟ لیکن کوئی بھی اسے تسلی بخش جواب نہ دے سکا۔ یہاں تک کہ وہ پاگل جو اپنے آپ کو خدا کہتا تھا، اس نے بھی بشن سنگھ کے اصرار پر اکتا کر کہہ دیا کہ میں نے ابھی تک یہ فیصلہ نہیں کیا کہ ٹوبہ ٹیک سنگھ کو کہاں بھیجوں گا۔ بشن سنگھ کا اضطراب دن بدن بڑھتا جا رہا تھا اور اس کی سوجی ہوئی ٹانگیں بے چینی سے ادھر ادھر گھومتی رہتی تھیں۔',
+      },
+      {
+        paragraphText:
+          'ایک دن بشن سنگھ سے ملنے اس کا ایک پرانا مسلمان دوست فضل دین آیا۔ فضل دین اس کے لیے پھل اور بھنے ہوئے چنے لے کر آیا تھا اور اس نے بتایا کہ تمہارے عزیز و اقارب سب خیر و عافیت سے ہندوستان چلے گئے ہیں اور تمہاری بیٹی روپ کور بھی خیریت سے ہے۔ بشن سنگھ نے بے تابی سے اس کی بات کاٹ کر پوچھا: ”فضل دین! سچ بتاؤ، ٹوبہ ٹیک سنگھ کہاں ہے؟ پاکستان میں یا ہندوستان میں؟“ فضل دین نے حیرت سے دیکھا اور بولا: ”کہاں؟ پاکستان میں اور کہاں!“ بشن سنگھ اپنا سر ہلا کر بڑبڑاتا ہوا پیچھے ہٹ گیا: ”اوپڑ دی گڑ گڑ دی اینکس دی بے دھیانا دی منگ دی دال آف دی پاکستان اینڈ ہندوستان در فٹے منہ!“',
+      },
+      {
+        paragraphText:
+          'بالآخر تبادلے کا سرد ترین دن آ پہنچا۔ رات کے وقت لاہور سے پاگلوں کو لاریاں میں بھر کر واہگہ کی سرحد پر لایا گیا۔ موسم شدید سرد تھا اور برفانی ہوائیں تیز تیز چل رہی تھیں۔ سرحد کے دونوں طرف پولیس کے مسلح دستے اور دونوں ملکوں کے افسران کاغذات ہاتھ میں لیے میزوں کے گرد بیٹھے تھے۔ ہندو اور سکھ پاگلوں کو ایک ایک کر کے لاریوں سے اتارا جا رہا تھا تاکہ انہیں ہندوستانی افسروں کے سپرد کیا جا سکے۔',
+      },
+      {
+        paragraphText:
+          'سرحد پر عجیب قیامت کا منظر تھا۔ بعض پاگل لاریوں سے نیچے اترنے کو تیار نہیں تھے اور چیخ پکار کر رہے تھے۔ بعض ننگے ہو کر رات کی سردی میں دوڑ لگا رہے تھے اور کچھ زار و قطار رو رہے تھے۔ کانفرنسوں کے ضابطے اور دفتری قوانین پاگلوں کی اس بے قابو فوج کے سامنے بے بس ہو چکے تھے۔ افسر اور سپاہی انہیں بمشکل قابو میں لا رہے تھے اور ہر طرف شدید افراتفری اور چیخ و پکار کا عالم تھا۔',
+      },
+      {
+        paragraphText:
+          'جب بشن سنگھ کی باری آئی اور رجسٹریشن رجسٹر میں اس کا نام درج ہونے لگا تو اس نے بارڈر پر کھڑے مجسٹریٹ سے پوچھا: ”ٹوبہ ٹیک سنگھ کہاں ہے؟ پاکستان میں یا ہندوستان میں؟“ افسر نے قہقہہ لگا کر جواب دیا: ”پاکستان میں ہے، جہاں تم کھڑے ہو!“ یہ سنتے ہی بشن سنگھ کی آنکھوں میں وحشت اتر آئی اور اس نے ہندوستان کی طرف جانے سے صاف انکار کر دیا۔',
+      },
+      {
+        paragraphText:
+          'بشن سنگھ تیزی سے مڑا اور اپنے سوجے ہوئے پیروں سے بھاگ کر پاکستانی لاریوں کی طرف جانے لگا۔ مگر پاکستانی سپاہیوں نے سنگینیں تان کر اسے روک دیا: ”ادھر نہیں، چلو ادھر چلو، تم سکھ ہو، ہندوستان جاؤ!“ ادھر ہندوستانی سپاہیوں نے اسے دھکیلتے ہوئے کہا: ”اگر یہ ادھر نہیں جانا چاہتا تو ہم اسے زبردستی نہیں لے جائیں گے۔“ بشن سنگھ دونوں ملکوں کے درمیان گھیرے ہوئے خونی اور تنگ فاصلے کے بیچوں بیچ جم کر کھڑا ہو گیا۔',
+      },
+      {
+        paragraphText:
+          'چونکہ بشن سنگھ کوئی خطرناک آدمی نہیں تھا اور پندرہ برس سے کسی کو نقصان نہیں پہنچایا تھا، اس لیے افسران نے سوچا کہ ابھی اسے یہیں کھڑا رہنے دیا جائے، باقی تمام پاگلوں کے تبادلے کا کام مکمل ہو لے تو پھر صبح اس کا فیصلہ کیا جائے گا۔ رات کی سردی ہڈیوں کو چیر رہی تھی اور بشن سنگھ اپنے سوکھے اور سوجے ہوئے قدموں پر بت بن کر اس بے نام مٹی پر کھڑا رہا۔',
+      },
+      {
+        paragraphText:
+          'سورج نکلنے سے ذرا پہلے، اس خاموش سرد فضا میں بشن سنگھ کے حلق سے ایک فلک شگاف چیخ نکلی۔ دونوں طرف سے افسر اور ڈاکٹر دوڑتے ہوئے اس کی طرف آئے۔ وہ آدمی جو پندرہ برس تک دن رات اپنی ٹانگوں پر کھڑا رہا تھا، اوندھے منہ زمین پر گرا پڑا تھا۔ ادھر خاردار تاروں کے پیچھے ہندوستان تھا… ادھر ویسے ہی تاروں کے پیچھے پاکستان تھا… اور درمیان میں، زمین کے اس بے نام ٹکڑے پر جس کا کوئی نام نہ تھا، ٹوبہ ٹیک سنگھ تڑپ کر جان دے چکا تھا۔',
       },
     ],
   },
@@ -6393,21 +6781,39 @@ const STORIES_DATA = [
     titleEnglish: 'Gadaria',
     level: 2.5,
     descriptionEnglish: 'Ashfaq Ahmed’s revered portrait of scholarly grace, cultural synthesis, and heartbreaking displacement.',
-    sceneVocabPreview: ['چٹائی', 'پروقار', 'پرسکون', 'چشمہ'],
-    paragraphText:
-      'داؤ جی بڑے سویرے اٹھتے اور اپنے مختصر سے کمرے میں چٹائی پر بیٹھ کر پڑھنے لکھنے میں مصروف ہو جاتے۔ ان کے چہرے پر ایک پروقار اور پرسکون مسکراہٹ ہمیشہ کھیلتی رہتی تھی جو ہر آنے والے کا دل موہ لیتی اور یوں محسوس ہوتا جیسے علم و حکمت کا کوئی خاموش چشمہ رواں دواں ہو۔',
-    sentences: [
+    sceneVocabPreview: ['داؤ جی', 'چٹائی', 'گلستان', 'علم و حکمت', 'حکمت', 'گڈریا'],
+    paragraphsList: [
       {
-        index: 0,
-        text: 'داؤ جی بڑے سویرے اٹھتے اور اپنے مختصر سے کمرے میں چٹائی پر بیٹھ کر پڑھنے لکھنے میں مصروف ہو جاتے۔',
-        startTimeMs: 0,
-        endTimeMs: 6500,
+        paragraphText:
+          'داؤ جی بڑے سویرے اٹھتے اور اپنے مختصر سے کمرے میں چٹائی پر بیٹھ کر پڑھنے لکھنے میں مصروف ہو جاتے۔ ان کے چہرے پر ایک پروقار اور پرسکون مسکراہٹ ہمیشہ کھیلتی رہتی تھی جو ہر آنے والے کا دل موہ لیتی اور یوں محسوس ہوتا جیسے علم و حکمت کا کوئی خاموش چشمہ رواں دواں ہو۔ ان کے لباس میں سادگی تھی مگر ان کی گفتگو میں ایسی مٹھاس اور وقار تھا کہ بڑے بڑے عالم ان کے احترام میں سر جھکا لیتے۔',
       },
       {
-        index: 1,
-        text: 'ان کے چہرے پر ایک پروقار اور پرسکون مسکراہٹ ہمیشہ کھیلتی رہتی تھی جو ہر آنے والے کا دل موہ لیتی اور یوں محسوس ہوتا جیسے علم و حکمت کا کوئی خاموش چشمہ رواں دواں ہو۔',
-        startTimeMs: 6500,
-        endTimeMs: 16000,
+        paragraphText:
+          'داؤ جی مجھے روزانہ فارسی کا سبق پڑھاتے تھے۔ جب وہ شیخ سعدی کی گلستان اور بوستان کھولتے تو ان کی آنکھیں عقیدت و احترام سے چمک اٹھتیں۔ وہ ایک ایک شعر کی تشریح اس دلکش انداز میں کرتے کہ الفاظ کے پردے سے اخلاق اور دانائی کی زندہ تصویریں جھلکنے لگتیں۔ داؤ جی نے مجھے پڑھانے کا کبھی کوئی معاوضہ نہ لیا۔ وہ کہتے کہ علم تو دل کا نور ہے اور نور کا سودا بازار میں نہیں کیا جاتا۔ ان کے پاس بیٹھ کر یوں لگتا جیسے وقت رک گیا ہو اور روح تسکین پا رہی ہو۔',
+      },
+      {
+        paragraphText:
+          'محلے کے لوگ داؤ جی کو احترام کے ساتھ ساتھ ایک خاص قسم کی حیرت سے دیکھتے تھے کیونکہ ان کا تعلق دراصل گڈریوں کے ایک غریب گھرانے سے تھا جن کا کام بکریاں چرانا تھا۔ لیکن داؤ جی نے اپنی بے پناہ لگن اور عشق کی بدولت عربی اور فارسی کی قدیم کتابوں پر وہ عبور حاصل کیا تھا جو اچھے اچھے فاضلوں کو نصیب نہیں ہوتا۔ وہ اپنے ماضی کو چھپاتے نہیں تھے بلکہ بڑی عاجزی سے مسکرا کر کہتے کہ انسان کی اصل پہچان اس کا نسب نہیں بلکہ اس کا فہم اور اس کا عمل ہے۔',
+      },
+      {
+        paragraphText:
+          'مگر پھر ۱۹۴۷ء کا وہ سیاہ سال آ پہنچا جس نے صدیوں کے پیار اور بھائی چارے کو خون کی ہولی میں تبدیل کر دیا۔ پنجاب کے گلی کوچوں میں نفرت کی آگ بھڑک اٹھی اور امن پسند بستیاں شعلوں کی لپیٹ میں آ گئیں۔ خونخوار جتھے سڑکوں پر گشت کرنے لگے اور انسانی جان کی کوئی قیمت باقی نہ رہی۔ لوگ اپنے گھر بار چھوڑ کر جان بچانے کے لیے محفوظ پناہ گاہوں کی تلاش میں سرگرداں تھے اور ہر طرف خوف و ہراس کا راج تھا۔',
+      },
+      {
+        paragraphText:
+          'جب فسادات کی آگ ہمارے محلے کے قریب پہنچی تو میں نے کانپتے دل کے ساتھ داؤ جی کے پاس جا کر التجا کی کہ داؤ جی! آپ فورا یہ بستی چھوڑ کر کسی محفوظ مقام پر چلے جائیں، یہاں اب کوئی محفوظ نہیں رہا! لیکن داؤ جی اپنی پرانی چٹائی پر اسی طرح بیٹھے رہے اور نرمی سے بولے: ”بیٹا! میرا کون سا دشمن ہے؟ میں نے ساری زندگی انسانوں سے محبت کی ہے، قلم اور کتاب کے سوا میرے پاس ہے ہی کیا؟ خدا سب پر رحم کرے گا۔“ ان کی اس معصومانہ سچائی کے آگے میری آنکھیں بھر آئیں۔',
+      },
+      {
+        paragraphText:
+          'ایک دوپہر اچانک محلے میں شور مچا اور مشتعل ہجوم نعرے لگاتا ہوا داؤ جی کے گھر میں داخل ہو گیا۔ جنونیوں نے ان کے کمرے کی ایک ایک چیز کو الٹ پلٹ کر رکھ دیا۔ انہوں نے داؤ جی کی وہ نایاب کتابیں اور قلمی نسخے جنہیں انہوں نے عمر بھر اپنے خونِ جگر سے سینچا تھا، گلی کے گندے نالے میں پھینک دیے اور چوراہے پر ڈھیر لگا کر آگ لگا دی۔ فارسی کے سنہری اوراق شعلوں میں راکھ بن رہے تھے اور داؤ جی ایک کونے میں کھڑے پرنم آنکھوں سے اپنے خوابوں کو خاکستر ہوتے دیکھ رہے تھے۔',
+      },
+      {
+        paragraphText:
+          'ظالموں کی درندگی یہیں نہیں رکی۔ وہ داؤ جی کو گھسیٹتے ہوئے بازار لے آئے، ان کا سر مونڈ دیا اور ان کے گلے میں پرانی جوتیوں کا ہار ڈال دیا۔ ہجوم تالیاں بجا کر قہقہے لگاتا تھا اور کہتا تھا: ”دیکھو، یہ وہی گڈریا ہے جو اپنے آپ کو علامہ سمجھتا تھا! بکریاں چرا گڈریا! اپنی اوقات میں واپس آ جا!“ وہ بزرگ جس کی آواز سن کر اہل محلہ ادب سے جھک جایا کرتے تھے، آج خون کے پیاسے تماشائیوں کے نرغے میں تنہا اور بے بس کھڑا تھا۔',
+      },
+      {
+        paragraphText:
+          'اس قیامت خیز تذلیل کے لمحے میں بھی داؤ جی کی آنکھوں میں انتقام کا کوئی جذبہ نہ تھا، بلکہ ان کے لبوں پر وہی ابدی دکھ اور معافی کی گہری التجا تھی جیسے وہ اپنے جلادوں کی گمراہی پر رو رہے ہوں۔ جب ایک سنگدل نے ان کے چہرے پر تھوکا تو داؤ جی نے دھیمی آواز میں شیخ سعدی کا وہ مشہور شعر پڑھا جس کا مفہوم تھا کہ اے بندے، اگر تو انسان ہے تو کسی کے دکھ پر خوش نہ ہو۔ میری چیخیں گلے میں گھٹ گئیں اور میں نے دیکھا کہ ہماری صدیوں کی تہذیب، علم اور انسانی وقار داؤ جی کے اس زخمی وجود کے ساتھ زمین بوس ہو چکے تھے۔',
       },
     ],
   },
@@ -6419,21 +6825,35 @@ const STORIES_DATA = [
     titleEnglish: 'Shehr-e-Afsos',
     level: 3.0,
     descriptionEnglish: 'Intizar Husain’s allegorical masterpiece on grief, desolate ruined cities, and historic memory.',
-    sceneVocabPreview: ['شہرِ افسوس', 'خاکستر', 'سناٹا', 'ویران'],
-    paragraphText:
-      'جب ہم اس ویران اور اجڑے ہوئے شہرِ افسوس کے اندر داخل ہوئے تو چاروں طرف ہو کا عالم طاری تھا اور گلی کوچوں میں سناٹا چیخ رہا تھا۔ یوں گمان گزرتا تھا جیسے وقت کی رفتار یکایک تھم گئی ہو اور صدیوں کی گرد نے ہر زندہ وجود کو اپنی لپیٹ میں لے کر خاکستر کر دیا ہو۔',
-    sentences: [
+    sceneVocabPreview: ['شہرِ افسوس', 'خاکستر', 'سناٹا', 'اعتراف', 'ضمیر', 'ویران'],
+    paragraphsList: [
       {
-        index: 0,
-        text: 'جب ہم اس ویران اور اجڑے ہوئے شہرِ افسوس کے اندر داخل ہوئے تو چاروں طرف ہو کا عالم طاری تھا اور گلی کوچوں میں سناٹا چیخ رہا تھا۔',
-        startTimeMs: 0,
-        endTimeMs: 8200,
+        paragraphText:
+          'جب ہم اس ویران اور اجڑے ہوئے شہرِ افسوس کے اندر داخل ہوئے تو چاروں طرف ہو کا عالم طاری تھا اور گلی کوچوں میں سناٹا چیخ رہا تھا۔ یوں گمان گزرتا تھا جیسے وقت کی رفتار یکایک تھم گئی ہو اور صدیوں کی گرد نے ہر زندہ وجود کو اپنی لپیٹ میں لے کر خاکستر کر دیا ہو۔ بازار ویران پڑے تھے، مکانوں کے دروازے کھلے تھے مگر اندر زندگی کا کوئی سراغ نہیں تھا، اور فضا میں جلی ہوئی لکڑیوں اور باسی بارود کی بو رچی بسی تھی۔',
       },
       {
-        index: 1,
-        text: 'یوں گمان گزرتا تھا جیسے وقت کی رفتار یکایک تھم گئی ہو اور صدیوں کی گرد نے ہر زندہ وجود کو اپنی لپیٹ میں لے کر خاکستر کر دیا ہو۔',
-        startTimeMs: 8200,
-        endTimeMs: 18000,
+        paragraphText:
+          'شہر کے ایک ویران چوک پر، جہاں کبھی سنگِ مرمر کا فوارہ ہوا کرتا تھا، تین آدمی مٹی کی ڈھیر پر بے حس و حرکت بیٹھے تھے۔ ان کے کپڑے تار تار تھے اور ان کی آنکھوں میں گہری وحشت کا ایسا سایہ تھا جیسے انہوں نے موت کو بالمشافہ دیکھا ہو۔ وہ نہ زندہ دکھائی دیتے تھے اور نہ ہی مردوں میں شمار ہوتے تھے۔ ان تینوں کے درمیان ایک گہری خاموشی تھی، ایسی خاموشی جو بوجھل پہاڑ کی طرح ان کے سینوں پر دبی ہوئی تھی۔',
+      },
+      {
+        paragraphText:
+          'بالآخر پہلے شخص نے ہولناک سناٹے کو توڑتے ہوئے سر اٹھایا اور کانپتی ہوئی دھیمی آواز میں کہا: ”جب شہر کے چوراہوں پر بے گناہوں کو قتل کیا جا رہا تھا اور آگ کے شعلے آسمان کو چھو رہے تھے، تو میں اپنے کمرے کی کھڑکیاں بند کر کے کونے میں چھپ گیا تھا۔ میں نے اپنے دل کو تسلی دی کہ جب تک آگ میرا دروازہ نہیں کھٹکھٹاتی، مجھے دوسروں کے ماتم سے کیا غرض؟ مگر اب یہ خاموشی میرے کانوں میں پگھلے ہوئے سیسے کی طرح اتر رہی ہے اور میرا ضمیر مجھے سونے نہیں دیتا۔“',
+      },
+      {
+        paragraphText:
+          'دوسرے شخص نے ایک سرد آہ بھری اور اپنے خاک آلود چہرے پر ہاتھ پھیرتے ہوئے اعتراف کیا: ”جب معصوم بچے گلیوں میں زندگی کی بھیک مانگ رہے تھے اور مدد کے لیے پکار رہے تھے، تو میں نے اپنی جان بچانے کے لیے ان کی طرف سے منہ موڑ لیا۔ میں نے اپنے ایک عزیز دوست کو ظالموں کے حوالے کر دیا تاکہ وہ مجھے زندہ چھوڑ دیں۔ میں زندہ تو بچ گیا، لیکن اس گھناؤنے سمجھوتے کے بعد میں ہر روز اپنے ہی اندر مرتا ہوں اور زندہ لاش بن کر بھٹک رہا ہوں۔“',
+      },
+      {
+        paragraphText:
+          'تیسرے شخص نے اپنے گھٹنوں میں سر چھپا کر بلک بلک کر رونا شروع کیا: ”میری بزدلی تم دونوں سے بڑھ کر تھی۔ میں نے جلادوں کے خوف سے ان کی ہاں میں ہاں ملائی اور جن مظلوموں کے ساتھ میرا برسوں کا ناطہ تھا، میں نے ان کی کمین گاہوں کی نشان دہی کر دی۔ میں نے سوچا تھا کہ میں بچ جاؤں گا اور عافیت کی زندگی گزاروں گا، مگر اس خیانت کا داغ میرے ماتھے پر ایسا نقش ہو چکا ہے کہ اب موت بھی مجھے پاک نہیں کر سکتی۔“',
+      },
+      {
+        paragraphText:
+          'تینوں کے اعتراف کے بعد تاریکی میں سے ایک لمبا پراسرار شخص نمودار ہوا۔ اس کے سر سے پاؤں تک ایک سیاہ چادر لپٹی ہوئی تھی اور اس کے ہاتھ میں ایک مدہم لالٹین تھی جس کی زرد روشنی دھند میں کانپ رہی تھی۔ وہ ان تینوں کے قریب آ کر رکا اور اس نے گرجدار مگر رنجیدہ آواز میں دریافت کیا: ”اے اس برباد بستی کے سائے نما باسیو! کیا اس پورے شہر میں کوئی ایک بھی ایسا زندہ انسان باقی ہے جس کا دل ملامت سے آزاد ہو اور جس کا ضمیر ابھی زندہ ہو؟“ تینوں نے شرم کے مارے سر جھکا لیے اور کوئی جواب نہ دے سکے۔',
+      },
+      {
+        paragraphText:
+          'اجنبی مسافر نے ایک پردرد نگاہ اس ویران منظر پر ڈالی، اپنی لالٹین کی لو مدہم کی اور اندھیرے میں غائب ہوتے ہوئے بولا: ”پس جان لو کہ جس بستی کا ضمیر مر جائے، وہ شہر نہیں بلکہ شہرِ افسوس بن جاتی ہے جہاں زندہ انسان بھی پچھتاوے کی قبروں میں سسکتے رہتے ہیں۔“ تیز سرد ہوا چلی اور اس اجڑے ہوئے شہر کے کھنڈرات پر صدیوں کی خاک اڑا کر لے گئی، اور وہ تینوں مجرم اپنے اپنے گناہوں کے بوجھ تلے ہمیشہ کے لیے پتھر کے بت بن کر رہ گئے۔',
       },
     ],
   },
