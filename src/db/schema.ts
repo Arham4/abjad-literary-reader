@@ -15,7 +15,12 @@ export const stories = sqliteTable('stories', {
   authorEnglish: text('author_english').notNull(),
   titleUrdu: text('title_urdu').notNull(),
   titleEnglish: text('title_english').notNull(),
-  level: real('level').notNull(), // 0.1 to 3.0 progression
+  level: real('level').notNull(), // 1 to 10 integer progression
+  subLevel: text('sub_level').notNull().default('1.1'), // e.g. "1.1", "2.2"
+  format: text('format').notNull().default('short_story'), // short_story | essay | novella_arc | novel_arc
+  targetVocabFocus: text('target_vocab_focus'),
+  sourceUrl: text('source_url'),
+  status: text('status').notNull().default('ready'), // ready | coming_soon
   descriptionEnglish: text('description_english'),
   sceneVocabPreviewJson: text('scene_vocab_preview_json', { mode: 'json' }).$type<string[]>(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),

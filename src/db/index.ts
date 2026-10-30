@@ -17,6 +17,11 @@ sqlite.exec(`
     title_urdu TEXT NOT NULL,
     title_english TEXT NOT NULL,
     level INTEGER NOT NULL,
+    sub_level TEXT NOT NULL DEFAULT '1.1',
+    format TEXT NOT NULL DEFAULT 'short_story',
+    target_vocab_focus TEXT,
+    source_url TEXT,
+    status TEXT NOT NULL DEFAULT 'ready',
     description_english TEXT,
     scene_vocab_preview_json TEXT,
     created_at INTEGER NOT NULL
@@ -81,6 +86,21 @@ sqlite.exec(`
 `);
 
 // Safe migrations for newly added columns
+try {
+  sqlite.exec("ALTER TABLE stories ADD COLUMN sub_level TEXT NOT NULL DEFAULT '1.1';");
+} catch (_) {}
+try {
+  sqlite.exec("ALTER TABLE stories ADD COLUMN format TEXT NOT NULL DEFAULT 'short_story';");
+} catch (_) {}
+try {
+  sqlite.exec('ALTER TABLE stories ADD COLUMN target_vocab_focus TEXT;');
+} catch (_) {}
+try {
+  sqlite.exec('ALTER TABLE stories ADD COLUMN source_url TEXT;');
+} catch (_) {}
+try {
+  sqlite.exec("ALTER TABLE stories ADD COLUMN status TEXT NOT NULL DEFAULT 'ready';");
+} catch (_) {}
 try {
   sqlite.exec('ALTER TABLE stories ADD COLUMN description_english TEXT;');
 } catch (_) {}

@@ -29,7 +29,7 @@ api.get('/stories', async (c) => {
     const allStories = db
       .select()
       .from(schema.stories)
-      .orderBy(asc(schema.stories.level))
+      .orderBy(asc(schema.stories.level), asc(schema.stories.subLevel))
       .all()
       .map((s) => ({
         ...s,

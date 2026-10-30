@@ -56,27 +56,69 @@ export default function ReaderNavbar() {
 
           <div class="h-4 w-px bg-black/10 dark:bg-white/10 hidden sm:block shrink-0" />
 
-          {/* Story Selector with Clean Dropdown */}
-          <div class="relative min-w-0">
-            <select
-              aria-label="Select Story"
-              class={`appearance-none text-xs sm:text-sm font-medium py-1.5 pl-2.5 pr-7 rounded-lg border focus:outline-none cursor-pointer max-w-[155px] xs:max-w-[210px] sm:max-w-xs truncate transition-colors ${
-                theme() === 'sepia'
-                  ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border-[#D8CCBA] text-[#28201A]'
-                  : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
-              }`}
-              value={activeStory()?.slug || ''}
-              onChange={(e) => selectStory(e.currentTarget.value)}
-            >
-              <For each={stories()}>
-                {(s) => (
-                  <option value={s.slug}>
-                    Level {s.level === 1 ? '1.0' : s.level} · {s.titleEnglish}
-                  </option>
-                )}
-              </For>
-            </select>
-            <ChevronDown size={12} class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />
+          {/* Story Selector with Clean Dropdown Grouped by Curriculum Level */}
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="relative min-w-0">
+              <select
+                aria-label="Select Reading Curriculum Tier"
+                class={`appearance-none text-xs sm:text-sm font-medium py-1.5 pl-2.5 pr-7 rounded-lg border focus:outline-none cursor-pointer max-w-[170px] xs:max-w-[220px] sm:max-w-xs truncate transition-colors ${
+                  theme() === 'sepia'
+                    ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border-[#D8CCBA] text-[#28201A]'
+                    : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
+                }`}
+                value={activeStory()?.slug || ''}
+                onChange={(e) => selectStory(e.currentTarget.value)}
+              >
+                <For
+                  each={(() => {
+                    const map = new Map<number, { levelNumber: number; title: string; stories: typeof stories }>();
+                    for (const s of stories()) {
+                      if (!map.has(s.level)) {
+                        map.set(s.level, {
+                          levelNumber: s.level,
+                          title: `Level ${s.level}`,
+                          stories: [] as any,
+                        });
+                      }
+                      (map.get(s.level)!.stories as any).push(s);
+                    }
+                    return Array.from(map.values()).sort((a, b) => a.levelNumber - b.levelNumber);
+                  })()}
+                >
+                  {(group) => (
+                    <optgroup label={group.title}>
+                      <For each={group.stories as any}>
+                        {(s: any) => (
+                          <option
+                            value={s.slug}
+                            disabled={s.status === 'coming_soon'}
+                            class={s.status === 'coming_soon' ? 'opacity-50 text-neutral-400' : ''}
+                          >
+                            {s.subLevel} · {s.titleEnglish} {s.status === 'coming_soon' ? '⏳ (Coming Soon)' : ''}
+                          </option>
+                        )}
+                      </For>
+                    </optgroup>
+                  )}
+                </For>
+              </select>
+              <ChevronDown size={12} class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />
+            </div>
+
+            {/* Subtle Active Level Pill */}
+            <Show when={activeStory()}>
+              <span
+                class={`text-[10px] font-bold px-2 py-0.5 rounded-full font-mono shrink-0 hidden lg:inline-flex items-center gap-1 ${
+                  theme() === 'sepia'
+                    ? 'bg-[#EAE0CF] text-[#4A3E35] border border-[#D4C5AD]'
+                    : 'bg-black/5 dark:bg-white/10 text-neutral-700 dark:text-neutral-300'
+                }`}
+                title={`Level ${activeStory()?.subLevel} · ${activeStory()?.format || 'short story'}`}
+              >
+                <span>Level</span>
+                <span class="font-extrabold">{activeStory()?.subLevel}</span>
+              </span>
+            </Show>
           </div>
         </div>
 

@@ -4,6 +4,7 @@ import { UrduLanguagePack } from '../lib/abjad/packs/urdu';
 import { PhoneticSyllablePill } from '../lib/abjad/types';
 import { vocalizeUrduWord, makePhoneticBreakdown } from '../lib/abjad/packs/urduVocalizer';
 import { EXTENDED_VOCAB } from './extendedVocab';
+import { CURRICULUM_REGISTRY } from '../lib/abjad/curriculum';
 
 interface LexemeAnalysisData {
   vocalizedForm: string;
@@ -6394,7 +6395,11 @@ const STORIES_DATA = [
     authorEnglish: 'Folk Tradition',
     titleUrdu: 'شیخ چلی کا خواب',
     titleEnglish: "Sheikh Chilli's Dream",
-    level: 0.1,
+    level: 1,
+    subLevel: '1.1',
+    format: 'short_story',
+    status: 'ready',
+    targetVocabFocus: '98% spoken vocabulary to build effortless eye-speed and master high-frequency written connectors like چنانچہ, البتہ, مگر, and اتفاق.',
     descriptionEnglish: '98% spoken vocabulary to build effortless eye-speed and master high-frequency written connectors like چنانچہ, البتہ, مگر, and یکایک.',
     sceneVocabPreview: ['گھڑا', 'چنانچہ', 'مرغیاں', 'البتہ', 'مگر', 'یکایک'],
     paragraphsList: [
@@ -6422,7 +6427,11 @@ const STORIES_DATA = [
     authorEnglish: 'Munshi Premchand',
     titleUrdu: 'عید گاہ',
     titleEnglish: 'Idgah',
-    level: 0.3,
+    level: 2,
+    subLevel: '2.2',
+    format: 'short_story',
+    status: 'ready',
+    targetVocabFocus: 'Empathetic domestic realism, festival excitement, selflessness, and familial sacrifice.',
     descriptionEnglish: 'Premchand’s immortal masterpiece of childhood empathy, rustic household life, and young Hamid’s selfless gift for his grandmother.',
     sceneVocabPreview: ['عید گاہ', 'امینہ', 'حامد', 'چمٹا', 'کھلونے', 'توا'],
     paragraphsList: [
@@ -6450,7 +6459,11 @@ const STORIES_DATA = [
     authorEnglish: 'Munshi Premchand',
     titleUrdu: 'حجِ اکبر',
     titleEnglish: 'Hajj-e-Akbar',
-    level: 0.5,
+    level: 2,
+    subLevel: '2.3',
+    format: 'short_story',
+    status: 'ready',
+    targetVocabFocus: 'Domestic devotion, nursemaid loyalty, pilgrimage vs human charity, and societal moral obligations.',
     descriptionEnglish: 'Premchand’s moving domestic tale of selfless devotion, nursemaid Abbasi’s maternal love, and the true meaning of spiritual sacrifice.',
     sceneVocabPreview: ['عباسی', 'نسیم', 'حجِ اکبر', 'تیمارداری', 'مکہ معظمہ', 'صابر'],
     paragraphsList: [
@@ -6478,7 +6491,11 @@ const STORIES_DATA = [
     authorEnglish: 'Ghulam Abbas',
     titleUrdu: 'اوور کوٹ',
     titleEnglish: 'Overcoat',
-    level: 0.8,
+    level: 5,
+    subLevel: '5.2',
+    format: 'short_story',
+    status: 'ready',
+    targetVocabFocus: 'Urban illusion, Mall Road promenade, pretense vs tragic destitution, and devastating irony.',
     descriptionEnglish: 'Ghulam Abbas’s poignant urban portrait of appearance versus reality along the glittering winter pavements of Lahore’s Mall Road.',
     sceneVocabPreview: ['اوور کوٹ', 'مال روڈ', 'فلیٹ ہیٹ', 'گلاب', 'میو اسپتال', 'چھڑی'],
     paragraphsList: [
@@ -6506,7 +6523,11 @@ const STORIES_DATA = [
     authorEnglish: 'Saadat Hasan Manto',
     titleUrdu: 'کھول دو',
     titleEnglish: 'Khol Do',
-    level: 1.0,
+    level: 7,
+    subLevel: '7.2',
+    format: 'short_story',
+    status: 'ready',
+    targetVocabFocus: 'Partition trauma, refugee camp dehumanization, and conditioned bodily reflex of violence.',
     descriptionEnglish: 'Now you have the reading stamina and written connectors down: Manto’s unforgettable foundational masterpiece.',
     sceneVocabPreview: ['کھڑکی', 'دوپٹہ', 'زندہ', 'رضاکار', 'سراج الدین'],
     paragraphsList: [
@@ -6860,7 +6881,11 @@ const STORIES_DATA = [
     authorEnglish: 'Saadat Hasan Manto',
     titleUrdu: 'ٹوبہ ٹیک سنگھ',
     titleEnglish: 'Toba Tek Singh',
-    level: 2.0,
+    level: 7,
+    subLevel: '7.3',
+    format: 'short_story',
+    status: 'ready',
+    targetVocabFocus: 'Partition lunacy, border absurdity, existential displacement, and asylum alienation.',
     descriptionEnglish: 'Saadat Hasan Manto’s masterwork on the absurdities of partition, sanity, and human belonging.',
     sceneVocabPreview: ['تبادلہ', 'پاگل خانہ', 'بشن سنگھ', 'بٹوارے', 'سرحد', 'لاوارث'],
     paragraphsList: [
@@ -6916,7 +6941,11 @@ const STORIES_DATA = [
     authorEnglish: 'Ashfaq Ahmed',
     titleUrdu: 'گڈریا',
     titleEnglish: 'Gadaria',
-    level: 2.5,
+    level: 8,
+    subLevel: '8.3',
+    format: 'short_story',
+    status: 'ready',
+    targetVocabFocus: 'Sufic devotion, erudite mentor tragedy, communal betrayal, and Sanskrit/Arabic/Urdu scholastic synthesis.',
     descriptionEnglish: 'Ashfaq Ahmed’s revered portrait of scholarly grace, cultural synthesis, and heartbreaking displacement.',
     sceneVocabPreview: ['داؤ جی', 'چٹائی', 'گلستان', 'علم و حکمت', 'حکمت', 'گڈریا'],
     paragraphsList: [
@@ -6954,46 +6983,6 @@ const STORIES_DATA = [
       },
     ],
   },
-  {
-    slug: 'shehr-e-afsos',
-    authorUrdu: 'انتظار حسین',
-    authorEnglish: 'Intizar Husain',
-    titleUrdu: 'شہرِ افسوس',
-    titleEnglish: 'Shehr-e-Afsos',
-    level: 3.0,
-    descriptionEnglish: 'Intizar Husain’s allegorical masterpiece on grief, desolate ruined cities, and historic memory.',
-    sceneVocabPreview: ['شہرِ افسوس', 'خاکستر', 'سناٹا', 'اعتراف', 'ضمیر', 'ویران'],
-    paragraphsList: [
-      {
-        paragraphText:
-          'جب ہم اس ویران اور اجڑے ہوئے شہرِ افسوس کے اندر داخل ہوئے تو چاروں طرف ہو کا عالم طاری تھا اور گلی کوچوں میں سناٹا چیخ رہا تھا۔ یوں گمان گزرتا تھا جیسے وقت کی رفتار یکایک تھم گئی ہو اور صدیوں کی گرد نے ہر زندہ وجود کو اپنی لپیٹ میں لے کر خاکستر کر دیا ہو۔ بازار ویران پڑے تھے، مکانوں کے دروازے کھلے تھے مگر اندر زندگی کا کوئی سراغ نہیں تھا، اور فضا میں جلی ہوئی لکڑیوں اور باسی بارود کی بو رچی بسی تھی۔',
-      },
-      {
-        paragraphText:
-          'شہر کے ایک ویران چوک پر، جہاں کبھی سنگِ مرمر کا فوارہ ہوا کرتا تھا، تین آدمی مٹی کی ڈھیر پر بے حس و حرکت بیٹھے تھے۔ ان کے کپڑے تار تار تھے اور ان کی آنکھوں میں گہری وحشت کا ایسا سایہ تھا جیسے انہوں نے موت کو بالمشافہ دیکھا ہو۔ وہ نہ زندہ دکھائی دیتے تھے اور نہ ہی مردوں میں شمار ہوتے تھے۔ ان تینوں کے درمیان ایک گہری خاموشی تھی، ایسی خاموشی جو بوجھل پہاڑ کی طرح ان کے سینوں پر دبی ہوئی تھی۔',
-      },
-      {
-        paragraphText:
-          'بالآخر پہلے شخص نے ہولناک سناٹے کو توڑتے ہوئے سر اٹھایا اور کانپتی ہوئی دھیمی آواز میں کہا: ”جب شہر کے چوراہوں پر بے گناہوں کو قتل کیا جا رہا تھا اور آگ کے شعلے آسمان کو چھو رہے تھے، تو میں اپنے کمرے کی کھڑکیاں بند کر کے کونے میں چھپ گیا تھا۔ میں نے اپنے دل کو تسلی دی کہ جب تک آگ میرا دروازہ نہیں کھٹکھٹاتی، مجھے دوسروں کے ماتم سے کیا غرض؟ مگر اب یہ خاموشی میرے کانوں میں پگھلے ہوئے سیسے کی طرح اتر رہی ہے اور میرا ضمیر مجھے سونے نہیں دیتا۔“',
-      },
-      {
-        paragraphText:
-          'دوسرے شخص نے ایک سرد آہ بھری اور اپنے خاک آلود چہرے پر ہاتھ پھیرتے ہوئے اعتراف کیا: ”جب معصوم بچے گلیوں میں زندگی کی بھیک مانگ رہے تھے اور مدد کے لیے پکار رہے تھے، تو میں نے اپنی جان بچانے کے لیے ان کی طرف سے منہ موڑ لیا۔ میں نے اپنے ایک عزیز دوست کو ظالموں کے حوالے کر دیا تاکہ وہ مجھے زندہ چھوڑ دیں۔ میں زندہ تو بچ گیا، لیکن اس گھناؤنے سمجھوتے کے بعد میں ہر روز اپنے ہی اندر مرتا ہوں اور زندہ لاش بن کر بھٹک رہا ہوں۔“',
-      },
-      {
-        paragraphText:
-          'تیسرے شخص نے اپنے گھٹنوں میں سر چھپا کر بلک بلک کر رونا شروع کیا: ”میری بزدلی تم دونوں سے بڑھ کر تھی۔ میں نے جلادوں کے خوف سے ان کی ہاں میں ہاں ملائی اور جن مظلوموں کے ساتھ میرا برسوں کا ناطہ تھا، میں نے ان کی کمین گاہوں کی نشان دہی کر دی۔ میں نے سوچا تھا کہ میں بچ جاؤں گا اور عافیت کی زندگی گزاروں گا، مگر اس خیانت کا داغ میرے ماتھے پر ایسا نقش ہو چکا ہے کہ اب موت بھی مجھے پاک نہیں کر سکتی۔“',
-      },
-      {
-        paragraphText:
-          'تینوں کے اعتراف کے بعد تاریکی میں سے ایک لمبا پراسرار شخص نمودار ہوا۔ اس کے سر سے پاؤں تک ایک سیاہ چادر لپٹی ہوئی تھی اور اس کے ہاتھ میں ایک مدہم لالٹین تھی جس کی زرد روشنی دھند میں کانپ رہی تھی۔ وہ ان تینوں کے قریب آ کر رکا اور اس نے گرجدار مگر رنجیدہ آواز میں دریافت کیا: ”اے اس برباد بستی کے سائے نما باسیو! کیا اس پورے شہر میں کوئی ایک بھی ایسا زندہ انسان باقی ہے جس کا دل ملامت سے آزاد ہو اور جس کا ضمیر ابھی زندہ ہو؟“ تینوں نے شرم کے مارے سر جھکا لیے اور کوئی جواب نہ دے سکے۔',
-      },
-      {
-        paragraphText:
-          'اجنبی مسافر نے ایک پردرد نگاہ اس ویران منظر پر ڈالی، اپنی لالٹین کی لو مدہم کی اور اندھیرے میں غائب ہوتے ہوئے بولا: ”پس جان لو کہ جس بستی کا ضمیر مر جائے، وہ شہر نہیں بلکہ شہرِ افسوس بن جاتی ہے جہاں زندہ انسان بھی پچھتاوے کی قبروں میں سسکتے رہتے ہیں۔“ تیز سرد ہوا چلی اور اس اجڑے ہوئے شہر کے کھنڈرات پر صدیوں کی خاک اڑا کر لے گئی، اور وہ تینوں مجرم اپنے اپنے گناہوں کے بوجھ تلے ہمیشہ کے لیے پتھر کے بت بن کر رہ گئے۔',
-      },
-    ],
-  },
 ];
 
 async function seed() {
@@ -7010,7 +6999,7 @@ async function seed() {
 
   for (const sData of STORIES_DATA) {
     const storyId = `story_${sData.slug}`;
-    console.log(`Inserting story: ${sData.titleEnglish} (${sData.titleUrdu}) [Level ${sData.level}]`);
+    console.log(`Inserting story: ${sData.titleEnglish} (${sData.titleUrdu}) [Level ${sData.subLevel}]`);
 
     db.insert(schema.stories)
       .values({
@@ -7021,6 +7010,10 @@ async function seed() {
         titleUrdu: sData.titleUrdu,
         titleEnglish: sData.titleEnglish,
         level: sData.level,
+        subLevel: sData.subLevel,
+        format: sData.format || 'short_story',
+        targetVocabFocus: sData.targetVocabFocus || null,
+        status: 'ready',
         descriptionEnglish: sData.descriptionEnglish || null,
         sceneVocabPreviewJson: sData.sceneVocabPreview || null,
         createdAt: new Date(),
@@ -7219,20 +7212,47 @@ async function seed() {
     console.log(`  -> Inserted ${pList.length} paragraphs`);
   }
 
+  // Seed the remaining 10-level curriculum entries as 'coming_soon'
+  console.log('Inserting upcoming curriculum entries (Levels 1–10)...');
+  for (const entry of CURRICULUM_REGISTRY) {
+    if (entry.status === 'coming_soon') {
+      const storyId = `story_${entry.id}`;
+      db.insert(schema.stories)
+        .values({
+          id: storyId,
+          slug: entry.id,
+          authorUrdu: entry.authorUrdu,
+          authorEnglish: entry.authorEnglish,
+          titleUrdu: entry.titleUrdu,
+          titleEnglish: entry.titleEnglish,
+          level: entry.level,
+          subLevel: entry.subLevel,
+          format: entry.format,
+          targetVocabFocus: entry.targetVocabFocus,
+          sourceUrl: entry.sourceUrl || null,
+          status: 'coming_soon',
+          descriptionEnglish: entry.descriptionEnglish || null,
+          sceneVocabPreviewJson: entry.sceneVocabPreview || null,
+          createdAt: new Date(),
+        })
+        .run();
+    }
+  }
+
   // Pre-seed a few sample telemetry items for Vocabulary Vault display
   db.insert(schema.userTelemetry)
     .values([
       {
         id: 'tel_sample_1',
-        normalizedSurface: 'شہرِ',
-        vocalizedSurface: 'شَہْرِ',
+        normalizedSurface: 'چمٹا',
+        vocalizedSurface: 'چِمْٹا',
         lookupCount: 4,
         maxTapLevel: 3, // Full Gloss
         lastTapLevel: 3,
-        storyId: 'story_shehr-e-afsos',
-        storySlug: 'shehr-e-afsos',
-        storyTitleUrdu: 'شہرِ افسوس',
-        sourceSentenceUrdu: 'یہ شہرِ افسوس کی داستان ہے۔',
+        storyId: 'story_idgah',
+        storySlug: 'idgah',
+        storyTitleUrdu: 'عید گاہ',
+        sourceSentenceUrdu: 'حامد نے تین پیسوں کا چمٹا خریدا۔',
         masteryStatus: 'learning',
         isStarred: true,
         lastSeenAt: new Date(Date.now() - 1000 * 60 * 30),

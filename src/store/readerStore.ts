@@ -9,6 +9,11 @@ export interface Story {
   titleUrdu: string;
   titleEnglish: string;
   level: number;
+  subLevel: string;
+  format?: 'short_story' | 'essay' | 'novella_arc' | 'novel_arc';
+  targetVocabFocus?: string | null;
+  sourceUrl?: string | null;
+  status: 'ready' | 'coming_soon';
   descriptionEnglish?: string | null;
   sceneVocabPreview?: string[] | null;
 }
@@ -1036,8 +1041,11 @@ export async function loadStories() {
       if (data.data.length > 0) {
         const urlParams = new URLSearchParams(window.location.search);
         const storyParam = urlParams.get('story');
-        const initialSlug = (storyParam && data.data.some((s: any) => s.slug === storyParam))
+        const readyStories = data.data.filter((s: any) => s.status === 'ready');
+        const initialSlug = (storyParam && readyStories.some((s: any) => s.slug === storyParam))
           ? storyParam
+          : readyStories.length > 0
+          ? readyStories[0].slug
           : data.data[0].slug;
         await selectStory(initialSlug);
       }
@@ -1051,6 +1059,12 @@ export async function loadStories() {
 
 export async function selectStory(slug: string) {
   try {
+    const target = stories().find((s) => s.slug === slug);
+    if (target && target.status === 'coming_soon') {
+      showToast(`Level ${target.subLevel} · "${target.titleEnglish}" is coming soon in the curriculum roadmap.`);
+      return;
+    }
+
     closeTokenLens();
     stopAudio();
     setIsLoading(true);
