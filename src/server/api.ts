@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { eq, sql, desc, asc } from 'drizzle-orm';
+import { eq, sql, desc, asc, and, gte, inArray, count } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db';
 import * as schema from '../db/schema';
@@ -43,7 +43,7 @@ api.get('/stories', async (c) => {
 });
 
 // -------------------------------------------------------------
-// 2. GET /api/stories/:slug - Get story with paragraphs, tokens & analyses
+// 2. GET /api/stories/:slug - Get story with paginated paragraphs, tokens & analyses
 // -------------------------------------------------------------
 api.get('/stories/:slug', async (c) => {
   try {
@@ -54,40 +54,78 @@ api.get('/stories/:slug', async (c) => {
       return c.json({ success: false, error: 'Story not found' }, 404);
     }
 
-    // Fetch paragraphs ordered by paragraphIndex
-    const paragraphsList = db
+    // Title paragraph (paragraphIndex -1) if available
+    const titleParagraph = db
       .select()
       .from(schema.paragraphs)
-      .where(eq(schema.paragraphs.storyId, story.id))
-      .all()
-      .sort((a, b) => a.paragraphIndex - b.paragraphIndex);
+      .where(and(eq(schema.paragraphs.storyId, story.id), eq(schema.paragraphs.paragraphIndex, -1)))
+      .get();
 
-    const paragraphIds = paragraphsList.map((p) => p.id);
+    // Total count of body paragraphs (paragraphIndex >= 0)
+    const bodyCountResult = db
+      .select({ count: count() })
+      .from(schema.paragraphs)
+      .where(and(eq(schema.paragraphs.storyId, story.id), gte(schema.paragraphs.paragraphIndex, 0)))
+      .get();
+    const totalBodyParagraphs = bodyCountResult?.count || 0;
 
-    // Fetch all tokens for these paragraphs
-    const allTokens: (typeof schema.tokens.$inferSelect)[] = [];
+    // Pagination calculations
+    const isAll = c.req.query('all') === 'true';
+    const requestedPageSize = parseInt(c.req.query('pageSize') || '4', 10);
+    const pageSize = Math.max(1, Math.min(20, isNaN(requestedPageSize) ? 4 : requestedPageSize));
+    const totalPages = Math.max(1, Math.ceil(totalBodyParagraphs / pageSize));
+    const requestedPage = parseInt(c.req.query('page') || '1', 10);
+    const currentPage = Math.max(1, Math.min(totalPages, isNaN(requestedPage) ? 1 : requestedPage));
+
+    let bodyParagraphs;
+    if (isAll) {
+      bodyParagraphs = db
+        .select()
+        .from(schema.paragraphs)
+        .where(and(eq(schema.paragraphs.storyId, story.id), gte(schema.paragraphs.paragraphIndex, 0)))
+        .orderBy(asc(schema.paragraphs.paragraphIndex))
+        .all();
+    } else {
+      const offset = (currentPage - 1) * pageSize;
+      bodyParagraphs = db
+        .select()
+        .from(schema.paragraphs)
+        .where(and(eq(schema.paragraphs.storyId, story.id), gte(schema.paragraphs.paragraphIndex, 0)))
+        .orderBy(asc(schema.paragraphs.paragraphIndex))
+        .limit(pageSize)
+        .offset(offset)
+        .all();
+    }
+
+    // Combine title (always included so reader has title tokens) + page's body paragraphs
+    const pageParagraphs = titleParagraph ? [titleParagraph, ...bodyParagraphs] : bodyParagraphs;
+    const paragraphIds = pageParagraphs.map((p) => p.id);
+
+    // Batch fetch tokens for only the active page's paragraphs
+    let allTokens: (typeof schema.tokens.$inferSelect)[] = [];
     const allAnalyses: Record<string, typeof schema.tokenAnalyses.$inferSelect> = {};
 
-    for (const pid of paragraphIds) {
-      const pTokens = db
+    if (paragraphIds.length > 0) {
+      allTokens = db
         .select()
         .from(schema.tokens)
-        .where(eq(schema.tokens.paragraphId, pid))
-        .all()
-        .sort((a, b) => a.tokenIndex - b.tokenIndex);
+        .where(inArray(schema.tokens.paragraphId, paragraphIds))
+        .orderBy(asc(schema.tokens.paragraphId), asc(schema.tokens.tokenIndex))
+        .all();
 
-      allTokens.push(...pTokens);
+      const wordTokenIds = allTokens.filter((t) => t.isWord).map((t) => t.id);
 
-      for (const tok of pTokens) {
-        if (tok.isWord) {
-          const analysis = db
+      // Chunk token IDs to stay safely below SQLite query variable limit
+      for (let i = 0; i < wordTokenIds.length; i += 300) {
+        const chunk = wordTokenIds.slice(i, i + 300);
+        if (chunk.length > 0) {
+          const analysesChunk = db
             .select()
             .from(schema.tokenAnalyses)
-            .where(eq(schema.tokenAnalyses.tokenId, tok.id))
-            .get();
-
-          if (analysis) {
-            allAnalyses[tok.id] = analysis;
+            .where(inArray(schema.tokenAnalyses.tokenId, chunk))
+            .all();
+          for (const a of analysesChunk) {
+            allAnalyses[a.tokenId] = a;
           }
         }
       }
@@ -100,9 +138,17 @@ api.get('/stories/:slug', async (c) => {
           ...story,
           sceneVocabPreview: story.sceneVocabPreviewJson,
         },
-        paragraphs: paragraphsList,
+        paragraphs: pageParagraphs,
         tokens: allTokens,
         analyses: allAnalyses,
+        pagination: {
+          currentPage: isAll ? 1 : currentPage,
+          pageSize: isAll ? totalBodyParagraphs : pageSize,
+          totalParagraphs: totalBodyParagraphs,
+          totalPages: isAll ? 1 : totalPages,
+          hasNextPage: isAll ? false : currentPage < totalPages,
+          hasPrevPage: isAll ? false : currentPage > 1,
+        },
       },
     });
   } catch (error: any) {

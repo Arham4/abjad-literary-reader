@@ -27,4 +27,4 @@ RUN bun run src/db/seed.ts
 EXPOSE 4000
 ENV PORT=4000
 
-CMD ["bun", "run", "src/server/index.ts"]
+CMD ["bun", "--smol", "run", "src/server/index.ts"]

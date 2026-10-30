@@ -1,4 +1,4 @@
-import { For, Show } from 'solid-js';
+import { For, Show, onCleanup } from 'solid-js';
 import {
   paragraphs,
   tokensMap,
@@ -11,7 +11,16 @@ import {
   showIzafatHighlights,
   currentSentence,
   isPlaying,
+  theme,
+  pagination,
+  currentPage,
+  totalPages,
+  totalParagraphs,
+  nextPage,
+  prevPage,
+  goToPage,
 } from '../store/readerStore';
+import { ChevronRight, ChevronLeft } from 'lucide-solid';
 
 export default function ReaderSurface() {
   // Delegated Click Handler on .abjad-reader-surface (Zero per-span listeners!)
@@ -201,6 +210,87 @@ export default function ReaderSurface() {
           );
         }}
       </For>
+
+      {/* Literary Reader Pagination Bar */}
+      <Show when={totalPages() > 1}>
+        <nav
+          aria-label="Story Pagination"
+          class={`abjad-pagination-bar mt-10 mb-6 pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors select-none ${
+            theme() === 'sepia'
+              ? 'border-[#D8CCBA]/60 text-[#3A2D23]'
+              : theme() === 'midnight'
+              ? 'border-neutral-800 text-neutral-300'
+              : 'border-neutral-200 text-neutral-700'
+          }`}
+        >
+          {/* Previous Page */}
+          <button
+            type="button"
+            onClick={prevPage}
+            disabled={!pagination().hasPrevPage}
+            class={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-150 disabled:opacity-35 disabled:cursor-not-allowed ${
+              theme() === 'sepia'
+                ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border border-[#D8CCBA] text-[#28201A] shadow-xs'
+                : theme() === 'midnight'
+                ? 'bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-100 shadow-xs'
+                : 'bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-800 shadow-xs'
+            }`}
+          >
+            <ChevronLeft class="w-4 h-4" />
+            <span class="font-nastaliq text-base">پچھلا صفحہ</span>
+            <span class="text-xs opacity-60 font-sans hidden sm:inline">(Previous Page)</span>
+          </button>
+
+          {/* Page Indicator & Quick Jumper */}
+          <div class="flex items-center gap-2 text-xs sm:text-sm font-serif">
+            <span class="font-nastaliq text-base sm:text-lg">
+              صفحہ {currentPage()} از {totalPages()}
+            </span>
+            <span class="opacity-40">·</span>
+            <span class="font-sans text-xs opacity-75 hidden xs:inline">
+              Page {currentPage()} of {totalPages()} ({totalParagraphs()} paragraphs)
+            </span>
+            <select
+              aria-label="Jump to page"
+              value={currentPage()}
+              onChange={(e) => goToPage(parseInt(e.currentTarget.value, 10))}
+              class={`text-xs py-1 px-2.5 rounded-lg border cursor-pointer focus:outline-none transition-colors ${
+                theme() === 'sepia'
+                  ? 'bg-[#FAF6EC] border-[#D8CCBA] text-[#28201A]'
+                  : theme() === 'midnight'
+                  ? 'bg-neutral-800 border-neutral-700 text-neutral-200'
+                  : 'bg-white border-neutral-200 text-neutral-800'
+              }`}
+            >
+              <For each={Array.from({ length: totalPages() }, (_, i) => i + 1)}>
+                {(pNum) => (
+                  <option value={pNum}>
+                    Page {pNum} (صفحہ {pNum})
+                  </option>
+                )}
+              </For>
+            </select>
+          </div>
+
+          {/* Next Page */}
+          <button
+            type="button"
+            onClick={nextPage}
+            disabled={!pagination().hasNextPage}
+            class={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-150 disabled:opacity-35 disabled:cursor-not-allowed ${
+              theme() === 'sepia'
+                ? 'bg-[#FAF6EC] hover:bg-[#F0E6D4] border border-[#D8CCBA] text-[#28201A] shadow-xs'
+                : theme() === 'midnight'
+                ? 'bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-100 shadow-xs'
+                : 'bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-800 shadow-xs'
+            }`}
+          >
+            <span class="font-nastaliq text-base">اگلا صفحہ</span>
+            <span class="text-xs opacity-60 font-sans hidden sm:inline">(Next Page)</span>
+            <ChevronRight class="w-4 h-4" />
+          </button>
+        </nav>
+      </Show>
     </div>
   );
 }

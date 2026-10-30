@@ -6,6 +6,8 @@ const sqlite = new Database('dev.db', { create: true });
 sqlite.exec('PRAGMA journal_mode = WAL;');
 sqlite.exec('PRAGMA synchronous = NORMAL;');
 sqlite.exec('PRAGMA foreign_keys = ON;');
+sqlite.exec('PRAGMA cache_size = -2000;');
+sqlite.exec('PRAGMA mmap_size = 0;');
 
 // Create tables automatically if not already created
 sqlite.exec(`

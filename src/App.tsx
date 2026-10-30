@@ -30,6 +30,8 @@ import {
   openVoiceSettings,
   allStorySentences,
   playSentence,
+  currentPage,
+  totalPages,
 } from './store/readerStore';
 import { X, Sparkles } from 'lucide-solid';
 
@@ -139,26 +141,22 @@ export default function App() {
     applyThemeToDom(theme());
   });
 
-  const getLevelLabel = (lvl: number) => {
-    switch (lvl) {
-      case 0.1:
-        return 'Level 0.1 · Spoken Vocab & Eye-Speed';
-      case 0.3:
-        return 'Level 0.3 · Classic Household Story';
-      case 0.5:
-        return 'Level 0.5 · Domestic Emotional Narrative';
-      case 0.8:
-        return 'Level 0.8 · Urban Literary Classic';
-      case 1:
-        return 'Level 1.0 · Foundational Masterpiece';
-      case 2:
-        return 'Level 2.0 · Complex Multi-Perspective';
-      case 2.5:
-        return 'Level 2.5 · Classical Portrait';
-      case 3:
-      default:
-        return `Level ${lvl} · High Classical Masterpiece`;
-    }
+  const getLevelLabel = (story: any) => {
+    const subLvl = story.subLevel || `${story.level}`;
+    const levelThemes: Record<number, string> = {
+      1: 'Folklore & Wit',
+      2: 'Household Realism',
+      3: 'Mystery & Adventure',
+      4: 'Ethics & Conscience',
+      5: 'Urban Irony',
+      6: 'Social Realism',
+      7: 'Manto & Thrillers',
+      8: 'Psychological Studies',
+      9: 'Existential Novellas',
+      10: 'Philosophical Novels',
+    };
+    const themeName = levelThemes[Math.floor(story.level)] || 'Urdu Literature';
+    return `Level ${subLvl} · ${themeName}`;
   };
 
   return (
@@ -194,8 +192,21 @@ export default function App() {
                         : 'bg-neutral-900 text-white border-neutral-800'
                     }`}
                   >
-                    {getLevelLabel(activeStory()!.level)}
+                    {getLevelLabel(activeStory()!)}
                   </div>
+                  <Show when={totalPages() > 1}>
+                    <div
+                      class={`inline-block px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-serif font-medium border shadow-xs ml-2 ${
+                        theme() === 'sepia'
+                          ? 'bg-[#FAF6EC] text-[#3A2D23] border-[#D8CCBA]'
+                          : theme() === 'midnight'
+                          ? 'bg-neutral-800 text-neutral-200 border-neutral-700'
+                          : 'bg-white text-neutral-800 border-neutral-200'
+                      }`}
+                    >
+                      Page {currentPage()} of {totalPages()}
+                    </div>
+                  </Show>
                 </div>
 
                 <h1

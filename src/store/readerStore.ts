@@ -1057,7 +1057,51 @@ export async function loadStories() {
   }
 }
 
-export async function selectStory(slug: string) {
+export interface PaginationInfo {
+  currentPage: number;
+  pageSize: number;
+  totalParagraphs: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export const [pagination, setPagination] = createSignal<PaginationInfo>({
+  currentPage: 1,
+  pageSize: 4,
+  totalParagraphs: 0,
+  totalPages: 1,
+  hasNextPage: false,
+  hasPrevPage: false,
+});
+export const currentPage = () => pagination().currentPage;
+export const totalPages = () => pagination().totalPages;
+export const totalParagraphs = () => pagination().totalParagraphs;
+
+export async function goToPage(page: number) {
+  const story = activeStory();
+  if (!story) return;
+  const targetPage = Math.max(1, Math.min(totalPages(), page));
+  if (targetPage === currentPage()) return;
+  await selectStory(story.slug, targetPage);
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+export async function nextPage() {
+  if (pagination().hasNextPage) {
+    await goToPage(currentPage() + 1);
+  }
+}
+
+export async function prevPage() {
+  if (pagination().hasPrevPage) {
+    await goToPage(currentPage() - 1);
+  }
+}
+
+export async function selectStory(slug: string, page = 1) {
   try {
     const target = stories().find((s) => s.slug === slug);
     if (target && target.status === 'coming_soon') {
@@ -1069,12 +1113,26 @@ export async function selectStory(slug: string) {
     stopAudio();
     setIsLoading(true);
 
-    const res = await fetch(`/api/stories/${slug}`);
+    const res = await fetch(`/api/stories/${slug}?page=${page}&pageSize=4`);
     const data = await res.json();
 
     if (data.success && data.data) {
       setActiveStory(data.data.story);
       setParagraphs(data.data.paragraphs);
+
+      // Set pagination state
+      if (data.data.pagination) {
+        setPagination(data.data.pagination);
+      } else {
+        setPagination({
+          currentPage: 1,
+          pageSize: data.data.paragraphs.length,
+          totalParagraphs: data.data.paragraphs.length,
+          totalPages: 1,
+          hasNextPage: false,
+          hasPrevPage: false,
+        });
+      }
 
       // Build token map
       const tMap: Record<string, Token> = {};
@@ -1084,7 +1142,7 @@ export async function selectStory(slug: string) {
       setTokensMap(tMap);
       setAnalysesMap(data.data.analyses || {});
 
-      // Initialize narration section to the first sentence of the story
+      // Initialize narration section to the first sentence of the story / current page
       const sentences = allStorySentences();
       if (sentences.length > 0) {
         setCurrentSentence(sentences[0]);

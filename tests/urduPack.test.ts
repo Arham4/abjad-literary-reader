@@ -322,4 +322,16 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     expect(dataLamha.success).toBe(true);
     expect(dataLamha.data.englishContextualGloss).toContain('moment by moment');
   });
+
+  test('Pagination API: GET /stories/:slug?page=1&pageSize=4 returns pagination metadata and bounded tokens', async () => {
+    const res = await api.fetch(new Request('http://localhost/stories/baagh?page=1&pageSize=4'));
+    expect(res.status).toBe(200);
+    const data: any = await res.json();
+    expect(data.success).toBe(true);
+    expect(data.data.pagination).toBeDefined();
+    expect(data.data.pagination.currentPage).toBe(1);
+    expect(data.data.pagination.pageSize).toBe(4);
+    expect(data.data.pagination.totalPages).toBeGreaterThanOrEqual(1);
+    expect(data.data.paragraphs.length).toBeLessThanOrEqual(5); // title (-1) + 4 body paragraphs
+  });
 });
