@@ -3,6 +3,7 @@ import * as schema from './schema';
 import { UrduLanguagePack } from '../lib/abjad/packs/urdu';
 import { PhoneticSyllablePill } from '../lib/abjad/types';
 import { vocalizeUrduWord, makePhoneticBreakdown } from '../lib/abjad/packs/urduVocalizer';
+import { EXTENDED_VOCAB } from './extendedVocab';
 
 interface LexemeAnalysisData {
   vocalizedForm: string;
@@ -190,6 +191,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
 
 // Rich contextual vocabulary dictionary for all 3 canonical stories
 export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
+  ...EXTENDED_VOCAB,
   // --- Exhaustive Vocabulary for Khol Do (کھول دو) & Canonical Literary Text ---
   'آ': {
     vocalizedForm: 'آ',
@@ -524,7 +526,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['افراتفری'],
     urduSimpleExplanation: 'افراتفری کی دوڑ (بھاگم بھاگ)',
     tokenTier: 'common_vocab',
-    englishContextualGloss: 'helter-skelter / stampede (in بھاگم بھاگ)',
+    englishContextualGloss: 'helter-skelter / stampede (in bhagam bhag)',
   },
   'بھاگنا': {
     vocalizedForm: 'بھاگْنا',
@@ -608,7 +610,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['شکستہ کیا'],
     urduSimpleExplanation: 'دم توڑا (جان دی) یا ٹکڑے کیا',
     tokenTier: 'common_vocab',
-    englishContextualGloss: 'broke / breathed one’s last (in دم توڑا)',
+    englishContextualGloss: 'broke / breathed one’s last (in dam toda)',
   },
   'تک': {
     vocalizedForm: 'تَک',
@@ -848,7 +850,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['حوصلہ دیا'],
     urduSimpleExplanation: 'یقین دلایا، اطمینان بخشا',
     tokenTier: 'common_vocab',
-    englishContextualGloss: 'assured / instilled (as in یقین دلایا, gave assurance)',
+    englishContextualGloss: 'assured / instilled (as in yaqeen dilaya, gave assurance)',
   },
   'دم': {
     vocalizedForm: 'دَم',
@@ -933,7 +935,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['عطا کرتا'],
     urduSimpleExplanation: 'دینے کی عادت یا صیغہ استمراری',
     tokenTier: 'function_word',
-    englishContextualGloss: 'gives / would give (as in سنائی نہیں دیتا تھا)',
+    englishContextualGloss: 'gives / would give (as in sunai nahin deta tha)',
   },
   'دیر': {
     vocalizedForm: 'دیر',
@@ -1205,7 +1207,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['قابل ہوا'],
     urduSimpleExplanation: 'فعل سکنا کا ماضی (جیسے مل نہ سکا)',
     tokenTier: 'function_word',
-    englishContextualGloss: 'could / was able to (in مل نہ سکا, could not find)',
+    englishContextualGloss: 'could / was able to (in mil na saka, could not find)',
   },
   'سی': {
     vocalizedForm: 'سی',
@@ -1288,7 +1290,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     urduSimpleExplanation: 'مقدار یا پیمانہ (کسی قدر: کچھ حد تک)',
     tokenTier: 'common_vocab',
     arabicRoot: 'ق-د-ر',
-    englishContextualGloss: 'measure / degree (in کسی قدر, somewhat / to a degree)',
+    englishContextualGloss: 'measure / degree (in kisi qadar, somewhat / to a degree)',
   },
   'قریب': {
     vocalizedForm: 'قَرِیب',
@@ -1810,7 +1812,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['نظریں چرائی'],
     urduSimpleExplanation: 'نظریں چرانا، شرمندگی سے نظریں ہٹا لینا',
     tokenTier: 'common_vocab',
-    englishContextualGloss: 'averted / stole away (in نظریں چرا کر, looking away in guilt)',
+    englishContextualGloss: 'averted / stole away (in nazrein chura kar, looking away in guilt)',
     literaryNuanceNote: 'The volunteers guiltily avert their gaze from Sirajuddin after failing to return his daughter.',
   },
   'چلا': {
@@ -1847,7 +1849,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['پھیرا'],
     urduSimpleExplanation: 'گھومنا پھرنا یا گشت لگانا',
     tokenTier: 'common_vocab',
-    englishContextualGloss: 'rounds / circuit (in چکر کاٹنا)',
+    englishContextualGloss: 'rounds / circuit (in chakkar kaatna)',
   },
   'چکی': {
     vocalizedForm: 'چُکی',
@@ -1868,7 +1870,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['ڈھونڈتا'],
     urduSimpleExplanation: 'خاک چھانتا، ذرے ذرے میں تلاش کرتا',
     tokenTier: 'literary_vocab',
-    englishContextualGloss: 'sifting / scouring (as in خاک چھانتا, scouring the dust)',
+    englishContextualGloss: 'sifting / scouring (as in khaak chaanta, scouring the dust)',
   },
   'چھوڑو': {
     vocalizedForm: 'چھوڑو',
@@ -1911,7 +1913,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['خوفزدہ نہ ہو'],
     urduSimpleExplanation: 'خوف مت کرو (مت ڈرو)',
     tokenTier: 'common_vocab',
-    englishContextualGloss: 'fear (in مت ڈرو, do not fear)',
+    englishContextualGloss: 'fear (in mat daro, do not fear)',
   },
   'ڈھانکنے': {
     vocalizedForm: 'ڈھانْکنے',
@@ -1939,7 +1941,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['چکر لگاتا'],
     urduSimpleExplanation: 'چکر کاٹتا، مسلسل گھومتا',
     tokenTier: 'common_vocab',
-    englishContextualGloss: 'pacing / making rounds (in چکر کاٹتا)',
+    englishContextualGloss: 'pacing / making rounds (in chakkar kaatta)',
   },
   'کب': {
     vocalizedForm: 'کَب',
@@ -1967,14 +1969,14 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['خدا کرے'],
     urduSimpleExplanation: 'فعل کرنا کا مضارع (خدا بھلا کرے)',
     tokenTier: 'function_word',
-    englishContextualGloss: 'may do / bless (as in خدا بھلا کرے)',
+    englishContextualGloss: 'may do / bless (as in "khuda bhala kare")',
   },
   'کسی': {
     vocalizedForm: 'کِسی',
     spokenUrduSynonymsJson: ['کوئی ایک'],
     urduSimpleExplanation: 'ضمیر تنکیر برائے حالتِ مفعولی یا اضافی',
     tokenTier: 'function_word',
-    englishContextualGloss: 'someone / anyone / any (oblique of کوئی)',
+    englishContextualGloss: 'someone / anyone / any (oblique of koi)',
   },
   'کوشش': {
     vocalizedForm: 'کوشِش',
@@ -2178,7 +2180,7 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     spokenUrduSynonymsJson: ['شکست'],
     urduSimpleExplanation: 'شکست یا عاجزی (تھک ہار کر)',
     tokenTier: 'common_vocab',
-    englishContextualGloss: 'defeat / exhaustion (in تھک ہار کر, utterly worn out)',
+    englishContextualGloss: 'defeat / exhaustion (in thak haar kar, utterly worn out)',
   },
   'ہرٹہ': {
     vocalizedForm: 'ہَرٹَہ',
@@ -4136,6 +4138,141 @@ export const CONTEXTUAL_VOCAB: Record<string, LexemeAnalysisData> = {
     urduSimpleExplanation: 'انتہائی دلکش اور پسندیدہ',
     tokenTier: 'common_vocab',
     englishContextualGloss: 'lovely / adorable / charming little',
+  },
+  'چہل پہل': {
+    vocalizedForm: 'چَہَل پَہَل',
+    spokenUrduSynonymsJson: ['رونق', 'آمد و رفت', 'ہلچل'],
+    urduSimpleExplanation: 'لوگوں کی چلت پھرت، گہما گہمی اور رونق و خوشی کا سماں',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'hustle and bustle / festivity / lively commotion',
+    literaryNuanceNote: 'مرکب تابع مہمل جو بازاروں، میلوں اور عید کے دنوں کی رونق اور گہما گہمی کو بیان کرنے کے لیے مستعمل ہے۔',
+  },
+  'ہنستے کھیلتے': {
+    vocalizedForm: 'ہَنَسْتے کھیلْتے',
+    spokenUrduSynonymsJson: ['خوشی خوشی', 'شاداں و فرحاں', 'مسکراتے ہوئے'],
+    urduSimpleExplanation: 'کمال خوشی، بے فکری اور مسرت کے ساتھ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'laughing and playing / in high spirits / merrily',
+    literaryNuanceNote: 'معطوف مرکب جو بچپن کی معصوم بے فکری اور عید کے سفر کی شادمانی کو کمال خوبصورتی سے منعکس کرتا ہے۔',
+  },
+  'رو رو کر': {
+    vocalizedForm: 'رو رو کَر',
+    spokenUrduSynonymsJson: ['زار و قطار روتے ہوئے'],
+    urduSimpleExplanation: 'شدتِ غم سے بار بار گریہ و زاری کرتے ہوئے',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'weeping continuously / crying bitterly',
+  },
+  'گلاب جامن': {
+    vocalizedForm: 'گُلاب جامَن',
+    spokenUrduSynonymsJson: ['میٹھی مٹھائی'],
+    urduSimpleExplanation: 'برصغیر کی روایتی شیریں اور لذیذ مٹھائی',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'gulab jamun (traditional syrup-soaked sweet dumpling)',
+  },
+  'بے حد': {
+    vocalizedForm: 'بے حَد',
+    spokenUrduSynonymsJson: ['بہت زیادہ', 'لا انتہا'],
+    urduSimpleExplanation: 'جس کی کوئی حد نہ ہو، انتہائی زیادہ',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'boundless / exceedingly / immensely',
+  },
+  'بے شمار': {
+    vocalizedForm: 'بے شُمار',
+    spokenUrduSynonymsJson: ['ان گنت', 'لا تعداد'],
+    urduSimpleExplanation: 'جو شمار سے باہر ہو، ان گنت',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'countless / innumerable / myriad',
+  },
+  'بارگاہِ الٰہی': {
+    vocalizedForm: 'بارگاہِ اِلٰہی',
+    spokenUrduSynonymsJson: ['خدا کے حضور', 'دربارِ خداوندی'],
+    urduSimpleExplanation: 'اللہ تعالیٰ کا دربارِ عالی',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'Divine Court / Divine Presence of God',
+  },
+  'بارگاہِ الہی': {
+    vocalizedForm: 'بارگاہِ اِلٰہی',
+    spokenUrduSynonymsJson: ['خدا کے حضور', 'دربارِ خداوندی'],
+    urduSimpleExplanation: 'اللہ تعالیٰ کا دربارِ عالی',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'Divine Court / Divine Presence of God',
+  },
+  'ٹوٹ پھوٹ': {
+    vocalizedForm: 'ٹُوٹ پُھوٹ',
+    spokenUrduSynonymsJson: ['شکستگی', 'خرابی'],
+    urduSimpleExplanation: 'ٹوٹنے اور بکھرنے کی کیفیت، شکستہ حالت',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'breakage / wear and tear / ruin',
+  },
+  'خیر و عافیت': {
+    vocalizedForm: 'خَیر و عافِیَت',
+    spokenUrduSynonymsJson: ['سلامتی', 'خیریت'],
+    urduSimpleExplanation: 'امن، سلامتی اور خیریت کی کیفیت',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'well-being / safety and peace',
+  },
+  'عزیز و اقارب': {
+    vocalizedForm: 'عَزِیز و اَقارِب',
+    spokenUrduSynonymsJson: ['رشتہ دار', 'اہل و عیال'],
+    urduSimpleExplanation: 'قریبی رشتہ دار اور ناتے دار',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'kith and kin / relatives and near ones',
+  },
+  'چیخ پکار': {
+    vocalizedForm: 'چِیخ پُکار',
+    spokenUrduSynonymsJson: ['شور و غل', 'واویلا'],
+    urduSimpleExplanation: 'چلانے اور مدد مانگنے کا بلند شور',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'screaming and shouting / clamor / uproar',
+  },
+  'افرا تفری': {
+    vocalizedForm: 'اَفْرا تَفْرِی',
+    spokenUrduSynonymsJson: ['بھاگ دوڑ', 'ہڑبونگ'],
+    urduSimpleExplanation: 'بدحواسی کی بھاگ دوڑ اور افراتفری',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'chaos / pandemonium / helter-skelter',
+  },
+  'اوندھے منہ': {
+    vocalizedForm: 'اَوندھے مُنہ',
+    spokenUrduSynonymsJson: ['الٹے بل', 'منہ کے بل'],
+    urduSimpleExplanation: 'چہرے کے بل گرنا، الٹے منہ زمین پر',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'face down / headlong / prone',
+  },
+  'بیچوں بیچ': {
+    vocalizedForm: 'بِیچوں بِیچ',
+    spokenUrduSynonymsJson: ['عین درمیان'],
+    urduSimpleExplanation: 'بالکل درمیان میں، مرکز میں',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'right in the middle / smack in the center',
+  },
+  'سنگِ مرمر': {
+    vocalizedForm: 'سَنگِ مَرمَر',
+    spokenUrduSynonymsJson: ['سفید چکنا پتھر'],
+    urduSimpleExplanation: 'ایک چکنا، قیمتی اور خوبصورت سفید پتھر',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'marble stone',
+  },
+  'بے حس و حرکت': {
+    vocalizedForm: 'بے حِس و حَرَکَت',
+    spokenUrduSynonymsJson: ['ساکت', 'بے جان'],
+    urduSimpleExplanation: 'بغیر کسی حرکت کے ساکت و بے سدھ',
+    tokenTier: 'literary_vocab',
+    englishContextualGloss: 'motionless / insensible / inert',
+  },
+  'بلک بلک کر': {
+    vocalizedForm: 'بِلَک بِلَک کَر',
+    spokenUrduSynonymsJson: ['پھوٹ پھوٹ کر'],
+    urduSimpleExplanation: 'شدتِ گریہ سے چیخ چیخ کر رونا',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'sobbing violently / wailing uncontrollably',
+  },
+  'تھک ہار کر': {
+    vocalizedForm: 'تَھک ہار کَر',
+    spokenUrduSynonymsJson: ['مایوس ہو کر', 'چور ہو کر'],
+    urduSimpleExplanation: 'شدید تھکن اور لاچاری کی حالت میں',
+    tokenTier: 'common_vocab',
+    englishContextualGloss: 'utterly exhausted / worn out / defeated by fatigue',
   },
   'نقصان': {
     vocalizedForm: 'نُقصان',
