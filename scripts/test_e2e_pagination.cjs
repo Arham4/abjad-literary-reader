@@ -58,18 +58,18 @@ async function runTests() {
     const levelBadge = await page.$eval('.abjad-book-page header div div', el => el.innerText);
     assert(levelBadge.toUpperCase().includes('LEVEL 9'), `Level badge indicates Level 9 (Found: "${levelBadge.trim()}")`);
 
-    // Verify initial pagination state on Page 1 of 7
+    // Verify initial pagination state on Page 1 of 22
     await page.waitForSelector('.abjad-pagination-bar', { timeout: 5000 });
     const pageIndicator = await page.$eval('.abjad-pagination-bar', el => el.innerText);
-    assert(pageIndicator.includes('صفحہ 1 از 7') || pageIndicator.includes('1 of 7'), `Pagination bar shows Page 1 of 7`);
+    assert(pageIndicator.includes('صفحہ 1 از 22') || pageIndicator.includes('1 of 22'), `Pagination bar shows Page 1 of 22`);
 
     // Verify header page pill
     const headerPill = await page.evaluate(() => {
       const pills = Array.from(document.querySelectorAll('header span, header div'));
-      const found = pills.find(el => el.innerText && el.innerText.includes('Page 1 of 7'));
+      const found = pills.find(el => el.innerText && el.innerText.includes('Page 1 of 22'));
       return found ? found.innerText : null;
     });
-    assert(headerPill !== null, `Header page badge displays 'Page 1 of 7'`);
+    assert(headerPill !== null, `Header page badge displays 'Page 1 of 22'`);
 
     // Verify Previous button disabled, Next button enabled
     const prevDisabled = await page.$eval('.abjad-pagination-bar button:first-child', btn => btn.disabled);
@@ -92,46 +92,46 @@ async function runTests() {
 
     await page.waitForFunction(() => {
       const bar = document.querySelector('.abjad-pagination-bar');
-      return bar && (bar.innerText.includes('صفحہ 2 از 7') || bar.innerText.includes('2 of 7'));
+      return bar && (bar.innerText.includes('صفحہ 2 از 22') || bar.innerText.includes('2 of 22'));
     }, { timeout: 8000 });
 
     const page2Indicator = await page.$eval('.abjad-pagination-bar', el => el.innerText);
-    assert(page2Indicator.includes('صفحہ 2 از 7') || page2Indicator.includes('2 of 7'), `Pagination bar updated to Page 2 of 7`);
+    assert(page2Indicator.includes('صفحہ 2 از 22') || page2Indicator.includes('2 of 22'), `Pagination bar updated to Page 2 of 22`);
 
     const prevDisabledOnPage2 = await page.$eval('.abjad-pagination-bar button:first-child', btn => btn.disabled);
     assert(prevDisabledOnPage2 === false, `Previous Page button is now enabled on Page 2`);
 
-    // Jump to Page 7 using select dropdown
-    console.log(`Jumping directly to Page 7 via dropdown...`);
-    await page.select('select[aria-label="Jump to page"]', '7');
+    // Jump to Page 22 using select dropdown
+    console.log(`Jumping directly to Page 22 via dropdown...`);
+    await page.select('select[aria-label="Jump to page"]', '22');
     await page.waitForFunction(() => {
       const bar = document.querySelector('.abjad-pagination-bar');
-      return bar && (bar.innerText.includes('7 of 7') || bar.innerText.includes('صفحہ 7 از 7'));
+      return bar && (bar.innerText.includes('22 of 22') || bar.innerText.includes('صفحہ 22 از 22'));
     }, { timeout: 8000 });
 
-    const nextDisabledOnPage7 = await page.$eval('.abjad-pagination-bar button:last-child', btn => btn.disabled);
-    assert(nextDisabledOnPage7 === true, `Next Page button is disabled on the final page (Page 7)`);
+    const nextDisabledOnPage22 = await page.$eval('.abjad-pagination-bar button:last-child', btn => btn.disabled);
+    assert(nextDisabledOnPage22 === true, `Next Page button is disabled on the final page (Page 22)`);
 
-    // Click Previous Page from Page 7 to return to Page 6
-    console.log(`Clicking 'Previous Page' button to go back to Page 6...`);
+    // Click Previous Page from Page 22 to return to Page 21
+    console.log(`Clicking 'Previous Page' button to go back to Page 21...`);
     await page.evaluate(() => {
       const prevBtn = document.querySelector('.abjad-pagination-bar button:first-child');
       if (prevBtn) prevBtn.click();
     });
     await page.waitForFunction(() => {
       const bar = document.querySelector('.abjad-pagination-bar');
-      return bar && (bar.innerText.includes('6 of 7') || bar.innerText.includes('صفحہ 6 از 7'));
+      return bar && (bar.innerText.includes('21 of 22') || bar.innerText.includes('صفحہ 21 از 22'));
     }, { timeout: 8000 });
-    assert(true, `Successfully navigated backward from Page 7 to Page 6`);
+    assert(true, `Successfully navigated backward from Page 22 to Page 21`);
 
     // Interactive Token Lens Popover on paginated page
-    console.log(`Testing interactive Token Lens Popover on Page 6...`);
+    console.log(`Testing interactive Token Lens Popover on Page 21...`);
     await page.waitForSelector('.abjad-word-token', { timeout: 5000 });
     
     // Scroll token into view and click directly
     await page.evaluate(() => {
       const tok = document.querySelector('.abjad-word-token');
-      if (!tok) throw new Error('No .abjad-word-token found on Page 6');
+      if (!tok) throw new Error('No .abjad-word-token found on Page 21');
       tok.scrollIntoView({ block: 'center' });
       tok.click();
     });
@@ -226,7 +226,7 @@ async function runTests() {
     });
     await page.waitForFunction(() => {
       const bar = document.querySelector('.abjad-pagination-bar');
-      return bar && (bar.innerText.includes('2 of 7') || bar.innerText.includes('صفحہ 2 از 7'));
+      return bar && (bar.innerText.includes('2 of 22') || bar.innerText.includes('صفحہ 2 از 22'));
     }, { timeout: 8000 });
     assert(true, `Tapped Next Page button on mobile: successfully navigated to Page 2`);
 
