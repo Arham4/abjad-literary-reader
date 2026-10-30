@@ -1,0 +1,22 @@
+FROM node:24-alpine
+
+# Install Chromium and required font/rendering packages
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+WORKDIR /app
+
+# Install puppeteer-core inside container
+RUN npm install puppeteer-core@23.11.1
+
+COPY scripts/test_e2e_pagination.cjs ./scripts/
+
+CMD ["node", "scripts/test_e2e_pagination.cjs"]

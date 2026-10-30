@@ -364,7 +364,7 @@ export default function TokenLensPopover() {
       <div
         ref={popoverRef}
         onClick={handleDesktopBodyClick}
-        class={`z-50 transition-all duration-200 overflow-y-auto ${
+        class={`abjad-token-lens-popover z-50 transition-all duration-200 overflow-y-auto ${
           isMobile()
             ? 'fixed bottom-0 inset-x-0 rounded-t-3xl max-h-[85vh] shadow-2xl p-5 border-t-2 animate-slideUp'
             : 'w-[440px] rounded-2xl shadow-2xl p-5 sm:p-6 border cursor-pointer'

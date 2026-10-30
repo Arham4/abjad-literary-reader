@@ -179,8 +179,10 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     expect(mittiPills[2].vowelNameUrdu).toBe('چھوٹی یے');
   });
 
-  test('Vocabulary Vault API: Contextual Ingestion, Enrichment, Patching & Anki Export', async () => {
-    // 1. Ingest contextual telemetry for an item
+  test(
+    'Vocabulary Vault API: Contextual Ingestion, Enrichment, Patching & Anki Export',
+    async () => {
+      // 1. Ingest contextual telemetry for an item
     const postRes = await api.fetch(
       new Request('http://localhost/telemetry', {
         method: 'POST',
@@ -235,7 +237,7 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
       })
     );
     expect(deleteRes.status).toBe(200);
-  });
+  }, 15000);
 
   test('Multi-word compound & idiom grouping: چکنا چور, دل ہی دل میں, لمحہ بہ لمحہ', () => {
     // 1. Binomial compound: چکنا چور

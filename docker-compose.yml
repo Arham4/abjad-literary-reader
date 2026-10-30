@@ -6,6 +6,7 @@ services:
     container_name: abjad-literary-reader
     ports:
       - "4000:4000"
+    mem_limit: 48m
     environment:
       - PORT=4000
     volumes:
