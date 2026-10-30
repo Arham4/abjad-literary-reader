@@ -5,6 +5,7 @@ import { PhoneticSyllablePill } from '../lib/abjad/types';
 import { vocalizeUrduWord, makePhoneticBreakdown } from '../lib/abjad/packs/urduVocalizer';
 import { EXTENDED_VOCAB } from './extendedVocab';
 import { CURRICULUM_REGISTRY } from '../lib/abjad/curriculum';
+import { lookupUrduWord } from '../lib/abjad/urduDictionary';
 
 interface LexemeAnalysisData {
   vocalizedForm: string;
@@ -7063,13 +7064,8 @@ async function seed() {
           CONTEXTUAL_VOCAB[cleanKey] ||
           FUNCTION_WORDS_DICT[baseKey] ||
           FUNCTION_WORDS_DICT[normKey] ||
-          FUNCTION_WORDS_DICT[cleanKey] || {
-            vocalizedForm: vocalizeUrduWord(cleanKey || normKey || span.surface),
-            spokenUrduSynonymsJson: [span.normalized],
-            urduSimpleExplanation: `${span.surface} - کتاب کا عنوان`,
-            tokenTier: 'literary_vocab',
-            englishContextualGloss: span.surface,
-          };
+          FUNCTION_WORDS_DICT[cleanKey] ||
+          lookupUrduWord(span.surface, span.normalized, span.compoundPhrase);
 
         const resolvedVocalized = /[\u064B-\u0652\u0670\u0653]/.test(lexData.vocalizedForm)
           ? lexData.vocalizedForm
@@ -7166,14 +7162,8 @@ async function seed() {
             CONTEXTUAL_VOCAB[cleanKey] ||
             FUNCTION_WORDS_DICT[baseKey] ||
             FUNCTION_WORDS_DICT[normKey] ||
-            FUNCTION_WORDS_DICT[cleanKey] || {
-              vocalizedForm: vocalizeUrduWord(cleanKey || normKey || span.surface),
-              spokenUrduSynonymsJson: [span.normalized],
-              urduSimpleExplanation: `${span.surface} کا لفظی مطلب`,
-              tokenTier: 'common_vocab',
-              englishContextualGloss: span.surface,
-              literaryNuanceNote: 'Contextual Urdu literary vocabulary item.',
-            };
+            FUNCTION_WORDS_DICT[cleanKey] ||
+            lookupUrduWord(span.surface, span.normalized, span.compoundPhrase);
 
           const resolvedVocalized = /[\u064B-\u0652\u0670\u0653]/.test(lexData.vocalizedForm)
             ? lexData.vocalizedForm
@@ -7291,6 +7281,10 @@ async function seed() {
     .run();
 
   console.log('✅ Canonical Seed completed successfully!');
+
+  console.log('🔄 Ingesting extended curriculum stories...');
+  const { ingestAllCurriculumFiles } = await import('../../scripts/ingest_all_curriculum');
+  await ingestAllCurriculumFiles();
 }
 
 seed().catch((err) => {

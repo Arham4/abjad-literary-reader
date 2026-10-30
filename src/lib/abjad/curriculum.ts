@@ -54,7 +54,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Conversational wit, basic narrative connectors, and everyday transactional bazaar humor.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Folklore & Wit',
     levelThemeUrdu: 'لوک کہانیاں اور ظرافت',
     gradeLevelDescription: 'Foundation / 98% Spoken Vocabulary',
@@ -73,7 +73,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Introduces fundamental courtroom, justice, and statecraft vocabulary: انصاف، حضور، حکم، قاضی، گواہ.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Folklore & Wit',
     levelThemeUrdu: 'لوک کہانیاں اور ظرافت',
     gradeLevelDescription: 'Foundation / 98% Spoken Vocabulary',
@@ -96,7 +96,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Domestic childhood curiosity, compassion, household objects, and tragic innocence.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Household Realism',
     levelThemeUrdu: 'گھریلو حقیقت پسندی',
     gradeLevelDescription: 'Grade 5–6 / Everyday Domestic Realism',
@@ -157,7 +157,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Classic dastan narrative framework, animal fable wisdom, and early Fort William Delhi idiom.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Middle-Grade Mystery & Adventure',
     levelThemeUrdu: 'مہم جوئی اور تجسس',
     gradeLevelDescription: 'Grade 7–8 / Plot & Strategy',
@@ -176,7 +176,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Dastan trickery, disguise, enchanted strategy, and tactical verbs (عیاری، زنبیل، سحر، کمند).',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Middle-Grade Mystery & Adventure',
     levelThemeUrdu: 'مہم جوئی اور تجسس',
     gradeLevelDescription: 'Grade 7–8 / Plot & Strategy',
@@ -195,7 +195,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Pre-teaches modern investigation and deduction vocabulary: تفتیش، شبہ، سراغ، معمہ، جال.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Middle-Grade Mystery & Adventure',
     levelThemeUrdu: 'مہم جوئی اور تجسس',
     gradeLevelDescription: 'Grade 7–8 / Plot & Strategy',
@@ -218,7 +218,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Pre-teaches judicial and conscience vocabulary: ضمیر، عدالت، انصاف، سرپنچ، حق، فیصلہ.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Matric Classics: Ethics & Conscience',
     levelThemeUrdu: 'میٹرک کلاسیکی ادب: اخلاقیات و ضمیر',
     gradeLevelDescription: 'Grade 9–10 Matric / Judicial & Moral Dilemmas',
@@ -237,7 +237,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Integrity vs systemic corruption, law enforcement terminology: رشوت، داروغہ، ایمان، قانون.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Matric Classics: Ethics & Conscience',
     levelThemeUrdu: 'میٹرک کلاسیکی ادب: اخلاقیات و ضمیر',
     gradeLevelDescription: 'Grade 9–10 Matric / Judicial & Moral Dilemmas',
@@ -256,7 +256,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Artistic exploitation, societal hypocrisy, and the tragedy of uncredited creative labor.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Matric Classics: Ethics & Conscience',
     levelThemeUrdu: 'میٹرک کلاسیکی ادب: اخلاقیات و ضمیر',
     gradeLevelDescription: 'Grade 9–10 Matric / Judicial & Moral Dilemmas',
@@ -279,7 +279,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'essay',
     targetVocabFocus:
       'Witty satirical prose, student life, Persianized humorous compounding, and morning routine irony.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Urban Observation & Irony',
     levelThemeUrdu: 'شہری مشاہدہ اور طنز و ظرافت',
     gradeLevelDescription: 'Grade 10 / Satire & Light Persianized Idiom',
@@ -317,7 +317,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Middle-class aspiration, lifetime deferred dreams, mortality, and quiet psychological resignation.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Urban Observation & Irony',
     levelThemeUrdu: 'شہری مشاہدہ اور طنز و ظرافت',
     gradeLevelDescription: 'Grade 10 / Satire & Light Persianized Idiom',
@@ -340,7 +340,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Bureaucratic favoritism, rural helplessness, psychological devastation, and social paralysis.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Social Hypocrisy & Bleak Realism',
     levelThemeUrdu: 'سماجی منافقت اور تلخ حقیقت نگاری',
     gradeLevelDescription: 'Grade 11 FSc / Biting Satire & Socio-Political Critique',
@@ -359,7 +359,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Municipal hypocrisy, town planning satire, and the cyclic displacement of marginalized women.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Social Hypocrisy & Bleak Realism',
     levelThemeUrdu: 'سماجی منافقت اور تلخ حقیقت نگاری',
     gradeLevelDescription: 'Grade 11 FSc / Biting Satire & Socio-Political Critique',
@@ -378,7 +378,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Lethal cynicism, dehumanizing destitution, unsparing peasant realism, and moral numbness.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Social Hypocrisy & Bleak Realism',
     levelThemeUrdu: 'سماجی منافقت اور تلخ حقیقت نگاری',
     gradeLevelDescription: 'Grade 11 FSc / Biting Satire & Socio-Political Critique',
@@ -401,7 +401,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Political naivety, colonial Government of India Act 1935, and streetwise disillusionment.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Accessible Manto & Pulp Thrillers',
     levelThemeUrdu: 'منٹو اور تجسس خیز ادب',
     gradeLevelDescription: 'Grade 12 FSc / Historical Trauma & Suspense',
@@ -458,7 +458,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'novella_arc',
     targetVocabFocus:
       'Pulp detective jargon, fast-paced dialogue, espionage pacing, and colloquial Urdu suspense.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Accessible Manto & Pulp Thrillers',
     levelThemeUrdu: 'منٹو اور تجسس خیز ادب',
     gradeLevelDescription: 'Grade 12 FSc / Historical Trauma & Suspense',
@@ -481,7 +481,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Rejection trauma, self-worth collapse, nocturnal urban psychology, and rebellion against humiliation.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Deep Psychological Studies',
     levelThemeUrdu: 'گہرے نفسیاتی مطالعات',
     gradeLevelDescription: 'Early College / Unflinching Character Dissections',
@@ -500,7 +500,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Visceral guilt, sexual impotence from communal atrocities, and primal psychological horror.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Deep Psychological Studies',
     levelThemeUrdu: 'گہرے نفسیاتی مطالعات',
     gradeLevelDescription: 'Early College / Unflinching Character Dissections',
@@ -542,7 +542,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'novella_arc',
     targetVocabFocus:
       'Forest solitude, psychological feral alienation, political metaphor, and existential drift.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Existential Novellas',
     levelThemeUrdu: 'وجودیت پسند ناولٹ',
     gradeLevelDescription: 'Upper College / Atmospheric Novellas & Classical Prose',
@@ -561,7 +561,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'short_story',
     targetVocabFocus:
       'Oneiric Lucknow decay, occult illusion, uncanny sensory atmosphere, and hypnotic dream-like syntax.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Existential Novellas',
     levelThemeUrdu: 'وجودیت پسند ناولٹ',
     gradeLevelDescription: 'Upper College / Atmospheric Novellas & Classical Prose',
@@ -580,7 +580,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'novel_arc',
     targetVocabFocus:
       'Courtesan salon culture, 19th-century Awadh idioms, classical poetic high culture, and autobiographical voice.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Existential Novellas',
     levelThemeUrdu: 'وجودیت پسند ناولٹ',
     gradeLevelDescription: 'Upper College / Atmospheric Novellas & Classical Prose',
@@ -603,7 +603,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'novel_arc',
     targetVocabFocus:
       'Historical sweep, WW1 European trenches to Partition, intergenerational trauma, and monumental prose rhythm.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Grand Philosophical Novels',
     levelThemeUrdu: 'عظیم فلسفیانہ شاہکار',
     gradeLevelDescription: 'Endgame / Magnum Opus Literary Masterpieces',
@@ -622,7 +622,7 @@ export const CURRICULUM_REGISTRY: CurriculumEntry[] = [
     format: 'novel_arc',
     targetVocabFocus:
       'Postmodern philosophical Urdu, existential dread, linguistic experimentation, and labyrinthine narratives.',
-    status: 'coming_soon',
+    status: 'ready',
     levelThemeEnglish: 'Grand Philosophical Novels',
     levelThemeUrdu: 'عظیم فلسفیانہ شاہکار',
     gradeLevelDescription: 'Endgame / Magnum Opus Literary Masterpieces',

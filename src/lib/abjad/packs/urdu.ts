@@ -179,6 +179,62 @@ export const URDU_COMMON_IDIOMS_AND_COMPOUNDS = new Set([
   'میو اسپتال',
   'بارگاہِ الٰہی',
   'بارگاہِ الہی',
+  'نادان دوست',
+  'نمک کا داروغہ',
+  'لہو اور قالین',
+  'نیا قانون',
+  'ٹھنڈا گوشت',
+  'اداس نسلیں',
+  'غلام باغ',
+  'باغ و بہار',
+  'طوطے کی کہانی',
+  'عمرو عیار',
+  'عمرو عیار کی کہانیاں',
+  'انسپکٹر جمشید',
+  'حاضر جوابی',
+  'خوفناک عمارت',
+  'حق و باطل',
+  'شام و سحر',
+  'کوچۂ جاناں',
+  'شب و روز',
+  'دھوم دھام',
+  'لوٹ مار',
+  'مار پیٹ',
+  'شور شرابا',
+  'عیش و عشرت',
+  'غم و اندوہ',
+  'حسن و جمال',
+  'رنج و الم',
+  'ملا نصیر الدین',
+  'ملا نصیر الدین کے واقعات',
+  'بیربل کی حاضر جوابی',
+  'توبہ توبہ',
+  'پھولے نہ سمانا',
+  'آنکھیں پھٹی کی پھٹی رہ گئیں',
+  'آنکھیں پھٹی رہ گئیں',
+  'دم سادھے',
+  'خاک چھاننا',
+  'حواس باختہ',
+  'سکتہ طاری',
+  'لب و لہجہ',
+  'رسم و رواج',
+  'ساز و سامان',
+  'خواب و خیال',
+  'آہ و بکا',
+  'نالہ و شیون',
+  'داد و دہش',
+  'زور و شور',
+  'عقل و شعور',
+  'قہر و غضب',
+  'چوری چھپے',
+  'آہٹ پا کر',
+  'ہکا بکا',
+  'آئیں بائیں شائیں',
+  'رات گئی بات گئی',
+  'رو رو کے',
+  'گھبراہٹ کے مارے',
+  'جرم و سزا',
+  'دار و مدار',
 ]);
 
 export const UrduLanguagePack: AbjadLanguagePack = {
@@ -394,8 +450,11 @@ export const UrduLanguagePack: AbjadLanguagePack = {
               .trim()
           );
           const joinedPhrase = rawWords.join(' ');
+          const bareJoinedPhrase = this.stripHarakatPreserveOrthography(joinedPhrase);
 
-          const isKnownCompound = URDU_COMMON_IDIOMS_AND_COMPOUNDS.has(joinedPhrase);
+          const isKnownCompound =
+            URDU_COMMON_IDIOMS_AND_COMPOUNDS.has(joinedPhrase) ||
+            URDU_COMMON_IDIOMS_AND_COMPOUNDS.has(bareJoinedPhrase);
           // Reduplicative emphatic [word] ہی [word] میں (e.g. دل ہی دل میں, باتوں ہی باتوں میں)
           const isReduplicativeHeIn =
             winSize === 4 &&
@@ -407,11 +466,11 @@ export const UrduLanguagePack: AbjadLanguagePack = {
             winSize === 3 &&
             rawWords[1] === 'بہ' &&
             rawWords[0] === rawWords[2];
-          // Waw-e-Atf compound pair: [Noun] و [Noun] (e.g. رگ و ریشے, سود و زیاں, حیران و پریشان)
+          // Waw-e-Atf compound pair: [Noun] و [Noun] (e.g. رگ و ریشے, سود و زیاں, حیران و پریشان, علم و حکمت)
           const isWawAtfCompound =
             winSize === 3 &&
             rawWords[1] === 'و' &&
-            URDU_COMMON_IDIOMS_AND_COMPOUNDS.has(joinedPhrase);
+            (isKnownCompound || (rawWords[0].length >= 2 && rawWords[2].length >= 2));
           // Echo pair / identical words (e.g. پیارے پیارے, طرح طرح, تار تار, پائی پائی)
           const isEchoPair =
             winSize === 2 &&

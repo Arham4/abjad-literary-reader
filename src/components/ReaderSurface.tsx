@@ -111,6 +111,18 @@ export default function ReaderSurface() {
                       activeTok.compoundGroupId === token.compoundGroupId
                     );
                   };
+                  const isIzafatActive = () => {
+                    if (!token.izafatGroupId) return false;
+                    const activeId = activeTokenId();
+                    if (!activeId) return false;
+                    const activeTok = tokensMap()[activeId];
+                    return Boolean(
+                      activeTok &&
+                      activeTok.paragraphId === token.paragraphId &&
+                      activeTok.izafatGroupId &&
+                      activeTok.izafatGroupId === token.izafatGroupId
+                    );
+                  };
 
                   const tokenWordDisplay = () => {
                     const activeId = activeTokenId();
@@ -135,6 +147,23 @@ export default function ReaderSurface() {
                       }
                     }
 
+                    // 1b. Part of active izafat: resolve only this token's constituent word
+                    if (
+                      token.izafatGroupId &&
+                      activeTok?.izafatGroupId === token.izafatGroupId &&
+                      activeTok?.paragraphId === token.paragraphId &&
+                      activeAna?.vocalizedForm
+                    ) {
+                      const izTokens = pTokens.filter(
+                        (t) => t.isWord && t.izafatGroupId && t.izafatGroupId === token.izafatGroupId
+                      );
+                      const parts = activeAna.vocalizedForm.trim().split(/\s+/);
+                      const idx = izTokens.findIndex((t) => t.id === token.id);
+                      if (idx >= 0 && idx < parts.length) {
+                        return parts[idx];
+                      }
+                    }
+
                     // 2. Single word token (non-compound)
                     if (activeId === token.id && analysesMap()[token.id]?.vocalizedForm) {
                       const voc = analysesMap()[token.id]!.vocalizedForm;
@@ -151,6 +180,8 @@ export default function ReaderSurface() {
                       } ${isCurrentSentence() ? 'sentence-token-active' : ''}`}
                       data-compound-group={token.compoundGroupId || undefined}
                       data-compound-active={isCompoundActive() ? 'true' : undefined}
+                      data-izafat-group={token.izafatGroupId || undefined}
+                      data-izafat-active={isIzafatActive() ? 'true' : undefined}
                       data-active-sentence={isCurrentSentence() ? 'true' : undefined}
                     >
                       <span

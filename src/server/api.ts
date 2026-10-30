@@ -7,6 +7,7 @@ import * as schema from '../db/schema';
 import { UrduLanguagePack } from '../lib/abjad/packs/urdu';
 import { CONTEXTUAL_VOCAB } from '../db/seed';
 import { vocalizeUrduWord, makePhoneticBreakdown } from '../lib/abjad/packs/urduVocalizer';
+import { lookupUrduWord } from '../lib/abjad/urduDictionary';
 import { existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -838,7 +839,7 @@ api.post('/phrase/decode', async (c) => {
         ),
         spokenUrduSynonymsJson: [cleanPhrase],
         urduSimpleExplanation: `${cleanPhrase} کا مجموعی ادبی مفہوم`,
-        englishContextualGloss: glosses.length > 0 ? glosses.join(' ') : cleanPhrase,
+        englishContextualGloss: glosses.length > 0 ? glosses.join(' ') : lookupUrduWord(cleanPhrase, cleanPhrase).englishContextualGloss,
         literaryNuanceNote: 'ادبی عبارت یا کلام کا کثیر لفظی حصہ۔',
         tokenTier: 'idiom_phrase',
         isPhrase: true,
@@ -856,7 +857,11 @@ const StoryIngestSchema = z.object({
   authorEnglish: z.string(),
   titleUrdu: z.string(),
   titleEnglish: z.string(),
-  level: z.number().int().min(1).max(3),
+  level: z.number().int().min(1).max(10),
+  subLevel: z.string().optional(),
+  format: z.string().optional(),
+  targetVocabFocus: z.string().optional(),
+  status: z.string().optional(),
   paragraphs: z.array(
     z.object({
       rawText: z.string(),
@@ -868,7 +873,7 @@ const StoryIngestSchema = z.object({
           startTimeMs: z.number().optional(),
           endTimeMs: z.number().optional(),
         })
-      ),
+      ).optional(),
     })
   ),
 });
@@ -895,6 +900,10 @@ api.post('/stories/ingest', async (c) => {
         titleUrdu: input.titleUrdu,
         titleEnglish: input.titleEnglish,
         level: input.level,
+        subLevel: input.subLevel || `${input.level}.1`,
+        format: input.format || 'short_story',
+        targetVocabFocus: input.targetVocabFocus || null,
+        status: input.status || 'ready',
         createdAt: new Date(),
       })
       .run();
@@ -902,6 +911,12 @@ api.post('/stories/ingest', async (c) => {
     for (let pIdx = 0; pIdx < input.paragraphs.length; pIdx++) {
       const pData = input.paragraphs[pIdx];
       const pId = `p_${storyId}_${pIdx}`;
+      const sentencesJson = pData.sentences || UrduLanguagePack.splitSentences(pData.rawText).map((sText, idx) => ({
+        index: idx,
+        text: sText,
+        startTimeMs: 0,
+        endTimeMs: Math.max(3500, sText.length * 85),
+      }));
 
       db.insert(schema.paragraphs)
         .values({
@@ -910,7 +925,7 @@ api.post('/stories/ingest', async (c) => {
           paragraphIndex: pIdx,
           rawText: pData.rawText,
           audioUrl: pData.audioUrl || null,
-          sentencesJson: pData.sentences,
+          sentencesJson: sentencesJson,
         })
         .run();
 
@@ -936,23 +951,27 @@ api.post('/stories/ingest', async (c) => {
 
         // If it's a word token, insert a rich token analysis
         if (tok.isWord) {
-          const graphemes = UrduLanguagePack.decomposeWordToGraphemes(tok.surface);
-          
+          const lexData = lookupUrduWord(tok.surface, tok.normalized, tok.compoundPhrase);
+          const graphemes = UrduLanguagePack.decomposeWordToGraphemes(tok.compoundPhrase || tok.surface).filter(
+            (g) => g.raw.trim().length > 0
+          );
+          const phonetic = makePhoneticBreakdown(lexData.vocalizedForm);
+
           db.insert(schema.tokenAnalyses)
             .values({
               id: `ana_${tokenId}`,
               tokenId,
-              vocalizedForm: tok.surface,
-              phoneticBreakdownJson: [{ letters: tok.surface }],
+              vocalizedForm: lexData.vocalizedForm,
+              phoneticBreakdownJson: phonetic,
               graphemesJson: graphemes,
-              spokenUrduSynonymsJson: [tok.normalized],
-              urduSimpleExplanation: `${tok.surface} کا وضاحتی مفہوم`,
-              izafatBreakdownUrdu: tok.izafatGroupId ? 'ترکیبِ اضافت کا جزو' : null,
-              tokenTier: 'common_vocab',
-              arabicRoot: null,
-              familiarCousinsJson: null,
-              englishContextualGloss: tok.normalized,
-              literaryNuanceNote: 'Ingested literary vocabulary item.',
+              spokenUrduSynonymsJson: lexData.spokenUrduSynonymsJson,
+              urduSimpleExplanation: lexData.urduSimpleExplanation,
+              izafatBreakdownUrdu: tok.izafatGroupId ? (lexData.izafatBreakdownUrdu || 'ترکیبِ اضافت کا جزو') : null,
+              tokenTier: lexData.tokenTier,
+              arabicRoot: lexData.arabicRoot || null,
+              familiarCousinsJson: lexData.familiarCousinsJson || null,
+              englishContextualGloss: lexData.englishContextualGloss,
+              literaryNuanceNote: lexData.literaryNuanceNote || 'Ingested literary vocabulary item.',
             })
             .run();
         }

@@ -38,3 +38,16 @@ export interface AbjadLanguagePack {
   supportedMorphology: Array<'izafat' | 'triliteral_root' | 'persian_compounding' | 'spoken_bridge'>;
   buildLinguisticPrompt(paragraph: string, contextTitle?: string): string;
 }
+
+export interface LexemeAnalysisData {
+  vocalizedForm: string;
+  spokenUrduSynonymsJson: string[];
+  urduSimpleExplanation: string;
+  izafatBreakdownUrdu?: string;
+  tokenTier: 'function_word' | 'common_vocab' | 'literary_vocab';
+  arabicRoot?: string;
+  familiarCousinsJson?: string[];
+  englishContextualGloss: string;
+  literaryNuanceNote?: string;
+}
+

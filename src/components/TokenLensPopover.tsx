@@ -151,17 +151,75 @@ export default function TokenLensPopover() {
 
   const [isWordAudioPlaying, setIsWordAudioPlaying] = createSignal(false);
 
-  const isCompoundMode = () => {
+  const isConnectedGroupMode = () => {
     const t = token();
     const a = analysis();
+    const hasCompound = Boolean(
+      t?.compoundGroupId &&
+        Object.values(tokensMap()).filter(
+          (tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId && tok.isWord
+        ).length > 1
+    );
+    const hasIzafat = Boolean(
+      t?.izafatGroupId &&
+        Object.values(tokensMap()).filter(
+          (tok) => tok.paragraphId === t.paragraphId && tok.izafatGroupId === t.izafatGroupId && tok.isWord
+        ).length > 1
+    );
     return Boolean(
       activePhrase() ||
-      (t?.compoundGroupId &&
-        Object.values(tokensMap()).filter(
-          (tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId
-        ).length > 1) ||
+      hasCompound ||
+      hasIzafat ||
       (a?.vocalizedForm && a.vocalizedForm.trim().includes(' '))
     );
+  };
+
+  const isCompoundMode = isConnectedGroupMode;
+
+  const calligraphicDisplay = () => {
+    const a = analysis();
+    const t = token();
+    if (!a) return '';
+
+    if (activePhrase()) {
+      return activePhrase()!.vocalizedForm || activePhrase()!.phraseText;
+    }
+
+    if (a.vocalizedForm && a.vocalizedForm.trim().includes(' ')) {
+      return a.vocalizedForm;
+    }
+
+    if (t?.compoundGroupId) {
+      const cTokens = Object.values(tokensMap())
+        .filter((tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId && tok.isWord)
+        .sort((tokA, tokB) => tokA.tokenIndex - tokB.tokenIndex);
+      if (cTokens.length > 1) {
+        const parts = cTokens.map((tok) => {
+          const tokAna = analysesMap()[tok.id];
+          return tokAna?.vocalizedForm && !tokAna.vocalizedForm.includes(' ')
+            ? tokAna.vocalizedForm
+            : tok.surfaceForm;
+        });
+        return parts.join(' ');
+      }
+    }
+
+    if (t?.izafatGroupId) {
+      const izTokens = Object.values(tokensMap())
+        .filter((tok) => tok.paragraphId === t.paragraphId && tok.izafatGroupId === t.izafatGroupId && tok.isWord)
+        .sort((tokA, tokB) => tokA.tokenIndex - tokB.tokenIndex);
+      if (izTokens.length > 1) {
+        const parts = izTokens.map((tok) => {
+          const tokAna = analysesMap()[tok.id];
+          return tokAna?.vocalizedForm && !tokAna.vocalizedForm.includes(' ')
+            ? tokAna.vocalizedForm
+            : tok.surfaceForm;
+        });
+        return parts.join(' ');
+      }
+    }
+
+    return a.vocalizedForm;
   };
 
   const wordToSpeak = () => {
@@ -169,55 +227,86 @@ export default function TokenLensPopover() {
     const t = token();
     const voc = a?.vocalizedForm || '';
 
-    // 1. If part of an active compound grouping, collect all constituent words in the compound
-    if (t?.compoundGroupId) {
-      const cTokens = Object.values(tokensMap())
-        .filter((tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId)
-        .sort((tokA, tokB) => tokA.tokenIndex - tokB.tokenIndex);
-      if (cTokens.length > 1) {
-        const compoundSurf = cTokens.map((tok) => tok.surfaceForm).join(' ').trim();
-        if (voc && (voc.includes('آ') || voc.includes('\u0653')) && (!compoundSurf.includes('آ') && !compoundSurf.includes('\u0653'))) {
-          return voc;
-        }
-        return compoundSurf || voc;
-      }
-    }
-
-    // 2. Multi-word phrase decoded via selection or phrase mode
+    // 1. Multi-word phrase decoded via selection or phrase mode
     if (activePhrase()) {
       const phraseText = activePhrase()!.phraseText;
-      if (voc && (voc.includes('آ') || voc.includes('\u0653')) && (!phraseText.includes('آ') && !phraseText.includes('\u0653'))) {
-        return voc;
-      }
-      return phraseText || voc;
+      return voc || phraseText;
     }
 
-    // 3. Fallback: if analysis vocalizedForm contains multiple words
+    // 2. If part of an active compound grouping, collect all constituent words in the compound
+    if (t?.compoundGroupId) {
+      const cTokens = Object.values(tokensMap())
+        .filter((tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId && tok.isWord)
+        .sort((tokA, tokB) => tokA.tokenIndex - tokB.tokenIndex);
+      if (cTokens.length > 1) {
+        if (voc && voc.trim().includes(' ')) {
+          return voc;
+        }
+        const parts = cTokens.map((tok) => {
+          const tokAna = analysesMap()[tok.id];
+          return tokAna?.vocalizedForm && !tokAna.vocalizedForm.includes(' ')
+            ? tokAna.vocalizedForm
+            : tok.surfaceForm;
+        });
+        return parts.join(' ').trim();
+      }
+    }
+
+    // 3. If part of an active Izafat grouping, collect all constituent words
+    if (t?.izafatGroupId) {
+      const izTokens = Object.values(tokensMap())
+        .filter((tok) => tok.paragraphId === t.paragraphId && tok.izafatGroupId === t.izafatGroupId && tok.isWord)
+        .sort((tokA, tokB) => tokA.tokenIndex - tokB.tokenIndex);
+      if (izTokens.length > 1) {
+        if (voc && voc.trim().includes(' ')) {
+          return voc;
+        }
+        const parts = izTokens.map((tok) => {
+          const tokAna = analysesMap()[tok.id];
+          return tokAna?.vocalizedForm && !tokAna.vocalizedForm.includes(' ')
+            ? tokAna.vocalizedForm
+            : tok.surfaceForm;
+        });
+        return parts.join(' ').trim();
+      }
+    }
+
+    // 4. Fallback: if analysis vocalizedForm contains multiple words
     if (voc.trim().includes(' ')) {
       return voc;
     }
 
     const surf = t?.surfaceForm || t?.normalizedForm || '';
-
-    // If vocalized form has Madda (آ or \u0653) but surface lacks it, prefer vocalizedForm so Madd is guaranteed
     if (voc && (voc.includes('آ') || voc.includes('\u0653')) && (!surf || (!surf.includes('آ') && !surf.includes('\u0653')))) {
       return voc;
     }
-    return surf || voc;
+    return voc || surf;
   };
 
   const graphemesList = () => {
     const a = analysis();
     const t = token();
+
     if (t?.compoundGroupId) {
       const cTokens = Object.values(tokensMap())
-        .filter((tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId)
+        .filter((tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId && tok.isWord)
         .sort((tokA, tokB) => tokA.tokenIndex - tokB.tokenIndex);
       if (cTokens.length > 1) {
         const fullText = cTokens.map((tok) => tok.surfaceForm).join(' ');
         return UrduLanguagePack.decomposeWordToGraphemes(fullText).filter((g) => g.raw.trim().length > 0);
       }
     }
+
+    if (t?.izafatGroupId) {
+      const izTokens = Object.values(tokensMap())
+        .filter((tok) => tok.paragraphId === t.paragraphId && tok.izafatGroupId === t.izafatGroupId && tok.isWord)
+        .sort((tokA, tokB) => tokA.tokenIndex - tokB.tokenIndex);
+      if (izTokens.length > 1) {
+        const fullText = izTokens.map((tok) => tok.surfaceForm).join(' ');
+        return UrduLanguagePack.decomposeWordToGraphemes(fullText).filter((g) => g.raw.trim().length > 0);
+      }
+    }
+
     return (a?.graphemesJson || []).filter((g) => g.raw.trim().length > 0);
   };
 
@@ -393,13 +482,13 @@ export default function TokenLensPopover() {
                 'line-height': scriptTradition() === 'naskh' ? '1.9' : '2.3',
               }}
             >
-              {analysis()!.vocalizedForm}
+              {calligraphicDisplay()}
             </div>
 
             <div class="pt-1">
               <button
                 type="button"
-                title={isCompoundMode() ? 'Listen to compound pronunciation' : 'Listen to word pronunciation'}
+                title={isConnectedGroupMode() ? 'Listen to phrase pronunciation' : 'Listen to word pronunciation'}
                 class={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold shadow-xs transition-all cursor-pointer ${
                   theme() === 'sepia'
                     ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
@@ -410,7 +499,7 @@ export default function TokenLensPopover() {
                 onClick={handleListenWord}
               >
                 <Volume2 size={15} class={isWordAudioPlaying() ? 'animate-pulse text-amber-300' : ''} />
-                <span>{isWordAudioPlaying() ? 'Playing pronunciation...' : (isCompoundMode() ? 'Listen to compound pronunciation' : 'Listen to pronunciation')}</span>
+                <span>{isWordAudioPlaying() ? 'Playing pronunciation...' : (isConnectedGroupMode() ? 'Listen to phrase pronunciation' : 'Listen to pronunciation')}</span>
               </button>
             </div>
           </div>
