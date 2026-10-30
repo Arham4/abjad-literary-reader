@@ -676,7 +676,9 @@ api.post('/phrase/decode', async (c) => {
           phraseText: rawPhrase,
           vocalizedForm: vocalized,
           phoneticBreakdownJson: makePhoneticBreakdown(vocalized),
-          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase).filter(
+            (g) => g.raw.trim().length > 0
+          ),
           spokenUrduSynonymsJson: directMatch.spokenUrduSynonymsJson || [],
           urduSimpleExplanation: directMatch.urduSimpleExplanation || '',
           englishContextualGloss: directMatch.englishContextualGloss || '',
@@ -699,7 +701,9 @@ api.post('/phrase/decode', async (c) => {
           phraseText: rawPhrase,
           vocalizedForm: vocPhrase,
           phoneticBreakdownJson: makePhoneticBreakdown(vocPhrase),
-          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase).filter(
+            (g) => g.raw.trim().length > 0
+          ),
           spokenUrduSynonymsJson: ['اپنے اندر ہی اندر', 'چپکے سے', 'خود میں'],
           urduSimpleExplanation: `${base} کے اندر بغیر کسی پر ظاہر کیے، خاموشی سے اپنے آپ میں`,
           englishContextualGloss: "in one's heart of hearts / secretly to oneself / inwardly",
@@ -724,7 +728,9 @@ api.post('/phrase/decode', async (c) => {
           phraseText: rawPhrase,
           vocalizedForm: vocPhrase,
           phoneticBreakdownJson: makePhoneticBreakdown(vocPhrase),
-          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase).filter(
+            (g) => g.raw.trim().length > 0
+          ),
           spokenUrduSynonymsJson: isSmiling
             ? ['چپکے سے مسکرا دیے', 'اپنے آپ میں ہنسے']
             : isThinking
@@ -767,7 +773,9 @@ api.post('/phrase/decode', async (c) => {
           phraseText: rawPhrase,
           vocalizedForm: vocPhrase,
           phoneticBreakdownJson: makePhoneticBreakdown(vocPhrase),
-          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase).filter(
+            (g) => g.raw.trim().length > 0
+          ),
           spokenUrduSynonymsJson: ['مسلسل', 'ساتھ ساتھ', 'ہر پل'],
           urduSimpleExplanation: `ہر ایک ${base} کے ساتھ، بتدریج اور مسلسل`,
           englishContextualGloss: gloss,
@@ -790,7 +798,9 @@ api.post('/phrase/decode', async (c) => {
           phraseText: rawPhrase,
           vocalizedForm: vocPhrase,
           phoneticBreakdownJson: makePhoneticBreakdown(vocPhrase),
-          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+          graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase).filter(
+            (g) => g.raw.trim().length > 0
+          ),
           spokenUrduSynonymsJson: ['بہت سارے', 'مختلف قسم کے', 'بار بار'],
           urduSimpleExplanation: 'تکرارِ لفظی جو کثرت، شدت یا تنوع کو ظاہر کرتی ہے',
           englishContextualGloss: `all kinds of / various / intensified plural repetition of ${base}`,
@@ -823,7 +833,9 @@ api.post('/phrase/decode', async (c) => {
         phraseText: rawPhrase,
         vocalizedForm: synthesizedVoc,
         phoneticBreakdownJson: makePhoneticBreakdown(synthesizedVoc),
-        graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase),
+        graphemesJson: UrduLanguagePack.decomposeWordToGraphemes(cleanPhrase).filter(
+          (g) => g.raw.trim().length > 0
+        ),
         spokenUrduSynonymsJson: [cleanPhrase],
         urduSimpleExplanation: `${cleanPhrase} کا مجموعی ادبی مفہوم`,
         englishContextualGloss: glosses.length > 0 ? glosses.join(' ') : cleanPhrase,

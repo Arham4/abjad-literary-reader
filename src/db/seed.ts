@@ -7082,7 +7082,10 @@ async function seed() {
           ? lexData.vocalizedForm
           : vocalizeUrduWord(cleanKey || normKey || span.surface);
 
-        const graphemes = UrduLanguagePack.decomposeWordToGraphemes(span.surface);
+        const graphemeSource = compoundKey || span.surface;
+        const graphemes = UrduLanguagePack.decomposeWordToGraphemes(graphemeSource).filter(
+          (g) => g.raw.trim().length > 0
+        );
         const phoneticBreakdown = makePhoneticBreakdown(resolvedVocalized);
 
         db.insert(schema.tokenAnalyses)
@@ -7184,7 +7187,10 @@ async function seed() {
             : vocalizeUrduWord(cleanKey || normKey || span.surface);
 
           // Graphemes are ALWAYS computed deterministically via UrduLanguagePack
-          const graphemes = UrduLanguagePack.decomposeWordToGraphemes(span.surface);
+          const graphemeSource = compoundKey || span.surface;
+        const graphemes = UrduLanguagePack.decomposeWordToGraphemes(graphemeSource).filter(
+          (g) => g.raw.trim().length > 0
+        );
 
           // Phonetic breakdown computed from vocalized form
           const phoneticBreakdown = makePhoneticBreakdown(resolvedVocalized);

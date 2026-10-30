@@ -19,6 +19,7 @@ import {
   vaultItems,
 } from '../store/readerStore';
 import { Volume2, X, Bookmark } from 'lucide-solid';
+import { UrduLanguagePack } from '../lib/abjad/packs/urdu';
 
 export default function TokenLensPopover() {
   let popoverRef: HTMLDivElement | undefined;
@@ -150,10 +151,52 @@ export default function TokenLensPopover() {
 
   const [isWordAudioPlaying, setIsWordAudioPlaying] = createSignal(false);
 
+  const isCompoundMode = () => {
+    const t = token();
+    const a = analysis();
+    return Boolean(
+      activePhrase() ||
+      (t?.compoundGroupId &&
+        Object.values(tokensMap()).filter(
+          (tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId
+        ).length > 1) ||
+      (a?.vocalizedForm && a.vocalizedForm.trim().includes(' '))
+    );
+  };
+
   const wordToSpeak = () => {
     const a = analysis();
     const t = token();
     const voc = a?.vocalizedForm || '';
+
+    // 1. If part of an active compound grouping, collect all constituent words in the compound
+    if (t?.compoundGroupId) {
+      const cTokens = Object.values(tokensMap())
+        .filter((tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId)
+        .sort((tokA, tokB) => tokA.tokenIndex - tokB.tokenIndex);
+      if (cTokens.length > 1) {
+        const compoundSurf = cTokens.map((tok) => tok.surfaceForm).join(' ').trim();
+        if (voc && (voc.includes('آ') || voc.includes('\u0653')) && (!compoundSurf.includes('آ') && !compoundSurf.includes('\u0653'))) {
+          return voc;
+        }
+        return compoundSurf || voc;
+      }
+    }
+
+    // 2. Multi-word phrase decoded via selection or phrase mode
+    if (activePhrase()) {
+      const phraseText = activePhrase()!.phraseText;
+      if (voc && (voc.includes('آ') || voc.includes('\u0653')) && (!phraseText.includes('آ') && !phraseText.includes('\u0653'))) {
+        return voc;
+      }
+      return phraseText || voc;
+    }
+
+    // 3. Fallback: if analysis vocalizedForm contains multiple words
+    if (voc.trim().includes(' ')) {
+      return voc;
+    }
+
     const surf = t?.surfaceForm || t?.normalizedForm || '';
 
     // If vocalized form has Madda (آ or \u0653) but surface lacks it, prefer vocalizedForm so Madd is guaranteed
@@ -161,6 +204,21 @@ export default function TokenLensPopover() {
       return voc;
     }
     return surf || voc;
+  };
+
+  const graphemesList = () => {
+    const a = analysis();
+    const t = token();
+    if (t?.compoundGroupId) {
+      const cTokens = Object.values(tokensMap())
+        .filter((tok) => tok.paragraphId === t.paragraphId && tok.compoundGroupId === t.compoundGroupId)
+        .sort((tokA, tokB) => tokA.tokenIndex - tokB.tokenIndex);
+      if (cTokens.length > 1) {
+        const fullText = cTokens.map((tok) => tok.surfaceForm).join(' ');
+        return UrduLanguagePack.decomposeWordToGraphemes(fullText).filter((g) => g.raw.trim().length > 0);
+      }
+    }
+    return (a?.graphemesJson || []).filter((g) => g.raw.trim().length > 0);
   };
 
   const handleListenWord = async (e: MouseEvent) => {
@@ -341,7 +399,7 @@ export default function TokenLensPopover() {
             <div class="pt-1">
               <button
                 type="button"
-                title="Listen to word pronunciation"
+                title={isCompoundMode() ? 'Listen to compound pronunciation' : 'Listen to word pronunciation'}
                 class={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold shadow-xs transition-all cursor-pointer ${
                   theme() === 'sepia'
                     ? 'bg-[#3A2D23] hover:bg-[#2A1F17] text-[#FAF6EC]'
@@ -352,7 +410,7 @@ export default function TokenLensPopover() {
                 onClick={handleListenWord}
               >
                 <Volume2 size={15} class={isWordAudioPlaying() ? 'animate-pulse text-amber-300' : ''} />
-                <span>{isWordAudioPlaying() ? 'Playing pronunciation...' : 'Listen to pronunciation'}</span>
+                <span>{isWordAudioPlaying() ? 'Playing pronunciation...' : (isCompoundMode() ? 'Listen to compound pronunciation' : 'Listen to pronunciation')}</span>
               </button>
             </div>
           </div>
@@ -400,14 +458,14 @@ export default function TokenLensPopover() {
           </Show>
 
           {/* Grapheme Decomposer Bar */}
-          <Show when={analysis()!.graphemesJson.length > 0}>
+          <Show when={graphemesList().length > 0}>
             <div class="space-y-1.5">
               <div class="text-xs font-bold opacity-85 flex items-center justify-between font-sans">
                 <span>Letter-by-Letter Breakdown:</span>
                 <span class="text-[11px] font-normal opacity-70">Isolated alphabet blocks</span>
               </div>
               <div dir="rtl" class="flex flex-wrap gap-2 justify-start">
-                <For each={analysis()!.graphemesJson}>
+                <For each={graphemesList()}>
                   {(g) => (
                     <div
                       class={`flex flex-col items-center justify-center min-w-[52px] px-2.5 py-2 rounded-xl border shadow-xs ${

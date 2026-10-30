@@ -249,10 +249,25 @@ export async function flushTelemetry(tokenId: string, levelReached: number) {
   }
   const story = activeStory();
 
+  // Resolve compound grouping if token is part of a compound
+  let normSurface = token.normalizedForm;
+  let surfDisplay = token.surfaceForm;
+  if (token.compoundGroupId) {
+    const cTokens = Object.values(tokensMap())
+      .filter((tok) => tok.paragraphId === token.paragraphId && tok.compoundGroupId === token.compoundGroupId)
+      .sort((a, b) => a.tokenIndex - b.tokenIndex);
+    if (cTokens.length > 1) {
+      normSurface = cTokens.map((tok) => tok.normalizedForm).join(' ');
+      surfDisplay = cTokens.map((tok) => tok.surfaceForm).join(' ');
+    }
+  }
+
   // Optimistically update local vaultItems signal for zero-latency UI updates
   const currentItems = vaultItems();
   const existingIdx = currentItems.findIndex(
-    (it) => it.normalizedSurface === token.normalizedForm && it.vocalizedSurface === analysis.vocalizedForm
+    (it) =>
+      (it.normalizedSurface === normSurface || it.normalizedSurface === token.normalizedForm) &&
+      it.vocalizedSurface === analysis.vocalizedForm
   );
 
   if (existingIdx !== -1) {
@@ -270,7 +285,7 @@ export async function flushTelemetry(tokenId: string, levelReached: number) {
   } else {
     const newItem: TelemetryItem = {
       id: `tel_local_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-      normalizedSurface: token.normalizedForm,
+      normalizedSurface: normSurface,
       vocalizedSurface: analysis.vocalizedForm,
       lookupCount: 1,
       maxTapLevel: levelReached,
@@ -297,7 +312,7 @@ export async function flushTelemetry(tokenId: string, levelReached: number) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        normalizedSurface: token.normalizedForm,
+        normalizedSurface: normSurface,
         vocalizedSurface: analysis.vocalizedForm,
         tapLevel: levelReached,
         storyId: story?.id || null,
@@ -1203,8 +1218,20 @@ export function isTokenInVault(tokenId: string): boolean {
   const token = tokensMap()[tokenId];
   const analysis = analysesMap()[tokenId];
   if (!token) return false;
+
+  let normSurface = token.normalizedForm;
+  if (token.compoundGroupId) {
+    const cTokens = Object.values(tokensMap())
+      .filter((tok) => tok.paragraphId === token.paragraphId && tok.compoundGroupId === token.compoundGroupId)
+      .sort((a, b) => a.tokenIndex - b.tokenIndex);
+    if (cTokens.length > 1) {
+      normSurface = cTokens.map((tok) => tok.normalizedForm).join(' ');
+    }
+  }
+
   return vaultItems().some(
     (item) =>
+      item.normalizedSurface === normSurface ||
       item.normalizedSurface === token.normalizedForm ||
       (analysis && item.vocalizedSurface === analysis.vocalizedForm)
   );
@@ -1215,15 +1242,28 @@ export async function toggleTokenInVault(tokenId: string) {
   const analysis = analysesMap()[tokenId];
   if (!token || !analysis) return;
 
+  let normSurface = token.normalizedForm;
+  let surfDisplay = token.surfaceForm;
+  if (token.compoundGroupId) {
+    const cTokens = Object.values(tokensMap())
+      .filter((tok) => tok.paragraphId === token.paragraphId && tok.compoundGroupId === token.compoundGroupId)
+      .sort((a, b) => a.tokenIndex - b.tokenIndex);
+    if (cTokens.length > 1) {
+      normSurface = cTokens.map((tok) => tok.normalizedForm).join(' ');
+      surfDisplay = cTokens.map((tok) => tok.surfaceForm).join(' ');
+    }
+  }
+
   const existing = vaultItems().find(
     (item) =>
+      item.normalizedSurface === normSurface ||
       item.normalizedSurface === token.normalizedForm ||
       item.vocalizedSurface === analysis.vocalizedForm
   );
 
   if (existing) {
     await deleteVaultItem(existing.id);
-    showToast(`Removed "${token.surfaceForm}" from Vault`);
+    showToast(`Removed "${surfDisplay}" from Vault`);
   } else {
     await flushTelemetry(tokenId, 1);
     showToast(`Saved "${analysis.vocalizedForm}" to Vault ★`);
