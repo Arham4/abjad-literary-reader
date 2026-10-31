@@ -874,7 +874,7 @@ export const URDU_VOCALIZATION_MAP: Record<string, string> = {
   'کھیت': 'کھَیت',
   'ناکام': 'نَاکَام',
   'کھولا': 'کھولَا',
-  'کھولو': 'کھولو',
+  'کھولو': 'کھُولُو',
   'کھول': 'کھول',
   'کھولے': 'کھولے',
   'عام': 'عَام',
@@ -934,7 +934,24 @@ export function vocalizeUrduWord(word: string): string {
     return trimmed;
   }
 
-  // Intelligent fallback harakat assignment
+  // Intelligent fallback harakat assignment: ensures every Urdu word has vowel diacritics
+  if (clean.length >= 1) {
+    const chars = Array.from(clean);
+    const first = chars[0];
+    const second = chars[1];
+    if (first !== 'آ' && first !== 'ں') {
+      let diacritic = '\u064E'; // Default Zabar (َ)
+      if (second === 'و') {
+        diacritic = '\u064F'; // Pesh (ُ) before Waw
+      } else if (second === 'ی' || second === 'ے') {
+        diacritic = '\u0650'; // Zer (ِ) before Yeh
+      } else if (first === 'ا' && clean.length > 1) {
+        diacritic = '\u0650'; // Zer (ِ) on initial Alif for grammatical words like اس، ان
+      }
+      return `${first}${diacritic}${chars.slice(1).join('')}`;
+    }
+  }
+
   return clean;
 }
 
@@ -998,6 +1015,8 @@ export function makePhoneticBreakdown(vocalized: string): PhoneticSyllablePill[]
       vName = 'چھوٹی یے';
     } else if (base === 'ے') {
       vName = 'بڑی یے';
+    } else if (base.trim()) {
+      vName = 'ساکن';
     }
 
     if (base.trim()) {
