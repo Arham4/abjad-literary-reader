@@ -7287,7 +7287,9 @@ async function seed() {
   await ingestAllCurriculumFiles();
 }
 
-seed().catch((err) => {
-  console.error('❌ Seed error:', err);
-  process.exit(1);
-});
+if (import.meta.main || process.argv[1]?.endsWith('seed.ts')) {
+  seed().catch((err) => {
+    console.error('❌ Seed error:', err);
+    process.exit(1);
+  });
+}

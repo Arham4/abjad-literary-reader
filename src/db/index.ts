@@ -51,6 +51,7 @@ sqlite.exec(`
     compound_group_id TEXT
   );
   CREATE INDEX IF NOT EXISTS idx_tokens_paragraph ON tokens(paragraph_id, token_index);
+  CREATE INDEX IF NOT EXISTS idx_tokens_normalized ON tokens(normalized_form);
 
   CREATE TABLE IF NOT EXISTS token_analyses (
     id TEXT PRIMARY KEY,
@@ -67,6 +68,7 @@ sqlite.exec(`
     english_contextual_gloss TEXT NOT NULL,
     literary_nuance_note TEXT
   );
+  CREATE INDEX IF NOT EXISTS idx_analyses_vocalized ON token_analyses(vocalized_form);
 
   CREATE TABLE IF NOT EXISTS user_telemetry (
     id TEXT PRIMARY KEY,

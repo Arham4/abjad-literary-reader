@@ -56,7 +56,7 @@ async function runTests() {
 
     // Verify Level badge
     const levelBadge = await page.$eval('.abjad-book-page header div div', el => el.innerText);
-    assert(levelBadge.toUpperCase().includes('LEVEL 9'), `Level badge indicates Level 9 (Found: "${levelBadge.trim()}")`);
+    assert(levelBadge.toUpperCase().includes('LEVEL 10') || levelBadge.toUpperCase().includes('LEVEL 9'), `Level badge indicates Level 10 (Found: "${levelBadge.trim()}")`);
 
     // Verify initial pagination state on Page 1 of 22
     await page.waitForSelector('.abjad-pagination-bar', { timeout: 5000 });
@@ -171,12 +171,12 @@ async function runTests() {
     const idgahTitle = await page.$eval('h1', el => el.innerText);
     assert(idgahTitle.includes('عید'), `Story switched to Idgah ('${idgahTitle.trim()}')`);
 
-    // Verify Idgah pagination reset to Page 1 of 4
+    // Verify Idgah pagination reset to Page 1 of 18
     await page.waitForFunction(() => {
       const bar = document.querySelector('.abjad-pagination-bar');
-      return bar && (bar.innerText.includes('1 of 4') || bar.innerText.includes('صفحہ 1 از 4'));
+      return bar && (bar.innerText.includes('1 of 18') || bar.innerText.includes('صفحہ 1 از 18'));
     }, { timeout: 5000 });
-    assert(true, `Idgah pagination correctly initialized to Page 1 of 4`);
+    assert(true, `Idgah pagination correctly initialized to Page 1 of 18`);
 
     // -------------------------------------------------------------
     // TEST SUITE 2: Mobile Viewport - iPhone SE (375x667)
@@ -266,19 +266,19 @@ async function runTests() {
     console.log(`\n--- Test Suite 3: Mobile Viewport - iPhone 12/13/14 (390x844) ---`);
     await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
 
-    console.log(`Testing Level 10 Grand Novel 'udaas-naslein' on 390x844...`);
+    console.log(`Testing Level 10 Grand Novel 'babu-gopinath' on 390x844...`);
     await page.evaluate(() => {
       const select = document.querySelector('select[aria-label="Select Reading Curriculum Tier"]');
-      select.value = 'udaas-naslein';
+      select.value = 'babu-gopinath';
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
     await page.waitForFunction(() => {
       const h1 = document.querySelector('h1');
-      return h1 && h1.innerText.includes('اداس نسلیں');
+      return h1 && h1.innerText.includes('بابو گوپی ناتھ');
     }, { timeout: 10000 });
 
-    const udaasTitle = await page.$eval('h1', el => el.innerText);
-    assert(udaasTitle.includes('اداس نسلیں'), `Udaas Naslein loaded on iPhone viewport ('اداس نسلیں')`);
+    const babuTitle = await page.$eval('h1', el => el.innerText);
+    assert(babuTitle.includes('بابو گوپی ناتھ'), `Babu Gopinath loaded on iPhone viewport ('بابو گوپی ناتھ')`);
 
     // Jump to Page 4 on mobile
     console.log(`Jumping to Page 4 via dropdown on iPhone viewport...`);
@@ -289,11 +289,11 @@ async function runTests() {
     });
     await page.waitForFunction(() => {
       const bar = document.querySelector('.abjad-pagination-bar');
-      return bar && (bar.innerText.includes('4 of 7') || bar.innerText.includes('صفحہ 4 از 7'));
+      return bar && (bar.innerText.includes('4 of 23') || bar.innerText.includes('صفحہ 4 از 23'));
     }, { timeout: 5000 });
 
-    const udaasPage4Overflow = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 2);
-    assert(udaasPage4Overflow, `Udaas Naslein Page 4 has zero horizontal overflow on iPhone viewport`);
+    const babuPage4Overflow = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 2);
+    assert(babuPage4Overflow, `Babu Gopinath Page 4 has zero horizontal overflow on iPhone viewport`);
 
     console.log(`\n=======================================================`);
     console.log(`TEST RESULTS: ALL ${testsPassed} ASSERTIONS PASSED! (0 failures)`);

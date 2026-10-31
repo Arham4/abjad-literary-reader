@@ -199,6 +199,12 @@ export async function ingestAllCurriculumFiles() {
     return;
   }
 
+  // Clean all previous stories to avoid orphaned stale records
+  db.delete(schema.tokenAnalyses).run();
+  db.delete(schema.tokens).run();
+  db.delete(schema.paragraphs).run();
+  db.delete(schema.stories).run();
+
   // Find all level directories
   const levelDirs = readdirSync(dataDir)
     .filter((d) => d.startsWith('level_'))

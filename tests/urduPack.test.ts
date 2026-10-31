@@ -2,6 +2,9 @@ import { describe, expect, test } from 'bun:test';
 import { UrduLanguagePack } from '../src/lib/abjad/packs/urdu';
 import { cleanUrduForTTS, api } from '../src/server/api';
 import { vocalizeUrduWord, makePhoneticBreakdown } from '../src/lib/abjad/packs/urduVocalizer';
+import { db } from '../src/db/index';
+import * as schema from '../src/db/schema';
+import { eq, and, gte } from 'drizzle-orm';
 
 describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
   test('Aspirated digraph grouping: پڑھنا -> ["پڑھ", "ن", "ا"]', () => {
@@ -335,5 +338,131 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
     expect(data.data.pagination.pageSize).toBe(4);
     expect(data.data.pagination.totalPages).toBeGreaterThanOrEqual(1);
     expect(data.data.paragraphs.length).toBeLessThanOrEqual(5); // title (-1) + 4 body paragraphs
+  });
+
+  describe('Curriculum Canon Unabridged Word Counts & Swaps Verification', () => {
+    function getStoryStats(slug: string) {
+      const story = db.select().from(schema.stories).where(eq(schema.stories.slug, slug)).get();
+      expect(story).toBeDefined();
+      const bodyParagraphs = db
+        .select({ rawText: schema.paragraphs.rawText })
+        .from(schema.paragraphs)
+        .where(and(eq(schema.paragraphs.storyId, story!.id), gte(schema.paragraphs.paragraphIndex, 0)))
+        .all();
+      const wordCount = bodyParagraphs
+        .map((p) => p.rawText)
+        .join(' ')
+        .split(/\s+/)
+        .filter(Boolean).length;
+      return { paragraphCount: bodyParagraphs.length, wordCount };
+    }
+
+    test('2.2 Idgah (Munshi Premchand) unabridged: > 4,200 words', async () => {
+      const stats = await getStoryStats('idgah');
+      expect(stats.wordCount).toBeGreaterThan(4200);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(60);
+    });
+
+    test('3.2 Mureedpur Ka Peer (Patras Bukhari swap) unabridged: > 3,000 words', async () => {
+      const stats = await getStoryStats('mureedpur-ka-peer');
+      expect(stats.wordCount).toBeGreaterThan(3000);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(70);
+    });
+
+    test('3.3 Chacha Chakkan (Imtiaz Ali Taj swap) unabridged: > 1,500 words', async () => {
+      const stats = await getStoryStats('chacha-chakkan');
+      expect(stats.wordCount).toBeGreaterThan(1500);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(20);
+    });
+
+    test('4.1 Panchayat (Munshi Premchand) unabridged: > 3,500 words', async () => {
+      const stats = await getStoryStats('panchayat');
+      expect(stats.wordCount).toBeGreaterThan(3500);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(40);
+    });
+
+    test('4.2 Namak Ka Darogha (Munshi Premchand) unabridged: > 3,000 words', async () => {
+      const stats = await getStoryStats('namak-ka-darogha');
+      expect(stats.wordCount).toBeGreaterThan(3000);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(40);
+    });
+
+    test('5.1 Sawere Jo Kal Aankh Meri Khuli (Patras Bukhari) unabridged: > 2,500 words', async () => {
+      const stats = await getStoryStats('sawere-kal-aankh');
+      expect(stats.wordCount).toBeGreaterThan(2500);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(50);
+    });
+
+    test('5.2 Overcoat (Ghulam Abbas) unabridged: > 2,500 words', async () => {
+      const stats = await getStoryStats('overcoat');
+      expect(stats.wordCount).toBeGreaterThan(2500);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(45);
+    });
+
+    test('6.2 Anandi (Ghulam Abbas) unabridged: > 3,800 words', async () => {
+      const stats = await getStoryStats('anandi');
+      expect(stats.wordCount).toBeGreaterThan(3800);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(50);
+    });
+
+    test('6.3 Kafan (Munshi Premchand) unabridged: > 2,800 words', async () => {
+      const stats = await getStoryStats('kafan');
+      expect(stats.wordCount).toBeGreaterThan(2800);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(50);
+    });
+
+    test('7.3 Toba Tek Singh (Saadat Hasan Manto) unabridged: > 2,400 words & > 35 paragraphs', async () => {
+      const stats = await getStoryStats('toba-tek-singh');
+      expect(stats.wordCount).toBeGreaterThan(2400);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(35);
+    });
+
+    test('7.4 Peshawar Express (Krishan Chander swap) unabridged: > 4,000 words', async () => {
+      const stats = await getStoryStats('peshawar-express');
+      expect(stats.wordCount).toBeGreaterThan(4000);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(50);
+    });
+
+    test('8.1 Hathak (Saadat Hasan Manto) unabridged: > 6,000 words & > 100 paragraphs', async () => {
+      const stats = await getStoryStats('hathak');
+      expect(stats.wordCount).toBeGreaterThan(6000);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(100);
+    });
+
+    test('8.2 Thanda Gosht (Saadat Hasan Manto) unabridged: > 2,000 words', async () => {
+      const stats = await getStoryStats('thanda-gosht');
+      expect(stats.wordCount).toBeGreaterThan(2000);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(50);
+    });
+
+    test('8.3 Lajwanti (Rajinder Singh Bedi swap) unabridged: > 4,500 words', async () => {
+      const stats = await getStoryStats('lajwanti');
+      expect(stats.wordCount).toBeGreaterThan(4500);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(60);
+    });
+
+    test('9.2 Seemiya / Taaoos Chaman Ki Maina (Naiyer Masud) unabridged: > 10,000 words', async () => {
+      const stats = await getStoryStats('seemiya');
+      expect(stats.wordCount).toBeGreaterThan(10000);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(300);
+    });
+
+    test('9.3 Patjhar Ki Awaz (Qurratulain Hyder swap) unabridged: > 5,000 words', async () => {
+      const stats = await getStoryStats('patjhar-ki-awaz');
+      expect(stats.wordCount).toBeGreaterThan(5000);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(65);
+    });
+
+    test('10.1 Babu Gopinath (Saadat Hasan Manto swap) unabridged: > 5,500 words', async () => {
+      const stats = await getStoryStats('babu-gopinath');
+      expect(stats.wordCount).toBeGreaterThan(5500);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(85);
+    });
+
+    test('10.2 Baagh (Abdullah Hussein) full multi-chapter arc: > 5,000 words', async () => {
+      const stats = await getStoryStats('baagh');
+      expect(stats.wordCount).toBeGreaterThan(5000);
+      expect(stats.paragraphCount).toBeGreaterThanOrEqual(80);
+    });
   });
 });

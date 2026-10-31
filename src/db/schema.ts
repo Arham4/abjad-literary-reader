@@ -49,6 +49,7 @@ export const tokens = sqliteTable('tokens', {
   compoundGroupId: text('compound_group_id'),
 }, (table) => [
   index('idx_tokens_paragraph').on(table.paragraphId, table.tokenIndex),
+  index('idx_tokens_normalized').on(table.normalizedForm),
 ]);
 
 export const tokenAnalyses = sqliteTable('token_analyses', {
@@ -65,7 +66,9 @@ export const tokenAnalyses = sqliteTable('token_analyses', {
   familiarCousinsJson: text('familiar_cousins_json', { mode: 'json' }).$type<string[]>(),
   englishContextualGloss: text('english_contextual_gloss').notNull(),
   literaryNuanceNote: text('literary_nuance_note'),
-});
+}, (table) => [
+  index('idx_analyses_vocalized').on(table.vocalizedForm),
+]);
 
 export const userTelemetry = sqliteTable('user_telemetry', {
   id: text('id').primaryKey(),
