@@ -1101,6 +1101,85 @@ export async function prevPage() {
   }
 }
 
+// -------------------------------------------------------------
+// Client-Side Page Cache & Background Prefetching
+// -------------------------------------------------------------
+const clientPageCache = new Map<string, any>();
+const MAX_CLIENT_CACHE_SIZE = 40;
+
+export function clearClientPageCache() {
+  clientPageCache.clear();
+}
+
+function applyStoryPagePayload(payload: any) {
+  setActiveStory(payload.story);
+  setParagraphs(payload.paragraphs);
+
+  if (payload.pagination) {
+    setPagination(payload.pagination);
+  } else {
+    setPagination({
+      currentPage: 1,
+      pageSize: payload.paragraphs.length,
+      totalParagraphs: payload.paragraphs.length,
+      totalPages: 1,
+      hasNextPage: false,
+      hasPrevPage: false,
+    });
+  }
+
+  const tMap: Record<string, Token> = {};
+  for (const t of payload.tokens) {
+    tMap[t.id] = t;
+  }
+  setTokensMap(tMap);
+  setAnalysesMap(payload.analyses || {});
+
+  const sentences = allStorySentences();
+  if (sentences.length > 0) {
+    setCurrentSentence(sentences[0]);
+  } else {
+    setCurrentSentence(null);
+  }
+}
+
+function scheduleAdjacentPrefetch(slug: string, curPage: number, maxPages: number) {
+  const toPrefetch: number[] = [];
+  if (curPage < maxPages && !clientPageCache.has(`${slug}:${curPage + 1}`)) {
+    toPrefetch.push(curPage + 1);
+  }
+  if (curPage > 1 && !clientPageCache.has(`${slug}:${curPage - 1}`)) {
+    toPrefetch.push(curPage - 1);
+  }
+
+  if (toPrefetch.length === 0) return;
+
+  const schedule =
+    typeof window !== 'undefined' && 'requestIdleCallback' in window
+      ? (cb: () => void) => (window as any).requestIdleCallback(cb, { timeout: 1200 })
+      : (cb: () => void) => setTimeout(cb, 100);
+
+  schedule(async () => {
+    for (const p of toPrefetch) {
+      const key = `${slug}:${p}`;
+      if (clientPageCache.has(key)) continue;
+      try {
+        const res = await fetch(`/api/stories/${slug}?page=${p}&pageSize=4`);
+        const json = await res.json();
+        if (json.success && json.data) {
+          clientPageCache.set(key, json.data);
+          if (clientPageCache.size > MAX_CLIENT_CACHE_SIZE) {
+            const oldest = clientPageCache.keys().next().value;
+            if (oldest) clientPageCache.delete(oldest);
+          }
+        }
+      } catch (_) {
+        // Silently ignore background prefetch errors
+      }
+    }
+  });
+}
+
 export async function selectStory(slug: string, page = 1) {
   try {
     const target = stories().find((s) => s.slug === slug);
@@ -1111,44 +1190,31 @@ export async function selectStory(slug: string, page = 1) {
 
     closeTokenLens();
     stopAudio();
+
+    const cacheKey = `${slug}:${page}`;
+    const cached = clientPageCache.get(cacheKey);
+
+    if (cached) {
+      // Instant switch: no loading spinner, zero latency
+      applyStoryPagePayload(cached);
+      scheduleAdjacentPrefetch(slug, cached.pagination?.currentPage || page, cached.pagination?.totalPages || 1);
+      return;
+    }
+
     setIsLoading(true);
 
     const res = await fetch(`/api/stories/${slug}?page=${page}&pageSize=4`);
     const data = await res.json();
 
     if (data.success && data.data) {
-      setActiveStory(data.data.story);
-      setParagraphs(data.data.paragraphs);
-
-      // Set pagination state
-      if (data.data.pagination) {
-        setPagination(data.data.pagination);
-      } else {
-        setPagination({
-          currentPage: 1,
-          pageSize: data.data.paragraphs.length,
-          totalParagraphs: data.data.paragraphs.length,
-          totalPages: 1,
-          hasNextPage: false,
-          hasPrevPage: false,
-        });
+      clientPageCache.set(cacheKey, data.data);
+      if (clientPageCache.size > MAX_CLIENT_CACHE_SIZE) {
+        const oldest = clientPageCache.keys().next().value;
+        if (oldest) clientPageCache.delete(oldest);
       }
 
-      // Build token map
-      const tMap: Record<string, Token> = {};
-      for (const t of data.data.tokens) {
-        tMap[t.id] = t;
-      }
-      setTokensMap(tMap);
-      setAnalysesMap(data.data.analyses || {});
-
-      // Initialize narration section to the first sentence of the story / current page
-      const sentences = allStorySentences();
-      if (sentences.length > 0) {
-        setCurrentSentence(sentences[0]);
-      } else {
-        setCurrentSentence(null);
-      }
+      applyStoryPagePayload(data.data);
+      scheduleAdjacentPrefetch(slug, data.data.pagination?.currentPage || page, data.data.pagination?.totalPages || 1);
     }
   } catch (err) {
     console.error(`Failed to select story ${slug}:`, err);

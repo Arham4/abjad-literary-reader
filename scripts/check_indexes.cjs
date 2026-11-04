@@ -1,0 +1,10 @@
+const { Database } = require('bun:sqlite');
+const db = new Database('dev.db');
+console.log('--- Indexes on token_analyses ---');
+console.log(db.query("SELECT name, sql FROM sqlite_master WHERE type='index' AND tbl_name='token_analyses';").all());
+console.log('--- Indexes on tokens ---');
+console.log(db.query("SELECT name, sql FROM sqlite_master WHERE type='index' AND tbl_name='tokens';").all());
+console.log('--- Indexes on paragraphs ---');
+console.log(db.query("SELECT name, sql FROM sqlite_master WHERE type='index' AND tbl_name='paragraphs';").all());
+console.log('--- Indexes on stories ---');
+console.log(db.query("SELECT name, sql FROM sqlite_master WHERE type='index' AND tbl_name='stories';").all());

@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { eq, sql, desc, asc, and, gte, inArray, count } from 'drizzle-orm';
 import { z } from 'zod';
-import { db } from '../db';
+import { db, sqlite } from '../db';
 import * as schema from '../db/schema';
 import { UrduLanguagePack } from '../lib/abjad/packs/urdu';
 import { CONTEXTUAL_VOCAB } from '../db/seed';
@@ -22,21 +22,149 @@ if (!existsSync(AUDIO_CACHE_DIR)) {
   mkdirSync(AUDIO_CACHE_DIR, { recursive: true });
 }
 
+// Prepared SQLite statements for zero-overhead query execution
+const stmtFindStoryBySlug = sqlite.prepare('SELECT * FROM stories WHERE slug = ?;');
+const stmtFindTitleParagraph = sqlite.prepare('SELECT * FROM paragraphs WHERE story_id = ? AND paragraph_index = -1;');
+const stmtCountBodyParagraphs = sqlite.prepare('SELECT count(*) as count FROM paragraphs WHERE story_id = ? AND paragraph_index >= 0;');
+const stmtGetBodyParagraphs = sqlite.prepare(
+  'SELECT * FROM paragraphs WHERE story_id = ? AND paragraph_index >= 0 ORDER BY paragraph_index ASC LIMIT ? OFFSET ?;'
+);
+const stmtGetAllBodyParagraphs = sqlite.prepare(
+  'SELECT * FROM paragraphs WHERE story_id = ? AND paragraph_index >= 0 ORDER BY paragraph_index ASC;'
+);
+const stmtAllStories = sqlite.prepare('SELECT * FROM stories ORDER BY level ASC, sub_level ASC;');
+
+function mapStoryRow(row: any) {
+  if (!row) return null;
+  const sceneVocab = row.scene_vocab_preview_json
+    ? typeof row.scene_vocab_preview_json === 'string'
+      ? JSON.parse(row.scene_vocab_preview_json)
+      : row.scene_vocab_preview_json
+    : null;
+  return {
+    id: row.id,
+    slug: row.slug,
+    authorUrdu: row.author_urdu,
+    authorEnglish: row.author_english,
+    titleUrdu: row.title_urdu,
+    titleEnglish: row.title_english,
+    level: row.level,
+    subLevel: row.sub_level,
+    format: row.format,
+    targetVocabFocus: row.target_vocab_focus,
+    sourceUrl: row.source_url,
+    status: row.status,
+    descriptionEnglish: row.description_english,
+    sceneVocabPreview: sceneVocab,
+    sceneVocabPreviewJson: sceneVocab,
+    createdAt: row.created_at instanceof Date ? row.created_at : new Date(row.created_at),
+  };
+}
+
+function mapParagraphRow(row: any) {
+  return {
+    id: row.id,
+    storyId: row.story_id,
+    paragraphIndex: row.paragraph_index,
+    rawText: row.raw_text,
+    audioUrl: row.audio_url,
+    sentencesJson: typeof row.sentences_json === 'string' ? JSON.parse(row.sentences_json) : row.sentences_json,
+  };
+}
+
+function mapTokenRow(row: any) {
+  return {
+    id: row.id,
+    paragraphId: row.paragraph_id,
+    tokenIndex: row.token_index,
+    surfaceForm: row.surface_form,
+    normalizedForm: row.normalized_form,
+    isWord: Boolean(row.is_word),
+    sentenceIndex: row.sentence_index,
+    izafatGroupId: row.izafat_group_id,
+    compoundGroupId: row.compound_group_id,
+  };
+}
+
+function mapAnalysisRow(row: any) {
+  return {
+    id: row.id,
+    tokenId: row.token_id,
+    vocalizedForm: row.vocalized_form,
+    phoneticBreakdownJson:
+      typeof row.phonetic_breakdown_json === 'string'
+        ? JSON.parse(row.phonetic_breakdown_json)
+        : row.phonetic_breakdown_json,
+    graphemesJson:
+      typeof row.graphemes_json === 'string' ? JSON.parse(row.graphemes_json) : row.graphemes_json,
+    spokenUrduSynonymsJson:
+      typeof row.spoken_urdu_synonyms_json === 'string'
+        ? JSON.parse(row.spoken_urdu_synonyms_json)
+        : row.spoken_urdu_synonyms_json,
+    urduSimpleExplanation: row.urdu_simple_explanation,
+    izafatBreakdownUrdu: row.izafat_breakdown_urdu,
+    tokenTier: row.token_tier,
+    arabicRoot: row.arabic_root,
+    familiarCousinsJson: row.familiar_cousins_json
+      ? typeof row.familiar_cousins_json === 'string'
+        ? JSON.parse(row.familiar_cousins_json)
+        : row.familiar_cousins_json
+      : null,
+    englishContextualGloss: row.english_contextual_gloss,
+    literaryNuanceNote: row.literary_nuance_note,
+  };
+}
+
+// Bounded in-memory response cache for page requests
+const pageResponseCache = new Map<string, string>();
+const MAX_PAGE_CACHE_ENTRIES = 50;
+let cachedStoriesListJson: string | null = null;
+
+function getCachedPage(key: string): string | undefined {
+  const val = pageResponseCache.get(key);
+  if (val !== undefined) {
+    pageResponseCache.delete(key);
+    pageResponseCache.set(key, val);
+  }
+  return val;
+}
+
+function setCachedPage(key: string, val: string) {
+  if (pageResponseCache.size >= MAX_PAGE_CACHE_ENTRIES) {
+    const oldestKey = pageResponseCache.keys().next().value;
+    if (oldestKey) pageResponseCache.delete(oldestKey);
+  }
+  pageResponseCache.set(key, val);
+}
+
+export function clearPageResponseCache() {
+  pageResponseCache.clear();
+  cachedStoriesListJson = null;
+}
+
 // -------------------------------------------------------------
 // 1. GET /api/stories - List all stories
 // -------------------------------------------------------------
 api.get('/stories', async (c) => {
   try {
-    const allStories = db
-      .select()
-      .from(schema.stories)
-      .orderBy(asc(schema.stories.level), asc(schema.stories.subLevel))
-      .all()
-      .map((s) => ({
-        ...s,
-        sceneVocabPreview: s.sceneVocabPreviewJson,
-      }));
-    return c.json({ success: true, data: allStories });
+    if (cachedStoriesListJson) {
+      return c.text(cachedStoriesListJson, 200, {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600',
+        'X-Cache': 'HIT',
+      });
+    }
+
+    const storyRows: any[] = stmtAllStories.all();
+    const allStories = storyRows.map(mapStoryRow);
+    const jsonStr = JSON.stringify({ success: true, data: allStories });
+    cachedStoriesListJson = jsonStr;
+
+    return c.text(jsonStr, 200, {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'public, max-age=3600',
+      'X-Cache': 'MISS',
+    });
   } catch (error: any) {
     return c.json({ success: false, error: error.message }, 500);
   }
@@ -48,90 +176,74 @@ api.get('/stories', async (c) => {
 api.get('/stories/:slug', async (c) => {
   try {
     const slug = c.req.param('slug');
-    const story = db.select().from(schema.stories).where(eq(schema.stories.slug, slug)).get();
-
-    if (!story) {
-      return c.json({ success: false, error: 'Story not found' }, 404);
-    }
-
-    // Title paragraph (paragraphIndex -1) if available
-    const titleParagraph = db
-      .select()
-      .from(schema.paragraphs)
-      .where(and(eq(schema.paragraphs.storyId, story.id), eq(schema.paragraphs.paragraphIndex, -1)))
-      .get();
-
-    // Total count of body paragraphs (paragraphIndex >= 0)
-    const bodyCountResult = db
-      .select({ count: count() })
-      .from(schema.paragraphs)
-      .where(and(eq(schema.paragraphs.storyId, story.id), gte(schema.paragraphs.paragraphIndex, 0)))
-      .get();
-    const totalBodyParagraphs = bodyCountResult?.count || 0;
-
-    // Pagination calculations
     const isAll = c.req.query('all') === 'true';
     const requestedPageSize = parseInt(c.req.query('pageSize') || '4', 10);
     const pageSize = Math.max(1, Math.min(20, isNaN(requestedPageSize) ? 4 : requestedPageSize));
-    const totalPages = Math.max(1, Math.ceil(totalBodyParagraphs / pageSize));
     const requestedPage = parseInt(c.req.query('page') || '1', 10);
-    const currentPage = Math.max(1, Math.min(totalPages, isNaN(requestedPage) ? 1 : requestedPage));
 
-    let bodyParagraphs;
-    if (isAll) {
-      bodyParagraphs = db
-        .select()
-        .from(schema.paragraphs)
-        .where(and(eq(schema.paragraphs.storyId, story.id), gte(schema.paragraphs.paragraphIndex, 0)))
-        .orderBy(asc(schema.paragraphs.paragraphIndex))
-        .all();
-    } else {
-      const offset = (currentPage - 1) * pageSize;
-      bodyParagraphs = db
-        .select()
-        .from(schema.paragraphs)
-        .where(and(eq(schema.paragraphs.storyId, story.id), gte(schema.paragraphs.paragraphIndex, 0)))
-        .orderBy(asc(schema.paragraphs.paragraphIndex))
-        .limit(pageSize)
-        .offset(offset)
-        .all();
+    const cacheKey = `${slug}:${isAll ? 'all' : `${requestedPage}:${pageSize}`}`;
+    const cached = getCachedPage(cacheKey);
+    if (cached) {
+      return c.text(cached, 200, {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600',
+        'X-Cache': 'HIT',
+      });
     }
 
-    // Combine title (always included so reader has title tokens) + page's body paragraphs
-    const pageParagraphs = titleParagraph ? [titleParagraph, ...bodyParagraphs] : bodyParagraphs;
-    const paragraphIds = pageParagraphs.map((p) => p.id);
+    const storyRow: any = stmtFindStoryBySlug.get(slug);
+    if (!storyRow) {
+      return c.json({ success: false, error: 'Story not found' }, 404);
+    }
+    const story = mapStoryRow(storyRow);
 
-    // Batch fetch tokens for only the active page's paragraphs
-    let allTokens: (typeof schema.tokens.$inferSelect)[] = [];
-    const allAnalyses: Record<string, typeof schema.tokenAnalyses.$inferSelect> = {};
+    const titleRow: any = stmtFindTitleParagraph.get(story.id);
+    const countRow: any = stmtCountBodyParagraphs.get(story.id);
+    const totalBodyParagraphs = countRow?.count || 0;
 
-    if (paragraphIds.length > 0) {
-      allTokens = db
-        .select()
-        .from(schema.tokens)
-        .where(inArray(schema.tokens.paragraphId, paragraphIds))
-        .orderBy(asc(schema.tokens.paragraphId), asc(schema.tokens.tokenIndex))
-        .all();
+    const totalPages = Math.max(1, Math.ceil(totalBodyParagraphs / pageSize));
+    const currentPage = Math.max(1, Math.min(totalPages, isNaN(requestedPage) ? 1 : requestedPage));
 
+    let bodyRows: any[];
+    if (isAll) {
+      bodyRows = stmtGetAllBodyParagraphs.all(story.id);
+    } else {
+      const offset = (currentPage - 1) * pageSize;
+      bodyRows = stmtGetBodyParagraphs.all(story.id, pageSize, offset);
+    }
+
+    const pageParagraphs = titleRow
+      ? [mapParagraphRow(titleRow), ...bodyRows.map(mapParagraphRow)]
+      : bodyRows.map(mapParagraphRow);
+    const pIds = pageParagraphs.map((p) => p.id);
+
+    let allTokens: any[] = [];
+    const allAnalyses: Record<string, any> = {};
+
+    if (pIds.length > 0) {
+      const pPlaceholders = pIds.map(() => '?').join(',');
+      const tokenRows: any[] = sqlite
+        .query(`SELECT * FROM tokens WHERE paragraph_id IN (${pPlaceholders}) ORDER BY paragraph_id ASC, token_index ASC;`)
+        .all(...pIds);
+
+      allTokens = tokenRows.map(mapTokenRow);
       const wordTokenIds = allTokens.filter((t) => t.isWord).map((t) => t.id);
 
-      // Chunk token IDs to stay safely below SQLite query variable limit
       for (let i = 0; i < wordTokenIds.length; i += 300) {
         const chunk = wordTokenIds.slice(i, i + 300);
         if (chunk.length > 0) {
-          const analysesChunk = db
-            .select()
-            .from(schema.tokenAnalyses)
-            .where(inArray(schema.tokenAnalyses.tokenId, chunk))
-            .all();
-          for (const a of analysesChunk) {
-            allAnalyses[a.tokenId] = a;
+          const chunkPlaceholders = chunk.map(() => '?').join(',');
+          const analysisRows: any[] = sqlite
+            .query(`SELECT * FROM token_analyses WHERE token_id IN (${chunkPlaceholders});`)
+            .all(...chunk);
+          for (const a of analysisRows) {
+            allAnalyses[a.token_id] = mapAnalysisRow(a);
           }
         }
       }
     }
 
-    return c.json({
+    const payload = {
       success: true,
       data: {
         story: {
@@ -150,6 +262,15 @@ api.get('/stories/:slug', async (c) => {
           hasPrevPage: isAll ? false : currentPage > 1,
         },
       },
+    };
+
+    const jsonStr = JSON.stringify(payload);
+    setCachedPage(cacheKey, jsonStr);
+
+    return c.text(jsonStr, 200, {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'public, max-age=3600',
+      'X-Cache': 'MISS',
     });
   } catch (error: any) {
     return c.json({ success: false, error: error.message }, 500);
@@ -1023,6 +1144,8 @@ api.post('/stories/ingest', async (c) => {
         }
       }
     }
+
+    clearPageResponseCache();
 
     return c.json({ success: true, storyId });
   } catch (error: any) {

@@ -1,9 +1,13 @@
 import { Hono } from 'hono';
+import { compress } from 'hono/compress';
 import { serveStatic } from 'hono/bun';
 import { api } from './api';
 import { existsSync } from 'node:fs';
 
 const app = new Hono();
+
+// Enable HTTP compression (gzip/deflate) for all eligible responses
+app.use('*', compress());
 
 // Mount API routes
 app.route('/api', api);
