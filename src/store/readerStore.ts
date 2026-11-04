@@ -1039,15 +1039,46 @@ export async function loadStories() {
     if (data.success && data.data) {
       setStories(data.data);
       if (data.data.length > 0) {
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
         const storyParam = urlParams.get('story');
+        const pageParam = urlParams.get('page');
         const readyStories = data.data.filter((s: any) => s.status === 'ready');
-        const initialSlug = (storyParam && readyStories.some((s: any) => s.slug === storyParam))
-          ? storyParam
-          : readyStories.length > 0
-          ? readyStories[0].slug
-          : data.data[0].slug;
-        await selectStory(initialSlug);
+
+        let initialSlug: string;
+        let initialPage = 1;
+
+        if (storyParam && readyStories.some((s: any) => s.slug === storyParam)) {
+          // Explicit story requested via URL query param takes priority
+          initialSlug = storyParam;
+          if (pageParam) {
+            const parsed = parseInt(pageParam, 10);
+            if (!isNaN(parsed) && parsed >= 1) {
+              initialPage = parsed;
+            }
+          }
+        } else {
+          // No explicit story in URL: restore last reading position from localStorage
+          let savedPosition: { slug?: string; page?: number } | null = null;
+          if (typeof localStorage !== 'undefined') {
+            try {
+              const raw = localStorage.getItem('abjad_last_position');
+              if (raw) savedPosition = JSON.parse(raw);
+            } catch (_) {}
+          }
+
+          if (savedPosition?.slug && readyStories.some((s: any) => s.slug === savedPosition.slug)) {
+            initialSlug = savedPosition.slug;
+            if (typeof savedPosition.page === 'number' && savedPosition.page >= 1) {
+              initialPage = savedPosition.page;
+            }
+          } else {
+            // First time visitor fallback: first ready story, page 1
+            initialSlug = readyStories.length > 0 ? readyStories[0].slug : data.data[0].slug;
+            initialPage = 1;
+          }
+        }
+
+        await selectStory(initialSlug, initialPage);
       }
     }
   } catch (err) {
@@ -1140,6 +1171,35 @@ function applyStoryPagePayload(payload: any) {
     setCurrentSentence(sentences[0]);
   } else {
     setCurrentSentence(null);
+  }
+
+  // Persist reading position to localStorage for seamless restoration across sessions
+  const activePageNum = payload.pagination?.currentPage || 1;
+  if (typeof localStorage !== 'undefined' && payload.story?.slug) {
+    try {
+      localStorage.setItem(
+        'abjad_last_position',
+        JSON.stringify({
+          slug: payload.story.slug,
+          page: activePageNum,
+          timestamp: Date.now(),
+        })
+      );
+    } catch (_) {}
+  }
+
+  // Synchronize browser URL bar without triggering page reloads
+  if (typeof window !== 'undefined' && window.history && window.history.replaceState && payload.story?.slug) {
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('story', payload.story.slug);
+      if (activePageNum > 1) {
+        url.searchParams.set('page', activePageNum.toString());
+      } else {
+        url.searchParams.delete('page');
+      }
+      window.history.replaceState({}, '', url.toString());
+    } catch (_) {}
   }
 }
 
