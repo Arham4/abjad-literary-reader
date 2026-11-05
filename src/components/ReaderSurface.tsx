@@ -78,15 +78,16 @@ export default function ReaderSurface() {
     >
       <For each={paragraphs().filter((p) => p.paragraphIndex >= 0)}>
         {(paragraph) => {
-          // Collect all tokens for this paragraph
-          const pTokens = Object.values(tokensMap()).filter(
-            (t) => t.paragraphId === paragraph.id
-          ).sort((a, b) => a.tokenIndex - b.tokenIndex);
+          // Collect all tokens for this paragraph reactively
+          const pTokens = () =>
+            Object.values(tokensMap())
+              .filter((t) => t.paragraphId === paragraph.id)
+              .sort((a, b) => a.tokenIndex - b.tokenIndex);
 
           // Group tokens into sentences or render with izafat group markers
           return (
             <div class="abjad-paragraph-block relative">
-              <For each={pTokens}>
+              <For each={pTokens()}>
                 {(token) => {
                   const isCurrentSentence = () => {
                     const activeS = currentSentence();
@@ -146,7 +147,7 @@ export default function ReaderSurface() {
                       activeTok?.paragraphId === token.paragraphId &&
                       activeAna?.vocalizedForm
                     ) {
-                      const cTokens = pTokens.filter(
+                      const cTokens = pTokens().filter(
                         (t) => t.isWord && t.compoundGroupId && t.compoundGroupId === token.compoundGroupId
                       );
                       const parts = activeAna.vocalizedForm.trim().split(/\s+/);
@@ -163,7 +164,7 @@ export default function ReaderSurface() {
                       activeTok?.paragraphId === token.paragraphId &&
                       activeAna?.vocalizedForm
                     ) {
-                      const izTokens = pTokens.filter(
+                      const izTokens = pTokens().filter(
                         (t) => t.isWord && t.izafatGroupId && t.izafatGroupId === token.izafatGroupId
                       );
                       const parts = activeAna.vocalizedForm.trim().split(/\s+/);

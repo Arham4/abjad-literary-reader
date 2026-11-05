@@ -1,4 +1,4 @@
-import { createSignal, createStore } from 'solid-js';
+import { createSignal, createStore, batch } from 'solid-js';
 import type { GraphemeUnit, PhoneticSyllablePill, ScriptTradition } from '../lib/abjad/types';
 
 export interface Story {
@@ -1143,35 +1143,37 @@ export function clearClientPageCache() {
 }
 
 function applyStoryPagePayload(payload: any) {
-  setActiveStory(payload.story);
-  setParagraphs(payload.paragraphs);
+  batch(() => {
+    setActiveStory(payload.story);
+    setParagraphs(payload.paragraphs);
 
-  if (payload.pagination) {
-    setPagination(payload.pagination);
-  } else {
-    setPagination({
-      currentPage: 1,
-      pageSize: payload.paragraphs.length,
-      totalParagraphs: payload.paragraphs.length,
-      totalPages: 1,
-      hasNextPage: false,
-      hasPrevPage: false,
-    });
-  }
+    if (payload.pagination) {
+      setPagination(payload.pagination);
+    } else {
+      setPagination({
+        currentPage: 1,
+        pageSize: payload.paragraphs.length,
+        totalParagraphs: payload.paragraphs.length,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+      });
+    }
 
-  const tMap: Record<string, Token> = {};
-  for (const t of payload.tokens) {
-    tMap[t.id] = t;
-  }
-  setTokensMap(tMap);
-  setAnalysesMap(payload.analyses || {});
+    const tMap: Record<string, Token> = {};
+    for (const t of payload.tokens) {
+      tMap[t.id] = t;
+    }
+    setTokensMap(tMap);
+    setAnalysesMap(payload.analyses || {});
 
-  const sentences = allStorySentences();
-  if (sentences.length > 0) {
-    setCurrentSentence(sentences[0]);
-  } else {
-    setCurrentSentence(null);
-  }
+    const sentences = allStorySentences();
+    if (sentences.length > 0) {
+      setCurrentSentence(sentences[0]);
+    } else {
+      setCurrentSentence(null);
+    }
+  });
 
   // Persist reading position to localStorage for seamless restoration across sessions
   const activePageNum = payload.pagination?.currentPage || 1;
