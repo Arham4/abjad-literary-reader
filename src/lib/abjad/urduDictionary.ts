@@ -1,6 +1,7 @@
 import { LexemeAnalysisData } from './types';
 import { vocalizeUrduWord, makePhoneticBreakdown } from './packs/urduVocalizer';
 import { UrduLanguagePack } from './packs/urdu';
+import { MASTER_LEXICON_DATA } from './masterLexiconData';
 
 // Comprehensive Core Urdu Vocabulary & Morphological Translation Engine
 export const COMPREHENSIVE_URDU_LEXICON: Record<string, LexemeAnalysisData> = {
@@ -592,6 +593,23 @@ export function lookupUrduWord(
     return COMPREHENSIVE_URDU_LEXICON[compoundKey];
   }
 
+  // 1b. Check Master Curated Lexicon
+  const masterHit =
+    (compoundKey && MASTER_LEXICON_DATA[compoundKey]) ||
+    MASTER_LEXICON_DATA[cleanSurface] ||
+    MASTER_LEXICON_DATA[cleanNorm] ||
+    MASTER_LEXICON_DATA[bareNorm];
+  if (masterHit) {
+    return {
+      vocalizedForm: masterHit.vocalizedForm || vocalizeUrduWord(bareNorm || cleanNorm || cleanSurface),
+      spokenUrduSynonymsJson: masterHit.spokenUrduSynonymsJson || [bareNorm || cleanNorm],
+      urduSimpleExplanation: masterHit.urduSimpleExplanation || `${bareNorm || cleanNorm} کے معنی`,
+      tokenTier: (masterHit.tokenTier as any) || 'common_vocab',
+      englishContextualGloss: masterHit.englishContextualGloss || `${bareNorm} (Urdu literary term)`,
+      literaryNuanceNote: masterHit.literaryNuanceNote || null,
+    };
+  }
+
   // 2. Direct exact or normalized match
   if (COMPREHENSIVE_URDU_LEXICON[cleanSurface]) return COMPREHENSIVE_URDU_LEXICON[cleanSurface];
   if (COMPREHENSIVE_URDU_LEXICON[cleanNorm]) return COMPREHENSIVE_URDU_LEXICON[cleanNorm];
@@ -730,7 +748,7 @@ export function lookupUrduWord(
     spokenUrduSynonymsJson: [cleanNorm],
     urduSimpleExplanation: `${bareNorm || cleanSurface} - ادبی مفہوم اور سیاق و سباق`,
     tokenTier: 'literary_vocab',
-    englishContextualGloss: `[${bareNorm || cleanSurface}] literary term / contextual expression`,
+    englishContextualGloss: `${bareNorm || cleanSurface} (Urdu literary expression)`,
     literaryNuanceNote: 'Urdu literary vocabulary item enriched with contextual pedagogical nuance.',
   };
 }

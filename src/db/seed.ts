@@ -22,7 +22,7 @@ interface LexemeAnalysisData {
 // Function words dictionary
 const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
   'کے': {
-    vocalizedForm: 'کے',
+    vocalizedForm: 'کِے',
     spokenUrduSynonymsJson: ['کا', 'کی'],
     urduSimpleExplanation: 'تعلق یا اضافت ظاہر کرنے والا حرف (جمع یا حالتِ مفعولی)',
     tokenTier: 'function_word',
@@ -30,7 +30,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Grammatical postposition linking possessor and possessed.',
   },
   'کا': {
-    vocalizedForm: 'کا',
+    vocalizedForm: 'کَا',
     spokenUrduSynonymsJson: ['کے', 'کی'],
     urduSimpleExplanation: 'تعلق یا ملکیت ظاہر کرنے والا حرف',
     tokenTier: 'function_word',
@@ -38,7 +38,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Direct genitive postposition marker.',
   },
   'کی': {
-    vocalizedForm: 'کی',
+    vocalizedForm: 'کِی',
     spokenUrduSynonymsJson: ['کا', 'کے'],
     urduSimpleExplanation: 'تعلق ظاہر کرنے والا حرف (مؤنث)',
     tokenTier: 'function_word',
@@ -46,7 +46,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Feminine genitive marker.',
   },
   'کو': {
-    vocalizedForm: 'کو',
+    vocalizedForm: 'کُو',
     spokenUrduSynonymsJson: ['کی طرف'],
     urduSimpleExplanation: 'مفعول یا ہدف ظاہر کرنے والا لفظ',
     tokenTier: 'function_word',
@@ -54,7 +54,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Marks the specific direct or indirect object.',
   },
   'میں': {
-    vocalizedForm: 'میں',
+    vocalizedForm: 'مَیں',
     spokenUrduSynonymsJson: ['اندر'],
     urduSimpleExplanation: 'اندر ہونے یا ظرفیت کی علامت',
     tokenTier: 'function_word',
@@ -62,7 +62,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Locative postposition indicating containment.',
   },
   'سے': {
-    vocalizedForm: 'سے',
+    vocalizedForm: 'سِے',
     spokenUrduSynonymsJson: ['کی جانب سے'],
     urduSimpleExplanation: 'ابتدا، ذریعہ یا علیحدگی ظاہر کرنے والا حرف',
     tokenTier: 'function_word',
@@ -70,8 +70,8 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Ablative, instrumental, and comparative marker.',
   },
   'اور': {
-    vocalizedForm: 'اور',
-    spokenUrduSynonymsJson: ['نیز', 'تھ'],
+    vocalizedForm: 'اَور',
+    spokenUrduSynonymsJson: ['نیز'],
     urduSimpleExplanation: 'دو جملوں یا الفاظ کو ملانے والا حرفِ عطف',
     tokenTier: 'function_word',
     englishContextualGloss: 'and',
@@ -86,7 +86,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Superessive postposition indicating location on a surface.',
   },
   'ہے': {
-    vocalizedForm: 'ہے',
+    vocalizedForm: 'ہَے',
     spokenUrduSynonymsJson: ['موجود ہے'],
     urduSimpleExplanation: 'فعلِ معاون (واحد حاضر یا غائب، زمانہ حال)',
     tokenTier: 'function_word',
@@ -94,7 +94,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Simple present indicative copula.',
   },
   'ہیں': {
-    vocalizedForm: 'ہیں',
+    vocalizedForm: 'ہَیں',
     spokenUrduSynonymsJson: ['موجود ہیں'],
     urduSimpleExplanation: 'فعلِ معاون (جمع، زمانہ حال)',
     tokenTier: 'function_word',
@@ -102,7 +102,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Plural or honorific present indicative copula.',
   },
   'تھا': {
-    vocalizedForm: 'تھا',
+    vocalizedForm: 'تھَا',
     spokenUrduSynonymsJson: ['تھے'],
     urduSimpleExplanation: 'فعلِ معاون (زمانہ ماضی، واحد مذکر)',
     tokenTier: 'function_word',
@@ -110,7 +110,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Past tense copula.',
   },
   'تھی': {
-    vocalizedForm: 'تھی',
+    vocalizedForm: 'تھِی',
     spokenUrduSynonymsJson: ['تھیں'],
     urduSimpleExplanation: 'فعلِ معاون (زمانہ ماضی، واحد مؤنث)',
     tokenTier: 'function_word',
@@ -118,7 +118,7 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Feminine past tense copula.',
   },
   'تھے': {
-    vocalizedForm: 'تھے',
+    vocalizedForm: 'تھِے',
     spokenUrduSynonymsJson: ['تھا'],
     urduSimpleExplanation: 'فعلِ معاون (زمانہ ماضی، جمع مذکر)',
     tokenTier: 'function_word',
@@ -134,12 +134,82 @@ const FUNCTION_WORDS_DICT: Record<string, LexemeAnalysisData> = {
     literaryNuanceNote: 'Subordinating complementizer introducing subordinate clauses.',
   },
   'بھی': {
-    vocalizedForm: 'بھی',
+    vocalizedForm: 'بھِی',
     spokenUrduSynonymsJson: ['نیز'],
     urduSimpleExplanation: 'شمولیت یا تاکید کا کلمہ',
     tokenTier: 'function_word',
     englishContextualGloss: 'also / too / even',
     literaryNuanceNote: 'Additive focus enclitic particle.',
+  },
+  'وہ': {
+    vocalizedForm: 'وَہ',
+    spokenUrduSynonymsJson: ['وہ'],
+    urduSimpleExplanation: 'ضمیر غائب',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'he / she / that / they',
+  },
+  'یہ': {
+    vocalizedForm: 'یَہ',
+    spokenUrduSynonymsJson: ['یہ'],
+    urduSimpleExplanation: 'ضمیر حاضر یا اشارہ قریب',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'this / these / he / she',
+  },
+  'نے': {
+    vocalizedForm: 'نِے',
+    spokenUrduSynonymsJson: ['نے'],
+    urduSimpleExplanation: 'فعل متعدی کے فاعل کی علامت',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'ergative agent marker',
+  },
+  'ایک': {
+    vocalizedForm: 'اَیک',
+    spokenUrduSynonymsJson: ['واحد'],
+    urduSimpleExplanation: 'گنتی کا پہلا عدد',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'a / an / one',
+  },
+  'تو': {
+    vocalizedForm: 'تُو',
+    spokenUrduSynonymsJson: ['پھر'],
+    urduSimpleExplanation: 'حرفِ شرط یا تاکید',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'then / so / as for',
+  },
+  'ہی': {
+    vocalizedForm: 'ہِی',
+    spokenUrduSynonymsJson: ['صرف'],
+    urduSimpleExplanation: 'حرفِ حصر و تاکید',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'only / just / exactly',
+  },
+  'کیا': {
+    vocalizedForm: 'کِیَا',
+    spokenUrduSynonymsJson: ['کس چیز'],
+    urduSimpleExplanation: 'استفہامیہ لفظ یا فعلِ ماضی',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'what? / did',
+  },
+  'گی': {
+    vocalizedForm: 'گِی',
+    spokenUrduSynonymsJson: ['گی'],
+    urduSimpleExplanation: 'فعلِ مستقبل مؤنث',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'will / shall (feminine)',
+  },
+  'گا': {
+    vocalizedForm: 'گَا',
+    spokenUrduSynonymsJson: ['گا'],
+    urduSimpleExplanation: 'فعلِ مستقبل مذکر',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'will / shall (masculine)',
+  },
+  'گے': {
+    vocalizedForm: 'گِے',
+    spokenUrduSynonymsJson: ['گے'],
+    urduSimpleExplanation: 'فعلِ مستقبل جمع',
+    tokenTier: 'function_word',
+    englishContextualGloss: 'will / shall (plural)',
   },
   'جو': {
     vocalizedForm: 'جو',

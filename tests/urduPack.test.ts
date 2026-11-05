@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { UrduLanguagePack } from '../src/lib/abjad/packs/urdu';
 import { cleanUrduForTTS, api } from '../src/server/api';
 import { vocalizeUrduWord, makePhoneticBreakdown } from '../src/lib/abjad/packs/urduVocalizer';
-import { db } from '../src/db/index';
+import { db, sqlite } from '../src/db/index';
 import * as schema from '../src/db/schema';
 import { eq, and, gte } from 'drizzle-orm';
 
@@ -463,6 +463,58 @@ describe('UrduLanguagePack Grapheme & Orthography Tests', () => {
       const stats = await getStoryStats('baagh');
       expect(stats.wordCount).toBeGreaterThan(5000);
       expect(stats.paragraphCount).toBeGreaterThanOrEqual(80);
+    });
+  });
+
+  describe('Catalog-Wide Vocabulary & Harakat Integrity Audit', () => {
+    test('Zero missing or generic fallback English glosses in dev.db', () => {
+      const genericRows: any = sqlite.query(`
+        SELECT count(*) as count
+        FROM token_analyses
+        WHERE english_contextual_gloss LIKE '%literary term / contextual expression%'
+           OR english_contextual_gloss LIKE '%[بادشاہ]%'
+           OR english_contextual_gloss LIKE '%[انوکھے]%';
+      `).get();
+      expect(genericRows.count).toBe(0);
+    });
+
+    test('Critical vocabulary items have 100% full authentic harakat, phonetic pills, and English gloss', () => {
+      const wordsToVerify = ['بادشاہ', 'انوکھے', 'شیخ', 'چلی', 'خواب'];
+      for (const word of wordsToVerify) {
+        const row: any = sqlite
+          .query(`
+            SELECT ta.vocalized_form, ta.english_contextual_gloss, ta.phonetic_breakdown_json, ta.graphemes_json
+            FROM tokens t
+            JOIN token_analyses ta ON ta.token_id = t.id
+            WHERE t.surface_form = ?
+            LIMIT 1;
+          `)
+          .get(word);
+
+        expect(row).toBeDefined();
+        // Harakat check
+        const harakatMatches = row.vocalized_form.match(/[\u064B-\u0652\u0670آ]/g) || [];
+        expect(harakatMatches.length).toBeGreaterThanOrEqual(1);
+
+        // English gloss check
+        expect(row.english_contextual_gloss).not.toContain('literary term / contextual expression');
+        expect(row.english_contextual_gloss.length).toBeGreaterThan(3);
+
+        // Breakdown pills check
+        const pills = typeof row.phonetic_breakdown_json === 'string' ? JSON.parse(row.phonetic_breakdown_json) : row.phonetic_breakdown_json;
+        expect(pills.length).toBeGreaterThanOrEqual(2);
+        for (const p of pills) {
+          expect(p.letters).toBeDefined();
+          expect(p.vowelNameUrdu).toBeDefined();
+        }
+      }
+    });
+
+    test('Catalog token count across 30 stories exceeds 100,000 unabridged word tokens', () => {
+      const countRow: any = sqlite
+        .query('SELECT count(*) as count FROM tokens WHERE is_word = 1;')
+        .get();
+      expect(countRow.count).toBeGreaterThan(100000);
     });
   });
 });

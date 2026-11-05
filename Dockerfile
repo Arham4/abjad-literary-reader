@@ -15,8 +15,8 @@ RUN bun install
 # Copy application sources
 COPY . .
 
-# Seed database with canonical literary texts
-RUN bun run src/db/seed.ts
+# Seed database with canonical literary texts and enrich catalog vocabulary
+RUN bun run src/db/seed.ts && bun run scripts/enrich_master_catalog.cjs
 
 # Run tests to guarantee zero regressions during container build
 RUN bun test
